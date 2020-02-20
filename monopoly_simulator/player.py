@@ -6,9 +6,7 @@ class Player(object):
     def __init__(self, current_position, status, has_get_out_of_jail_community_chest_card, has_get_out_of_jail_chance_card,
                  current_cash, num_railroads_possessed, player_name, assets,full_color_sets_possessed, currently_in_jail,
                  num_utilities_possessed,
-                 handle_negative_cash_balance, make_pre_roll_move, # on this line and below, all variables are assigned to a method
-                 make_out_of_turn_move,
-                 make_post_roll_move, make_buy_property_decision, make_bid
+                 agent
                  ):
         """
         An object representing a unique player in the game.
@@ -25,17 +23,10 @@ class Player(object):
         :param full_color_sets_possessed: A set. The real estate colors for which the full set is possessed by the player in assets.
         :param currently_in_jail: A boolean. Self-explanatory but with one caveat: if you are only 'visiting' in jail, this flag will not be set to True
         :param num_utilities_possessed: An integer. Self-explanatory
-        :param handle_negative_cash_balance: A function. Typically, this should be implemented separately in a decision agent and then passed in during
-        game initialization for this player.
+        :param agent: An instance of class Agent. This instance encapsulates the decision-making portion of the program
+        that is the domain of TA2
 
-        All of the variables below should be assigned to methods (encapsulated in your 'decision agent'). See both gameplay
-        and simple_decision_agent_1 for examples of how to do this.
 
-        :param make_pre_roll_move:
-        :param make_out_of_turn_move:
-        :param make_post_roll_move:
-        :param make_buy_property_decision:
-        :param make_bid:
         """
         self.current_position = current_position # this is an integer. Use 'location_sequence' in the game schema to map position into an actual location
         self.status = status
@@ -49,13 +40,8 @@ class Player(object):
         self.currently_in_jail = currently_in_jail
         self.num_utilities_possessed = num_utilities_possessed
 
-        # decision agent method assignments
-        self.handle_negative_cash_balance = handle_negative_cash_balance
-        self.make_pre_roll_move = make_pre_roll_move
-        self.make_out_of_turn_move = make_out_of_turn_move
-        self.make_post_roll_move = make_post_roll_move
-        self.make_buy_property_decision = make_buy_property_decision
-        self.make_bid = make_bid
+        # the agent assigned to this player.
+        self.agent=agent
 
         # all of the variables below are assigned a default initial value, and do not need input arguments/game schema inputs
         self.num_total_houses = 0 # the total number of houses, across all assets, that the player possesses
@@ -76,16 +62,9 @@ class Player(object):
         self._option_to_buy = False # this option will turn true when  the player lands on a property that could be bought.
         # We always set it to false again at the end of the post_roll phase. It is an internal variable.
 
-        self._agent_memory = dict() # a scratchpad for the agent behind this player.
 
-
-    def change_decision_agent(self, handle_negative_cash_balance, make_pre_roll_move, make_out_of_turn_move, make_post_roll_move, make_buy_property_decision, make_bid):
-        self.handle_negative_cash_balance = handle_negative_cash_balance
-        self.make_pre_roll_move = make_pre_roll_move
-        self.make_out_of_turn_move = make_out_of_turn_move
-        self.make_post_roll_move = make_post_roll_move
-        self.make_buy_property_decision = make_buy_property_decision
-        self.make_bid = make_bid
+    def change_decision_agent(self, agent):
+        self.agent = agent
 
 
     def begin_bankruptcy_proceedings(self, current_gameboard):
@@ -169,13 +148,13 @@ class Player(object):
 
             if asset.num_houses > 0:
                 self.num_total_houses += asset.num_houses
-                print('incrementing ',self.player_name, "'s num_total_houses count by ", str(asset.num_houses), \
+                print('incrementing ',self.player_name, "'s num_total_houses count by ", str(asset.num_houses),
                     ". Total houses now owned by player now is ", str(self.num_total_houses))
                 # note that technically, the property should not have been transferred to player
                 # if there were improvements on it. But we include this code just in case, and to flag errors later.
             elif asset.num_hotels > 0:
                 self.num_total_hotels += asset.num_hotels
-                print('incrementing ', self.player_name, "'s num_total_hotels count by ", str(asset.num_hotels), \
+                print('incrementing ', self.player_name, "'s num_total_hotels count by ", str(asset.num_hotels),
                     ". Total hotels now owned by player now is ", str(self.num_total_hotels))
         else:
             print('You are attempting to add non-purchaseable asset to player\'s portfolio!')
@@ -220,13 +199,13 @@ class Player(object):
 
             if asset.num_houses > 0:
                 self.num_total_houses -= asset.num_houses
-                print('Decrementing ',self.player_name, "'s num_total_houses count by ", str(asset.num_houses), \
+                print('Decrementing ',self.player_name, "'s num_total_houses count by ", str(asset.num_houses),
                     ". Total houses now owned by player now is ", str(self.num_total_houses))
                 # note that technically, the property should not have been removed
                 # if there were improvements on it. But we include this code just in case, and to flag errors later.
             elif asset.num_hotels > 0:
                 self.num_total_hotels -= asset.num_hotels
-                print('Decrementing ', self.player_name, "'s num_total_hotels count by ", str(asset.num_hotels), \
+                print('Decrementing ', self.player_name, "'s num_total_hotels count by ", str(asset.num_hotels),
                     ". Total hotels now owned by player now is ", str(self.num_total_hotels))
         else:
             print('The property to be removed from the portfolio is not purchaseable. How did it get here?')
@@ -638,10 +617,10 @@ class Player(object):
         allowable_actions.remove(concluded_actions)
         allowable_actions.add(skip_turn)
         code = 0
-        action_to_execute, parameters = self.make_pre_roll_move(self, current_gameboard, allowable_actions, code)
+        action_to_execute, parameters = self.agent.make_pre_roll_move(self, current_gameboard, allowable_actions, code)
         t = (action_to_execute, parameters)
         # add to game history
-        current_gameboard['history']['function'].append(self.make_pre_roll_move)
+        current_gameboard['history']['function'].append(self.agent.make_pre_roll_move)
         params = dict()
         params['player'] = self
         params['current_gameboard'] = current_gameboard
@@ -678,10 +657,10 @@ class Player(object):
                 code = self._execute_action(action_to_execute, parameters, current_gameboard)
                 print('Received code ', str(code), '. Continuing iteration...')
                 allowable_actions = self.compute_allowable_pre_roll_actions(current_gameboard)
-                action_to_execute, parameters = self.make_pre_roll_move(self, current_gameboard, allowable_actions, code)
+                action_to_execute, parameters = self.agent.make_pre_roll_move(self, current_gameboard, allowable_actions, code)
                 t = (action_to_execute, parameters)
                 # add to game history
-                current_gameboard['history']['function'].append(self.make_pre_roll_move)
+                current_gameboard['history']['function'].append(self.agent.make_pre_roll_move)
                 params = dict()
                 params['player'] = self
                 params['current_gameboard'] = current_gameboard
@@ -713,10 +692,10 @@ class Player(object):
         allowable_actions.remove(concluded_actions)
         allowable_actions.add(skip_turn)
         code = 0
-        action_to_execute, parameters = self.make_out_of_turn_move(self, current_gameboard, allowable_actions, code)
+        action_to_execute, parameters = self.agent.make_out_of_turn_move(self, current_gameboard, allowable_actions, code)
         t = (action_to_execute, parameters)
         # add to game history
-        current_gameboard['history']['function'].append(self.make_out_of_turn_move)
+        current_gameboard['history']['function'].append(self.agent.make_out_of_turn_move)
         params = dict()
         params['player'] = self
         params['current_gameboard'] = current_gameboard
@@ -751,10 +730,10 @@ class Player(object):
                 code = self._execute_action(action_to_execute, parameters, current_gameboard)
                 print('Received code ', str(code), '. Continuing iteration...')
                 allowable_actions = self.compute_allowable_out_of_turn_actions(current_gameboard)
-                action_to_execute, parameters = self.make_out_of_turn_move(self, current_gameboard, allowable_actions, code)
+                action_to_execute, parameters = self.agent.make_out_of_turn_move(self, current_gameboard, allowable_actions, code)
                 t = (action_to_execute, parameters)
                 # add to game history
-                current_gameboard['history']['function'].append(self.make_out_of_turn_move)
+                current_gameboard['history']['function'].append(self.agent.make_out_of_turn_move)
                 params = dict()
                 params['player'] = self
                 params['current_gameboard'] = current_gameboard
@@ -790,10 +769,10 @@ class Player(object):
         print('We are in the post-roll phase for ', self.player_name)
         allowable_actions = self.compute_allowable_post_roll_actions(current_gameboard)
         code = 0
-        action_to_execute, parameters = self.make_post_roll_move(self, current_gameboard, allowable_actions, code)
+        action_to_execute, parameters = self.agent.make_post_roll_move(self, current_gameboard, allowable_actions, code)
         t = (action_to_execute, parameters)
         # add to game history
-        current_gameboard['history']['function'].append(self.make_post_roll_move)
+        current_gameboard['history']['function'].append(self.agent.make_post_roll_move)
         params = dict()
         params['player'] = self
         params['current_gameboard'] = current_gameboard
@@ -816,10 +795,10 @@ class Player(object):
                 code = self._execute_action(action_to_execute, parameters, current_gameboard)
                 print('Received code ', str(code), '. Continuing iteration...')
                 allowable_actions = self.compute_allowable_post_roll_actions(current_gameboard)
-                action_to_execute, parameters = self.make_post_roll_move(self, current_gameboard, allowable_actions, code)
+                action_to_execute, parameters = self.agent.make_post_roll_move(self, current_gameboard, allowable_actions, code)
                 t = (action_to_execute, parameters)
                 # add to game history
-                current_gameboard['history']['function'].append(self.make_post_roll_move)
+                current_gameboard['history']['function'].append(self.agent.make_post_roll_move)
                 params = dict()
                 params['player'] = self
                 params['current_gameboard'] = current_gameboard
@@ -866,9 +845,9 @@ class Player(object):
         """
         print('Executing _own_or_auction for ',self.player_name)
 
-        dec = self.make_buy_property_decision(self, current_gameboard, asset) # your agent has to make a decision here
+        dec = self.agent.make_buy_property_decision(self, current_gameboard, asset) # your agent has to make a decision here
         # add to game history
-        current_gameboard['history']['function'].append(self.make_buy_property_decision)
+        current_gameboard['history']['function'].append(self.agent.make_buy_property_decision)
         params = dict()
         params['asset'] = asset
         params['player'] = self

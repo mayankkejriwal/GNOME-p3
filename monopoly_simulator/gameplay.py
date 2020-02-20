@@ -6,6 +6,7 @@ from monopoly_simulator import background_agent_v1
 # import simple_decision_agent_1
 import json
 from monopoly_simulator import diagnostics
+from monopoly_simulator.agent import Agent
 
 
 def simulate_game_instance(game_elements, np_seed=6):
@@ -122,9 +123,9 @@ def simulate_game_instance(game_elements, np_seed=6):
             current_player.currently_in_jail = False # the player is only allowed to skip one turn (i.e. this one)
 
         if current_player.current_cash < 0:
-            code = current_player.handle_negative_cash_balance(current_player, game_elements)
+            code = current_player.agent.handle_negative_cash_balance(current_player, game_elements)
             # add to game history
-            game_elements['history']['function'].append(current_player.handle_negative_cash_balance)
+            game_elements['history']['function'].append(current_player.agent.handle_negative_cash_balance)
             params = dict()
             params['player'] = current_player
             params['current_gameboard'] = game_elements
@@ -184,10 +185,10 @@ def set_up_board(game_schema_file_path, player_decision_agents):
 player_decision_agents = dict()
 # for p in ['player_1','player_3']:
 #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
-player_decision_agents['player_1'] = background_agent_v1.decision_agent_methods
-player_decision_agents['player_2'] = background_agent_v1.decision_agent_methods
-player_decision_agents['player_3'] = background_agent_v1.decision_agent_methods
-player_decision_agents['player_4'] = background_agent_v1.decision_agent_methods
+player_decision_agents['player_1'] = Agent(**background_agent_v1.decision_agent_methods)
+player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
+player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
+player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
 game_elements = set_up_board('/Users/mayankkejriwal/git-projects/GNOME-p3/monopoly_game_schema_v1-2.json',
                              player_decision_agents)
 simulate_game_instance(game_elements)

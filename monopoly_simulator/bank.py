@@ -46,11 +46,10 @@ class Bank(object):
             if bidding_player in players_out_of_auction:
                 bidding_player_index = (bidding_player_index+1)%len(current_gameboard['players']) # next player
                 continue
-            proposed_bid = bidding_player.make_bid(bidding_player, current_gameboard,
-                                asset, current_bid) # make_bid automatically passes in the player as the first argument
-                                                    # since it is a non-static function assignment
+            proposed_bid = bidding_player.agent.make_bid(bidding_player, current_gameboard,
+                                asset, current_bid)
             # add to game history
-            current_gameboard['history']['function'].append(bidding_player.make_bid)
+            current_gameboard['history']['function'].append(bidding_player.agent.make_bid)
             params = dict()
             params['player'] = bidding_player
             params['current_gameboard'] = current_gameboard
