@@ -6,20 +6,17 @@ Full code for the simulator is in monopoly-simulator/ and is written using OOP m
 
 The entry point for the simulator is gameplay.py and can be run on the command line:
 
-$ python gameplay.py > game-log.txt
+$ python3 gameplay.py > game-log.txt
 
-The simulator currently relies on Python 3.8.
+The simulator currently relies on Python 3.8.x. Because inheritance has a different syntax between 2.7 and 3, you should use the repository https://github.com/mayankkejriwal/GNOME  if you are using Python 2.7.x. For this current package, we recommend setting up a Python 3 interpreter and running the code therein.
 
-You could also choose to print the log on the command line. We've found the log to be very useful in providing a human
-readable version of game events. When debugging a decision agent, these logs are your friend.
+An important difference between GNOME and GNOME-p3 (besides the Python 2.7->Python 3.8 change) is the way that agents are represented. In GNOME, the agents are not object-oriented; each agent is a dictionary of decision-making functions that is used to supplement a player's data structure. In GNOME-p3, there is an agent.py file that encapsulates these functions within an Agent class. Now, instead of passing agent function pointers directly into a Player object's instantiation, we pass in an Agent object instead. We believe this is a more elegant and long-term solution since you could create your own agent classes by sub-classing, and adding fields and state variables to your sub-class as necessary.
 
-To run the simulator, you need a decision agent and the game schema. We have provided the schema already in the outer folder,
-although you will have to specify the path to the schema once you clone this repo on your own system. In gameplay, we
-also have to specify the numpy seed (currently a default is set) and if we want, we can modify elements of the game schema
-for testing purposes. For simple agents that do not try to monopolize, we recommend modifying go_increment to avoid
-runaway cash increases from the bank to the players.
+We print out a log that tracks the game at a fairly detailed level. The prints are routed to stdout by default, but you could pipe them to a file if you want to retain a file log. 
 
-We have provided two example decision agents to guide you on how to build out your own decision agent. One of these is a fairly sophisticated rule-based decision agent that tries to buy and monopolize properties strategically (background agent v1) while the other is a dummy agent (simple decision afent) placed for testing/guidance.
+To run the simulator, you need to assign a decision agent to each of the four players and the game schema. We have provided the schema already (monopoly_game_schema_v1-2.json) in the outer folder, although you will have to specify the path to the schema once you clone this repo on your own system. In gameplay, we also have to specify the numpy seed (currently a default is set) and if we want, we can modify elements of the game schema for testing purposes. For simple agents that do not try to monopolize or trade, we recommend modifying go_increment to avoid runaway cash increases from the bank to the players.
+
+We have provided two example decision agents to guide you on how to build out your own decision agent; the code also shows how to assign these agents to players. Currently, one of the decision agents is a simply 'dummy' agent, while the other is a 'background' agent that will be assigned to three of the four players during evaluations. The former is very simplistic, and often leads to cash runaway increases. The latter, though simple, is capable of monopolizing and trading and plays the game fairly well. Sometime in March, we will release the baseline agent used in our novelty evaluations, which will also be a rule-based, sophisticated decision maker who weighs the state of the board carefully before deciding what to do.
 
 The code has been fairly well documented, and we've done a lot of testing on it. That does not mean it's completely clear
 or that mistakes might not appear. On our part, we are continuously running tests but if you see something that's unclear
@@ -30,9 +27,6 @@ GAME SCHEMA:
 The current version of the schema, generated using monopoly-game-schema.py is monopoly_game_schema_v1-2.json. We provide
 _v1-1.json for comparison only. It should not be used in the game. Here's a succinct version of some of the more
 important changes in going from v1-1 to v1-2:
-
-
-Updates from v1-1 to v1-2:
 
 --In location_states, we have changed 'class' to 'loc_class'. The reason is (and we should have realized it earlier)
 that class is a reserved word in Python.
@@ -77,7 +71,7 @@ from me due to a card draw, and I have low cash). Because the chances are so sma
 that player to take action just yet but once it's his turn, he'll have to deal with the negative cash before he can
 conclude his turn (or declare bankruptcy)
 
---the 'player' objects now have some additional fields that will be useful for keeping track of the game state.
+--the 'player' objects now have some additional fields that will be useful for keeping track of the game state. In general, we have continued to refine and update the player data structure to ensure the game plays smoothly, quickly and in a well-defined manner.
 
 --I've added 'mortgage_property', 'improve_property' to the list of functions that are allowed in out_of_turn moves.
 'bid_on_property' has been removed. The reason is that currently, the only way you can bid on a property is at auction,
@@ -85,12 +79,15 @@ which is conducted by the bank as a special process when a player refuses to buy
 landed. So you can't really 'choose' to bid in an out_of_turn move; instead, you can bid only in a player's
 post-roll phase.
 
-
 REMINDERS:
 
 --it IS possible to sell a mortgaged property
 
-UPDATES:
+GENERAL UPDATES:
+
+February 15, 2020:
+
+--We have released the first version of the novelty schema in the outer folder. The novelty generator that uses this schema to inject novelty into the game will be released within February. 
 
 February 5, 2020:
 
@@ -126,11 +123,11 @@ by agents themselves.
 --Note that since the parameters can be objects, and we do not do a deep copy of objects when we insert them into
 a param dict, the state of objects can (and in many cases, will) change between the time an object is inserted as
 a parameter or return value into a list, and the time when it is queried by an external agent. With this caveat in mind,
- there are many core values in each object that stay constant over the tenure of the game e.g., a player's name,
- an asset's name, card details etc. Dereference with caution.
+there are many core values in each object that stay constant over the tenure of the game e.g., a player's name,
+an asset's name, card details etc. Dereference with caution.
 
- --Because of the history facility, we had to modify the signatures of action_choices/mortgage_property & pay_jail_fine slightly
- (we added current_gameboard to the argument list of both functions). This was necessary since each of these functions
- itself calls a function, and in order to accurately update history, needs access to the gameboard. If you have already
- implemented a decision agent that expects the old signature (without current_gameboard) you may want to update; it should
- be a very small change.
+--Because of the history facility, we had to modify the signatures of action_choices/mortgage_property & pay_jail_fine slightly
+(we added current_gameboard to the argument list of both functions). This was necessary since each of these functions
+itself calls a function, and in order to accurately update history, needs access to the gameboard. If you have already
+implemented a decision agent that expects the old signature (without current_gameboard) you may want to update; it should
+be a very small change.
