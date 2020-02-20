@@ -8,13 +8,10 @@ The entry point for the simulator is gameplay.py and can be run on the command l
 
 $ python gameplay.py > game-log.txt
 
-The simulator currently relies on Python 2.7.x. Because inheritance has a different syntax between 2.7 and 3, we will
-need to release a different version if you really like 3. This can be accomplished relatively easily, but for now, we recommend
-setting up a 2.7 interpreter and running the code therein.
+The simulator currently relies on Python 3.8.
 
 You could also choose to print the log on the command line. We've found the log to be very useful in providing a human
-readable version of game events. When debugging a decision agent, these logs are your friend. If you succeed in running
-the game off the shelf, you should get a log that looks somewhat (though probably not exactly) like game-1-log.txt
+readable version of game events. When debugging a decision agent, these logs are your friend.
 
 To run the simulator, you need a decision agent and the game schema. We have provided the schema already in the outer folder,
 although you will have to specify the path to the schema once you clone this repo on your own system. In gameplay, we
@@ -22,10 +19,7 @@ also have to specify the numpy seed (currently a default is set) and if we want,
 for testing purposes. For simple agents that do not try to monopolize, we recommend modifying go_increment to avoid
 runaway cash increases from the bank to the players.
 
-We have provided an example 'dummy' decision agent to guide you on how to build out your own decision agent. We plan
-to release at least one sophisticated decision agent sometime in January, and the baseline agent used in evaluations
-will also be a rule-based, sophisticated decision maker who weighs the state of the board carefully before deciding
-what to do.
+We have provided two example decision agents to guide you on how to build out your own decision agent. One of these is a fairly sophisticated rule-based decision agent that tries to buy and monopolize properties strategically (background agent v1) while the other is a dummy agent (simple decision afent) placed for testing/guidance.
 
 The code has been fairly well documented, and we've done a lot of testing on it. That does not mean it's completely clear
 or that mistakes might not appear. On our part, we are continuously running tests but if you see something that's unclear
