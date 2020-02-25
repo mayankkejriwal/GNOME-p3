@@ -425,28 +425,31 @@ def use_get_out_of_jail_card(player, current_gameboard):
     :param current_gameboard: A dict. The global data structure representing the current game board.
     :return: 1 if the player has successfully used get out of jail card, or -1 otherwise.
     """
+    import copy
     if not player.currently_in_jail:
-        print('Player is not currently in jail and cannot use the card. Returning -1')
-        return -1 # simple check. note that player will still have the card(s)
+        print 'Player is not currently in jail and cannot use the card. Returning -1'
+        return -1  # simple check. note that player will still have the card(s)
 
-    if player.has_get_out_of_jail_chance_card: # we give first preference to chance, then community chest
-        print('Player has get_out_of_jail_chance card. Removing card and setting player jail status to False')
+    if player.has_get_out_of_jail_chance_card:  # we give first preference to chance, then community chest
+        print 'Player has get_out_of_jail_chance card. Removing card and setting player jail status to False'
         player.has_get_out_of_jail_chance_card = False
         player.currently_in_jail = False
-        print('Adding the card back again to the chance pack.')
-        current_gameboard['chance_cards'].add(current_gameboard['chance_card_objects']['get_out_of_jail_free'])
-        print('Returning 1')
+        print 'Adding the card back again to the chance pack.'
+        current_gameboard['chance_cards'].add(
+            copy.deepcopy(current_gameboard['chance_card_objects']['get_out_of_jail_free']))
+        print 'Returning 1'
         return 1
     elif player.has_get_out_of_jail_community_chest_card:
-        print('Player has get_out_of_jail_community_chest card. Removing card and setting player jail status to False')
+        print 'Player has get_out_of_jail_community_chest card. Removing card and setting player jail status to False'
         player.has_get_out_of_jail_community_chest_card = False
         player.currently_in_jail = False
-        print('Adding the card back again to the community chest pack.')
-        current_gameboard['community_chest_cards'].add(current_gameboard['community_chest_card_objects']['get_out_of_jail_free'])
-        print('Returning 1')
+        print 'Adding the card back again to the community chest pack.'
+        current_gameboard['community_chest_cards'].add(
+            copy.deepcopy(current_gameboard['community_chest_card_objects']['get_out_of_jail_free']))
+        print 'Returning 1'
         return 1
     else:
-        print('Player does not possess a get_out_of_jail free card! Returning -1')
+        print 'Player does not possess a get_out_of_jail free card! Returning -1'
         return -1
 
 

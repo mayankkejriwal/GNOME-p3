@@ -7,3 +7,6 @@ class Dice(object):
         In future editions, we may add other states to the dice (with changes correspondingly reflected in the schema).
         """
         self.die_state = die_state
+
+        self.die_state_distribution = 'uniform'
+        self.die_type = 'consecutive'

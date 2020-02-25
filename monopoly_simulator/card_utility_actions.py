@@ -48,26 +48,35 @@ def pick_card_from_community_chest(player, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print(player.player_name,' is picking card from community chest.')
+    print player.player_name,' is picking card from community chest.'
     card_rand = np.random.RandomState(current_gameboard['card_seed'])
     set_cc_cards_copy = current_gameboard['community_chest_cards'].copy()
     list_community_chest_cards = _set_to_sorted_list_func(set_cc_cards_copy)
     card = card_rand.choice(list_community_chest_cards)
     # card = card_rand.choice(list(current_gameboard['community_chest_cards']))
     current_gameboard['card_seed'] += 1
-    print(player.player_name,' picked card ',card.name)
+    print player.player_name,' picked card ',card.name
     if card.name == 'get_out_of_jail_free':
-        print('removing get_out_of_jail card from community chest pack')
-        current_gameboard['community_chest_cards'].remove(card)
-    card.action(player, card, current_gameboard) # all card actions must take this signature
-    # add to game history
-    current_gameboard['history']['function'].append(card.action)
-    params = dict()
-    params['player'] = player
-    params['card'] = card
-    params['current_gameboard'] = current_gameboard
-    current_gameboard['history']['param'].append(params)
-    current_gameboard['history']['return'].append(None)
+        print 'removing get_out_of_jail card from community chest pack'
+        current_gameboard['chance_cards'].remove(card)
+        card.action(player, card, current_gameboard, pack='community_chest')
+        params = dict()
+        params['player'] = player
+        params['card'] = card
+        params['current_gameboard'] = current_gameboard
+        params['pack'] = 'community_chest'
+        current_gameboard['history']['param'].append(params)
+        current_gameboard['history']['return'].append(None)
+    else:
+        card.action(player, card, current_gameboard) # all card actions except get out of jail free must take this signature
+        # add to game history
+        current_gameboard['history']['function'].append(card.action)
+        params = dict()
+        params['player'] = player
+        params['card'] = card
+        params['current_gameboard'] = current_gameboard
+        current_gameboard['history']['param'].append(params)
+        current_gameboard['history']['return'].append(None)
 
 
 def pick_card_from_chance(player, current_gameboard):
@@ -78,26 +87,35 @@ def pick_card_from_chance(player, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print(player.player_name, ' is picking card from chance.')
+    print player.player_name, ' is picking card from chance.'
     card_rand = np.random.RandomState(current_gameboard['card_seed'])
     set_chance_cards_copy = current_gameboard['chance_cards'].copy()
     list_chance_cards = _set_to_sorted_list_func(set_chance_cards_copy)
     card = card_rand.choice(list_chance_cards)
     # card = card_rand.choice(list(current_gameboard['chance_cards']))
     current_gameboard['card_seed'] += 1
-    print(player.player_name, ' picked card ', card.name)
+    print player.player_name, ' picked card ', card.name
     if card.name == 'get_out_of_jail_free':
-        print('removing get_out_of_jail card from chance pack')
+        print 'removing get_out_of_jail card from chance pack'
         current_gameboard['chance_cards'].remove(card)
-    card.action(player, card, current_gameboard) # all card actions must take this signature
-    # add to game history
-    current_gameboard['history']['function'].append(card.action)
-    params = dict()
-    params['player'] = player
-    params['card'] = card
-    params['current_gameboard'] = current_gameboard
-    current_gameboard['history']['param'].append(params)
-    current_gameboard['history']['return'].append(None)
+        card.action(player, card, current_gameboard, pack='chance')
+        params = dict()
+        params['player'] = player
+        params['card'] = card
+        params['current_gameboard'] = current_gameboard
+        params['pack'] = 'chance'
+        current_gameboard['history']['param'].append(params)
+        current_gameboard['history']['return'].append(None)
+    else:
+        card.action(player, card, current_gameboard) # all card actions except get out of jail free must take this signature
+        # add to game history
+        current_gameboard['history']['function'].append(card.action)
+        params = dict()
+        params['player'] = player
+        params['card'] = card
+        params['current_gameboard'] = current_gameboard
+        current_gameboard['history']['param'].append(params)
+        current_gameboard['history']['return'].append(None)
 
 
 def move_player(player, card, current_gameboard):
@@ -125,7 +143,7 @@ def move_player(player, card, current_gameboard):
         _move_player__check_for_go(player, new_position, current_gameboard)
 
 
-def set_get_out_of_jail_card_status(player, card, current_gameboard):
+def set_get_out_of_jail_card_status(player, card, current_gameboard, pack):
     """
     Depending on whether we took the card out of community chest or chance, we update the requisite field for the player.
 
@@ -134,17 +152,15 @@ def set_get_out_of_jail_card_status(player, card, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print('executing set_get_out_of_jail_card_status for ',player.player_name)
-    if card == current_gameboard['community_chest_card_objects'][card.name] and \
-     card.name == 'get_out_of_jail_free': # remember, this is an object equality test
+    print 'executing set_get_out_of_jail_card_status for ',player.player_name
+    if pack == 'community_chest' and card.name == 'get_out_of_jail_free': # remember, this is an object equality test
         player.has_get_out_of_jail_community_chest_card = True
-        print(player.player_name,' now has get_out_of_jail community_chest card')
-    elif card == current_gameboard['chance_card_objects'][card.name] and \
-     card.name == 'get_out_of_jail_free': # remember, this is an object equality test
+        print player.player_name,' now has get_out_of_jail community_chest card'
+    elif pack == 'chance' and card.name == 'get_out_of_jail_free': # remember, this is an object equality test
         player.has_get_out_of_jail_chance_card = True
-        print(player.player_name, ' now has get_out_of_jail chance card')
+        print player.player_name, ' now has get_out_of_jail chance card'
     else: # if we arrive here, it means that the card we have is either not get out of jail free, or something else has gone wrong.
-        print('something has gone wrong in set_get_out_of_jail_card_status. That is all I know.')
+        print 'something has gone wrong in set_get_out_of_jail_card_status. That is all I know.'
         raise Exception
 
 
