@@ -58,7 +58,7 @@ def pick_card_from_community_chest(player, current_gameboard):
     print player.player_name,' picked card ',card.name
     if card.name == 'get_out_of_jail_free':
         print 'removing get_out_of_jail card from community chest pack'
-        current_gameboard['chance_cards'].remove(card)
+        current_gameboard['community_chest_cards'].remove(card)
         card.action(player, card, current_gameboard, pack='community_chest')
         params = dict()
         params['player'] = player
