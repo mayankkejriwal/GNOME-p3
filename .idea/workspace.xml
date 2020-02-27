@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="61cf598a-cde5-4dc2-9d94-49c1e65f3621" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/monopoly_simulator/gameplay.py" afterPath="$PROJECT_DIR$/monopoly_simulator/gameplay.py" />
-    </list>
+    <list default="true" id="61cf598a-cde5-4dc2-9d94-49c1e65f3621" name="Default" comment="" />
     <ignored path="GNOME-p3.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />

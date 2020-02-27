@@ -61,7 +61,7 @@ def simulate_game_instance(game_elements, np_seed=6, history_log_file=None):
     num_active_players = 4
     winner = None
     workbook = None
-    if not history_log_file:
+    if history_log_file:
         workbook = xlsxwriter.Workbook(history_log_file)
 
     while num_active_players > 1:
@@ -192,7 +192,7 @@ def simulate_game_instance(game_elements, np_seed=6, history_log_file=None):
             diagnostics.print_player_cash_balances(game_elements)
             return
 
-    if not workbook:
+    if workbook:
         write_history_to_file(game_elements, workbook)
     # let's print some numbers
     print('printing final asset owners: ')
