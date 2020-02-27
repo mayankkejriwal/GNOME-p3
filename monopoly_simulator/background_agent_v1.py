@@ -61,7 +61,9 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
 
     # if we ran the gamut, and did not return, then it's time to skip turn or conclude actions
     if action_choices.skip_turn in allowable_moves:
-        # testing hypothetical simulator (will comment when done testing)
+        # testing hypothetical simulator (will comment when done testing). Note that this was written for the Python 2
+        # version (the GNOME repo). Make sure to appropriately modify by instantiating agent instead of sending in the
+        # decision agent methods as being done below.
         # player_decision_agents = dict()
         # import simple_decision_agent_1
         # player_decision_agents['player_1'] = simple_decision_agent_1.decision_agent_methods # the reason I am doing this for all agents is to avoid infinite loops.
@@ -146,6 +148,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
                 param = dict()
                 param['player'] = player
                 param['asset'] = m
+                param['current_gameboard'] = current_gameboard
                 print(player.player_name, ': I am going to free mortgage on ', param['asset'].name)
                 player.agent._agent_memory['previous_action'] = action_choices.free_mortgage
                 return (action_choices.free_mortgage, param)

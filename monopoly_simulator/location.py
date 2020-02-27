@@ -50,8 +50,8 @@ class Location(object):
             print('Bank error!', self.name,' being sold has improvements on it. Raising Exception')
             raise Exception
         if self.is_mortgaged:
+            cash_owed = self.calculate_mortgage_owed(self, current_gameboard)
             self.is_mortgaged = False
-            cash_owed = cash_owed = self.calculate_mortgage_owed(self, current_gameboard)
 
         if cash_due >= cash_owed:
             return cash_due - cash_owed

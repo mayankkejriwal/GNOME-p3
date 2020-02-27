@@ -13,7 +13,7 @@ def initialize_hypothetical_universe(current_gameboard, player_decision_agents, 
         player_name_obj[p.player_name] = p
         # pprint.pprint(p.__dict__)
     for k,v in player_name_obj.items(): # k,v is player name, player object
-        v.change_decision_agent(**player_decision_agents[k])
+        v.change_decision_agent(player_decision_agents[k])
     # for p in hypothetical_gameboard['players']:
     #     pprint.pprint(p.__dict__) # we've run the check and verified the function pointer changes
     hypothetical_gameboard['seed'] = seed

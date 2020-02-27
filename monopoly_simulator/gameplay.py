@@ -6,6 +6,7 @@ from monopoly_simulator import background_agent_v1
 # import simple_decision_agent_1
 import json
 from monopoly_simulator import diagnostics
+from monopoly_simulator import novelty_generator
 from monopoly_simulator.agent import Agent
 import xlsxwriter
 
@@ -37,7 +38,7 @@ def write_history_to_file(game_board, workbook):
     workbook.close()
     print("History logged into history_log.xlsx file.")
 
-def simulate_game_instance(game_elements, np_seed=6, history_log_file=None):
+def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     """
     Simulate a game instance.
     :param game_elements: The dict output by set_up_board
@@ -212,6 +213,24 @@ def set_up_board(game_schema_file_path, player_decision_agents):
     return initialize_game_elements.initialize_board(game_schema, player_decision_agents)
 
 
+def inject_class_novelty_1(current_gameboard, novelty_schema=None):
+    """
+    Function for illustrating how we inject novelty
+    :param current_gameboard: the current gameboard into which novelty will be injected. This gameboard will be modified
+    :param novelty_schema: the novelty schema json, read in from file. It is more useful for running experiments at scale
+    rather than in functions like these. For the most part, we advise writing your novelty generation routines, just like
+    we do below, and for using the novelty schema for informational purposes (i.e. for making sense of the novelty_generator.py
+    file and its functions.
+    :return: None
+    """
+    numberDieNovelty = novelty_generator.NumberClassNovelty()
+    numberDieNovelty.die_novelty(current_gameboard, 4, die_state_vector=[[1,2,3,4,5],[1,2,3,4],[5,6,7],[2,3,4]])
+
+    classDieNovelty = novelty_generator.TypeClassNovelty()
+    die_state_distribution_vector = ['uniform','uniform','biased','biased']
+    die_type_vector = ['odd_only','even_only','consecutive','consecutive']
+    classDieNovelty.die_novelty(current_gameboard, die_state_distribution_vector, die_type_vector)
+
 # this is where everything begins. Assign decision agents to your players, set up the board and start simulating! You can
 # control any number of players you like, and assign the rest to the simple agent. We plan to release a more sophisticated
 # but still relatively simple agent soon.
@@ -224,6 +243,7 @@ player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_
 player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
 game_elements = set_up_board('/Users/mayankkejriwal/git-projects/GNOME-p3/monopoly_game_schema_v1-2.json',
                              player_decision_agents)
+inject_class_novelty_1(game_elements)
 simulate_game_instance(game_elements)
 
 #just testing history.

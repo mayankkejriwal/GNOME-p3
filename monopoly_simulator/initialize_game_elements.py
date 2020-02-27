@@ -315,8 +315,7 @@ def _initialize_players(game_elements, game_schema, player_decision_agents):
         player_args['currently_in_jail'] = False
 
         player_args['player_name'] = player
-        for k, v in player_decision_agents[player].items():
-            player_args[k] = v
+        player_args['agent'] = player_decision_agents[player]
         players.append(Player(**player_args))
 
     game_elements['players'] = players
