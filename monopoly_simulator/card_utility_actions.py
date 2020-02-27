@@ -6,6 +6,29 @@ card pack)
 """
 import numpy as np
 
+
+def calculate_mortgage_owed(mortgaged_property, current_gameboard=None):
+    """
+    calculate the mortgage owed on mortgaged_property
+    :param player: Player instance. not used in this function, but the signature is important because of the novelty generator
+    which could use other information from the player (like total debt) besides just the info in mortgaged_property.
+    :param mortgaged_property: a property instance that is mortgaged
+    :return:
+    """
+    if not mortgaged_property.is_mortgaged:
+        raise Exception
+    else:
+        if current_gameboard['bank'].total_mortgage_rule is False:
+            return (1.0+current_gameboard['bank'].mortgage_percentage) * mortgaged_property.mortgage
+        else:
+            # to avoid passing in a player object, I am going to use the owner of the mortgaged_property as the player whose
+            # total debt outstanding we have to compute the mortgage against.
+            player = mortgaged_property.owned_by
+            total = 0
+            for a in player.mortgaged_assets:
+                total += ((1.0+current_gameboard['bank'].mortgage_percentage)*a.mortgage)
+            return total
+
 def go_to_jail(player, current_gameboard):
     """
     The player will be moved to jail. The player will not receive go_increment, even if they pass go.
@@ -48,16 +71,16 @@ def pick_card_from_community_chest(player, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print player.player_name,' is picking card from community chest.'
+    print(player.player_name,' is picking card from community chest.')
     card_rand = np.random.RandomState(current_gameboard['card_seed'])
     set_cc_cards_copy = current_gameboard['community_chest_cards'].copy()
     list_community_chest_cards = _set_to_sorted_list_func(set_cc_cards_copy)
     card = card_rand.choice(list_community_chest_cards)
     # card = card_rand.choice(list(current_gameboard['community_chest_cards']))
     current_gameboard['card_seed'] += 1
-    print player.player_name,' picked card ',card.name
+    print(player.player_name,' picked card ',card.name)
     if card.name == 'get_out_of_jail_free':
-        print 'removing get_out_of_jail card from community chest pack'
+        print('removing get_out_of_jail card from community chest pack')
         current_gameboard['community_chest_cards'].remove(card)
         card.action(player, card, current_gameboard, pack='community_chest')
         params = dict()
@@ -87,16 +110,16 @@ def pick_card_from_chance(player, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print player.player_name, ' is picking card from chance.'
+    print(player.player_name, ' is picking card from chance.')
     card_rand = np.random.RandomState(current_gameboard['card_seed'])
     set_chance_cards_copy = current_gameboard['chance_cards'].copy()
     list_chance_cards = _set_to_sorted_list_func(set_chance_cards_copy)
     card = card_rand.choice(list_chance_cards)
     # card = card_rand.choice(list(current_gameboard['chance_cards']))
     current_gameboard['card_seed'] += 1
-    print player.player_name, ' picked card ', card.name
+    print(player.player_name, ' picked card ', card.name)
     if card.name == 'get_out_of_jail_free':
-        print 'removing get_out_of_jail card from chance pack'
+        print('removing get_out_of_jail card from chance pack')
         current_gameboard['chance_cards'].remove(card)
         card.action(player, card, current_gameboard, pack='chance')
         params = dict()
@@ -152,15 +175,15 @@ def set_get_out_of_jail_card_status(player, card, current_gameboard, pack):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print 'executing set_get_out_of_jail_card_status for ',player.player_name
+    print('executing set_get_out_of_jail_card_status for ',player.player_name)
     if pack == 'community_chest' and card.name == 'get_out_of_jail_free': # remember, this is an object equality test
         player.has_get_out_of_jail_community_chest_card = True
-        print player.player_name,' now has get_out_of_jail community_chest card'
+        print(player.player_name,' now has get_out_of_jail community_chest card')
     elif pack == 'chance' and card.name == 'get_out_of_jail_free': # remember, this is an object equality test
         player.has_get_out_of_jail_chance_card = True
-        print player.player_name, ' now has get_out_of_jail chance card'
+        print(player.player_name, ' now has get_out_of_jail chance card')
     else: # if we arrive here, it means that the card we have is either not get out of jail free, or something else has gone wrong.
-        print 'something has gone wrong in set_get_out_of_jail_card_status. That is all I know.'
+        print('something has gone wrong in set_get_out_of_jail_card_status. That is all I know.')
         raise Exception
 
 

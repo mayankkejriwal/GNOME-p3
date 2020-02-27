@@ -33,7 +33,7 @@ def specify_board_state():
     # note that we will not be introducing 'new' colors i.e. when a color changes (whether on a full block or an individual property), it will be to one of
     # the colors that currently exists in the game schema.
 
-    board_state['location_free_mortgage_rule'] = ['default', 'percent of_total_mortgage_outstanding', 'change_percentage'] # these are Level 2 attribute novelties at the contingent sub-level
+    board_state['location_free_mortgage_rule'] = ['default', 'percent_of_total_mortgage_outstanding', 'change_percentage'] # these are Level 2 attribute novelties at the contingent sub-level
     # recall, the default rule simply says that to free the mortgage on a property you have to pay the principle (mortgage field on that property) + 10% of principle
     # change percentage will change the percent from 10% to a range of [1,5,10,20,40,70]. The lower end makes it cheaper to mortgage, the higher end more expensive to do so.
     # percent_of_total_mortgage_outstanding will compute interest against the total outstanding mortgage rather than just the mortgage to be freed (see google

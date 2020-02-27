@@ -1,4 +1,4 @@
-def free_mortgage(player, asset):
+def free_mortgage(player, asset, current_gameboard=None):
     """
     Action for freeing player's mortgage on asset.
     :param player: A Player instance.
@@ -6,19 +6,19 @@ def free_mortgage(player, asset):
     purchaseable an Exception will automatically be raised.
     :return: 1 if the player has succeeded in freeing the mortgage on asset, otherwise -1
     """
-    print(player.player_name, ' is attempting to free up mortgage on asset ',asset.name)
+    print(player.player_name, ' is attempting to free up mortgage on asset ', asset.name)
     if asset.owned_by != player:
-        print(player.player_name,' is trying to free up mortgage on property that is not theirs','. Returning -1')
+        print(player.player_name, ' is trying to free up mortgage on property that is not theirs', '. Returning -1')
         return -1
-    elif asset.is_mortgaged is False or asset not in player.mortgaged_assets: # the or is unnecessary but serves as a check
-        print(asset.name,'  is not mortgaged to begin with','. Returning -1')
+    elif asset.is_mortgaged is False or asset not in player.mortgaged_assets:  # the or is unnecessary but serves as a check
+        print(asset.name, '  is not mortgaged to begin with', '. Returning -1')
         return -1
-    elif player.current_cash <= 1.1 * asset.mortgage:
-        print(player.player_name,' does not have cash to free mortgage on asset ',asset.name,'. Returning -1')
+    elif player.current_cash <= asset.calculate_mortgage_owed(asset, current_gameboard):
+        print(player.player_name, ' does not have cash to free mortgage on asset ', asset.name, '. Returning -1')
         return -1
     else:
-        player.charge_player(1.1 * asset.mortgage)
-        print(player.player_name,"Player has paid down mortgage with interest. Setting status of asset to unmortgaged, and removing asset from player's mortgaged set")
+        player.charge_player(asset.calculate_mortgage_owed(asset, current_gameboard))
+        print(player.player_name, "Player has paid down mortgage with interest. Setting status of asset to unmortgaged, and removing asset from player's mortgaged set")
         asset.is_mortgaged = False
         player.mortgaged_assets.remove(asset)
         print('Mortgage has successfully been freed. Returning 1')
@@ -427,29 +427,29 @@ def use_get_out_of_jail_card(player, current_gameboard):
     """
     import copy
     if not player.currently_in_jail:
-        print 'Player is not currently in jail and cannot use the card. Returning -1'
+        print('Player is not currently in jail and cannot use the card. Returning -1')
         return -1  # simple check. note that player will still have the card(s)
 
     if player.has_get_out_of_jail_chance_card:  # we give first preference to chance, then community chest
-        print 'Player has get_out_of_jail_chance card. Removing card and setting player jail status to False'
+        print('Player has get_out_of_jail_chance card. Removing card and setting player jail status to False')
         player.has_get_out_of_jail_chance_card = False
         player.currently_in_jail = False
-        print 'Adding the card back again to the chance pack.'
+        print('Adding the card back again to the chance pack.')
         current_gameboard['chance_cards'].add(
             copy.deepcopy(current_gameboard['chance_card_objects']['get_out_of_jail_free']))
-        print 'Returning 1'
+        print('Returning 1')
         return 1
     elif player.has_get_out_of_jail_community_chest_card:
-        print 'Player has get_out_of_jail_community_chest card. Removing card and setting player jail status to False'
+        print('Player has get_out_of_jail_community_chest card. Removing card and setting player jail status to False')
         player.has_get_out_of_jail_community_chest_card = False
         player.currently_in_jail = False
-        print 'Adding the card back again to the community chest pack.'
+        print('Adding the card back again to the community chest pack.')
         current_gameboard['community_chest_cards'].add(
             copy.deepcopy(current_gameboard['community_chest_card_objects']['get_out_of_jail_free']))
-        print 'Returning 1'
+        print('Returning 1')
         return 1
     else:
-        print 'Player does not possess a get_out_of_jail free card! Returning -1'
+        print('Player does not possess a get_out_of_jail free card! Returning -1')
         return -1
 
 

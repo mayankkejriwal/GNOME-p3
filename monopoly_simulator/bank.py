@@ -1,6 +1,7 @@
 class Bank(object):
     def __init__(self):
-        pass
+        self.mortgage_percentage = 0.1
+        self.total_mortgage_rule = False  # if true, then mortgage will be calculated as a percentage of total debt the player has outstanding
 
     def auction(self, starting_player_index, current_gameboard, asset):
         """
