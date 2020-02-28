@@ -27,7 +27,6 @@ def write_history_to_file(game_board, workbook):
                     pass
                 row += 1
             col+=1
-
         else:
             col += 1
             row = 0
