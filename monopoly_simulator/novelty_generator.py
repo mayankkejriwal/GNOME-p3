@@ -385,3 +385,45 @@ class SpatialRepresentationNovelty(RepresentationNovelty):
 class GranularityRepresentationNovelty(RepresentationNovelty):
     def __init__(self):
         super().__init__()
+
+    def granularity_novelty(self, current_gameboard, location, new_end_position):
+        """
+        current_gameboard['location_sequence'], current_gameboard['location_objects'], current_gameboard['go_position'],
+        current_gameboard['jail_position'], current_gameboard['railroad_positions']
+        and current_gameboard['utility_positions'] may all potentially get modified. current_gameboard['location_objects']
+        gets modified not only via location, which will change its end_position field but also via the start
+        :param current_gameboard:
+        :param location:
+        :param new_end_position:
+        :return:
+        """
+
+        location.end_position = new_end_position
+        current_gameboard['railroad_positions'] = list()
+        current_gameboard['utility_positions'] = list()
+
+        # now let's repair the other fields
+        new_location_sequence = list()
+
+        for loc in current_gameboard['location_sequence']:
+            new_start_position = len(new_location_sequence) # the new start position is the current length of the new sequence
+            new_end_position = new_start_position + (loc.end_position - loc.start_position) # the new end position is the new start position + difference
+            for i in range(loc.start_position, loc.end_position):
+                new_location_sequence.append(loc)
+                if loc.loc_class == 'railroad':
+                    current_gameboard['railroad_positions'].append(len(new_location_sequence)-1) # we cannot directly use the start and end position, since the whole board is changing through 'stretching'
+                elif loc.loc_class == 'utility':
+                    current_gameboard['utility_positions'].append(len(new_location_sequence)-1)
+
+                if loc.name == 'In Jail/Just Visiting':
+                    current_gameboard['jail_position'] = len(new_location_sequence)-1
+
+                if loc.name == 'Go':
+                    current_gameboard['go_position'] = len(new_location_sequence)-1
+
+            loc.start_position = new_start_position
+            loc.end_position = new_end_position
+
+
+        current_gameboard['location_sequence'] = new_location_sequence
+
