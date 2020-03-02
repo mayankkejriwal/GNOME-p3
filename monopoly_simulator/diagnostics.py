@@ -1,3 +1,20 @@
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
+
 """
 This file is imported into gameplay and primarily used for printing diagnostics. Expand as necessary for your own
 use cases.
@@ -12,9 +29,9 @@ def print_asset_owners(game_elements):
     for k,v in game_elements['location_objects'].items():
         if v.loc_class == 'railroad' or v.loc_class == 'utility' or v.loc_class == 'real_estate':
             if v.owned_by == game_elements['bank']:
-                print('Owner of ', k, ' is bank')
+                logger.debug('Owner of '+ k+ ' is bank')
             else:
-                print('Owner of ', k, ' is ',v.owned_by.player_name)
+                logger.debug('Owner of '+ k+ ' is '+v.owned_by.player_name)
 
 
 def print_player_cash_balances(game_elements):
@@ -26,7 +43,7 @@ def print_player_cash_balances(game_elements):
     """
 
     for p in game_elements['players']:
-        print(p.player_name, ' has cash balance ',str(p.current_cash))
+        logger.debug(p.player_name+ ' has cash balance '+str(p.current_cash))
 
 
 def max_cash_balance(game_elements):

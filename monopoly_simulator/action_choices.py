@@ -1,3 +1,21 @@
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
+
+
 def free_mortgage(player, asset, current_gameboard):
     """
     Action for freeing player's mortgage on asset.
@@ -6,22 +24,22 @@ def free_mortgage(player, asset, current_gameboard):
     purchaseable an Exception will automatically be raised.
     :return: 1 if the player has succeeded in freeing the mortgage on asset, otherwise -1
     """
-    print(player.player_name, ' is attempting to free up mortgage on asset ', asset.name)
+    logger.debug(player.player_name+' is attempting to free up mortgage on asset '+asset.name)
     if asset.owned_by != player:
-        print(player.player_name, ' is trying to free up mortgage on property that is not theirs', '. Returning -1')
+        logger.debug(player.player_name+' is trying to free up mortgage on property that is not theirs. Returning -1')
         return -1
     elif asset.is_mortgaged is False or asset not in player.mortgaged_assets:  # the or is unnecessary but serves as a check
-        print(asset.name, '  is not mortgaged to begin with', '. Returning -1')
+        logger.debug(asset.name+'  is not mortgaged to begin with. Returning -1')
         return -1
     elif player.current_cash <= asset.calculate_mortgage_owed(asset, current_gameboard):
-        print(player.player_name, ' does not have cash to free mortgage on asset ', asset.name, '. Returning -1')
+        logger.debug(player.player_name+ ' does not have cash to free mortgage on asset '+str(asset.name)+'. Returning -1')
         return -1
     else:
         player.charge_player(asset.calculate_mortgage_owed(asset, current_gameboard))
-        print(player.player_name, "Player has paid down mortgage with interest. Setting status of asset to unmortgaged, and removing asset from player's mortgaged set")
+        logger.debug(player.player_name+"Player has paid down mortgage with interest. Setting status of asset to unmortgaged, and removing asset from player's mortgaged set")
         asset.is_mortgaged = False
         player.mortgaged_assets.remove(asset)
-        print('Mortgage has successfully been freed. Returning 1')
+        logger.debug('Mortgage has successfully been freed. Returning 1')
         return 1
 
 
@@ -37,22 +55,22 @@ def make_sell_property_offer(from_player, asset, to_player, price):
     """
 
     if to_player.is_property_offer_outstanding:
-        print(to_player.player_name,' already has a property offer. You must wait. Returning -1')
+        logger.debug(to_player.player_name+' already has a property offer. You must wait. Returning -1')
         return -1
     elif asset.owned_by != from_player:
-        print(from_player.player_name,'player does not own this property and cannot make an offer. Returning -1')
+        logger.debug(from_player.player_name+'player does not own this property and cannot make an offer. Returning -1')
         return -1
     elif asset.loc_class == 'real_estate' and (asset.num_houses > 0 or asset.num_hotels > 0):
-        print(asset.name,' has improvements. Clear them before making an offer! Returning -1') # note that this entails a risk since you
+        logger.debug(asset.name+' has improvements. Clear them before making an offer! Returning -1') # note that this entails a risk since you
         # could clear the improvements, and still not get an offer accepted. Decide at your own peril!
         return -1
     else:
-        print('Instantiating data structures outstanding_property_offer and setting is_property_offer_outstanding to True to enable property offer to ',to_player.player_name)
+        logger.debug('Instantiating data structures outstanding_property_offer and setting is_property_offer_outstanding to True to enable property offer to '+to_player.player_name)
         to_player.outstanding_property_offer['asset'] = asset
         to_player.outstanding_property_offer['from_player'] = from_player
         to_player.outstanding_property_offer['price'] = price
         to_player.is_property_offer_outstanding = True
-        print('Offer has been made.')
+        logger.debug('Offer has been made.')
         return 1 # offer has been made
 
 
@@ -67,15 +85,15 @@ def sell_property(player, asset, current_gameboard):
     """
 
     if asset.owned_by != player:
-        print(player.player_name,' does not own this property and cannot sell it. Returning -1')
+        logger.debug(player.player_name+' does not own this property and cannot sell it. Returning -1')
         return -1
 
     elif asset.loc_class == 'real_estate' and (asset.num_houses > 0 or asset.num_hotels > 0) :
-        print(asset.name,' has improvements. Clear them before trying to sell! Returning -1')
+        logger.debug(asset.name+' has improvements. Clear them before trying to sell! Returning -1')
         return -1
 
     else:
-        print('Transferring property to bank')
+        logger.debug('Transferring property to bank')
         cash_due = asset.transfer_property_to_bank(player, current_gameboard)
         # add to game history
         current_gameboard['history']['function'].append(asset.transfer_property_to_bank)
@@ -86,7 +104,7 @@ def sell_property(player, asset, current_gameboard):
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(cash_due)
 
-        print('Transfer successful. Paying player what they are due for the property and returning 1...')
+        logger.debug('Transfer successful. Paying player what they are due for the property and returning 1...')
         player.receive_cash(cash_due)
         # add to game history
         current_gameboard['history']['function'].append(player.receive_cash)
@@ -111,20 +129,20 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
     """
 
     if asset.owned_by != player:
-        print(player.player_name,' does not own this property and cannot make an offer. Returning -1')
+        logger.debug(player.player_name+' does not own this property and cannot make an offer. Returning -1')
         return -1
     elif asset.loc_class != 'real_estate':
-        print(asset.name, ' is not real estate. Returning -1')
+        logger.debug(asset.name+' is not real estate. Returning -1')
         return -1
     elif asset.num_hotels == 0 and sell_hotel:
-        print('There are no hotels to sell. Returning -1')
+        logger.debug('There are no hotels to sell. Returning -1')
         return -1
     elif asset.num_houses == 0 and sell_house:
-        print('There are no houses to sell. Returning -1')
+        logger.debug('There are no houses to sell. Returning -1')
         return -1
 
     if sell_hotel: # this is the simpler case
-        print('Looking to sell hotel on ',asset.name)
+        logger.debug('Looking to sell hotel on '+asset.name)
         flag = True
         for same_colored_asset in current_gameboard['color_assets'][asset.color]:
             if same_colored_asset == asset:
@@ -136,10 +154,10 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
                 flag = False
                 break
         if flag:
-            print('Selling hotel and updating num_total_hotels and num_total_houses.')
+            logger.debug('Selling hotel and updating num_total_hotels and num_total_houses.')
             player.num_total_hotels -= 1
-            print(player.player_name,' now has num_total_hotels ',str(player.num_total_hotels),' and num_total_houses ',str(player.num_total_houses))
-            print('Paying player for sale.')
+            logger.debug(player.player_name+' now has num_total_hotels '+str(player.num_total_hotels)+' and num_total_houses '+str(player.num_total_houses))
+            logger.debug('Paying player for sale.')
             player.receive_cash((asset.price_per_house*4)/2) # player only gets half the initial cost back. Recall that you can sell the entire hotel or not at all.
             # add to game history
             current_gameboard['history']['function'].append(player.receive_cash)
@@ -149,19 +167,19 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
 
-            print('Updating houses and hotels on the asset')
+            logger.debug('Updating houses and hotels on the asset')
             asset.num_houses = 0 # this should already be 0 but just in case
             asset.num_hotels = 0
-            print('Player has successfully sold hotel. Returning 1')
+            logger.debug('Player has successfully sold hotel. Returning 1')
             return 1
 
         else:
-            print('All same-colored properties must stay uniformly improved for you to sell a hotel on this property. ' \
+            logger.debug('All same-colored properties must stay uniformly improved for you to sell a hotel on this property. ' \
                   'You may need to build hotels on other properties of the same color before attempting to sell this one. Returning -1')
             return -1
 
     elif sell_house:
-        print('Looking to sell house on ', asset.name)
+        logger.debug('Looking to sell house on '+ asset.name)
         flag = True
         current_asset_num_houses = asset.num_houses
         for same_colored_asset in current_gameboard['color_assets'][asset.color]:
@@ -171,11 +189,11 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
                 flag = False
                 break
         if flag:
-            print('Selling house and updating num_total_houses.')
+            logger.debug('Selling house and updating num_total_houses.')
             player.num_total_houses -= 1
-            print(player.player_name, ' now has num_total_hotels ', str(
+            logger.debug(player.player_name+ ' now has num_total_hotels ', str(
                 player.num_total_hotels), ' and num_total_houses ', str(player.num_total_houses))
-            print('Paying player for sale.')
+            logger.debug('Paying player for sale.')
             player.receive_cash(asset.price_per_house/2)
             # add to game history
             current_gameboard['history']['function'].append(player.receive_cash)
@@ -185,13 +203,13 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
 
-            print('Updating houses and hotels on the asset')
+            logger.debug('Updating houses and hotels on the asset')
             asset.num_houses -= 1
-            print('Player has successfully sold house. Returning 1')
+            logger.debug('Player has successfully sold house. Returning 1')
             return 1
 
         else:
-            print('All same-colored properties must stay uniformly improved for you to sell a house on this property. ' \
+            logger.debug('All same-colored properties must stay uniformly improved for you to sell a house on this property. ' \
                   'You may need to build houses on other properties of the same color before attempting to sell this one. Returning -1')
             return -1
 
@@ -205,17 +223,17 @@ def accept_sell_property_offer(player, current_gameboard):
     :return: 1 if the property offer is accepted and property is successfully transferred, otherwise -1.
     """
     if not player.is_property_offer_outstanding:
-        print(player.player_name,' does not have outstanding property offers to accept. Returning -1')
+        logger.debug(player.player_name+' does not have outstanding property offers to accept. Returning -1')
         return -1
     elif player.current_cash <= player.outstanding_property_offer['price']:
-        print(player.player_name,' does not have the cash necessary to accept. Nulling outstanding property offers data structures and returning -1')
+        logger.debug(player.player_name+' does not have the cash necessary to accept. Nulling outstanding property offers data structures and returning -1')
         player.is_property_offer_outstanding = False
         player.outstanding_property_offer['from_player'] = None
         player.outstanding_property_offer['asset'] = None
         player.outstanding_property_offer['price'] = -1
         return -1
     else:
-        print('Initiating property transfer...')
+        logger.debug('Initiating property transfer...')
         func_asset = player.outstanding_property_offer['asset']
         func = func_asset.transfer_property_between_players
         func(player.outstanding_property_offer['from_player'],
@@ -230,7 +248,7 @@ def accept_sell_property_offer(player, current_gameboard):
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
 
-        print('Initiating cash transfer from one player to another')
+        logger.debug('Initiating cash transfer from one player to another')
         player.charge_player(player.outstanding_property_offer['price'])
         # add to game history
         current_gameboard['history']['function'].append(player.charge_player)
@@ -249,7 +267,7 @@ def accept_sell_property_offer(player, current_gameboard):
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
 
-        print('Transaction successful. Nulling outstanding property offers data structures and returning 1')
+        logger.debug('Transaction successful. Nulling outstanding property offers data structures and returning 1')
         player.is_property_offer_outstanding = False
         player.outstanding_property_offer['from_player'] = None
         player.outstanding_property_offer['asset'] = None
@@ -263,7 +281,7 @@ def skip_turn():
     pre-roll or out-of-turn phases
     :return: 2
     """
-    print('player is skipping turn')
+    logger.debug('player is skipping turn')
     return 2 # uses special code, since we need it in gameplay
 
 
@@ -273,7 +291,7 @@ def concluded_actions():
     if your first action was not skip_turn.
     :return: 1
     """
-    print('player has concluded actions')
+    logger.debug('player has concluded actions')
     return 1 # does nothing; code is always a success
 
 
@@ -285,16 +303,16 @@ def mortgage_property(player, asset, current_gameboard):
     :return: 1 if the mortgage has gone through, -1 otherwise.
     """
     if asset.owned_by != player:
-        print(player.player_name,' is trying to mortgage property that is not theirs. Returning -1')
+        logger.debug(player.player_name+' is trying to mortgage property that is not theirs. Returning -1')
         return -1
     elif asset.is_mortgaged is True or asset in player.mortgaged_assets: # the or is unnecessary but serves as a check
-        print(asset.name,' is already mortgaged to begin with...Returning -1')
+        logger.debug(asset.name+' is already mortgaged to begin with...Returning -1')
         return -1
     elif asset.loc_class == 'real_estate' and (asset.num_houses > 0 or asset.num_hotels > 0):
-        print(asset.name,' has improvements. Remove improvements before attempting mortgage. Returning -1')
+        logger.debug(asset.name+' has improvements. Remove improvements before attempting mortgage. Returning -1')
         return -1
     else:
-        print("Setting asset to mortgage status and adding to player's mortgaged assets")
+        logger.debug("Setting asset to mortgage status and adding to player's mortgaged assets")
         asset.is_mortgaged = True
         player.mortgaged_assets.add(asset)
         player.receive_cash(asset.mortgage)
@@ -306,7 +324,7 @@ def mortgage_property(player, asset, current_gameboard):
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
 
-        print("Property has been mortgaged and player has received cash. Returning 1")
+        logger.debug("Property has been mortgaged and player has received cash. Returning 1")
         return 1 # property has been successfully mortgaged
 
 
@@ -324,27 +342,27 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
     """
     if asset.owned_by != player or asset.is_mortgaged:
         # these are the usual conditions that we verify before allowing any improvement to proceed
-        print(player.player_name,' does not own this property, or it is mortgaged. Returning -1')
+        logger.debug(player.player_name+' does not own this property, or it is mortgaged. Returning -1')
         return -1
     elif asset.loc_class != 'real_estate':
-        print(asset.name,' is not real estate and cannot be improved. Returning -1')
+        logger.debug(asset.name+' is not real estate and cannot be improved. Returning -1')
         return -1
     elif (asset.color not in player.full_color_sets_possessed):
 
         # these are the usual conditions that we verify before allowing any improvement to proceed
-        print(player.player_name,' does not own all properties of this color, hence it cannot be improved. Returning -1')
+        logger.debug(player.player_name+' does not own all properties of this color, hence it cannot be improved. Returning -1')
         return -1
     elif player.current_cash <= asset.price_per_house:
-        print(player.player_name, ' cannot afford this improvement. Returning -1')
+        logger.debug(player.player_name+ ' cannot afford this improvement. Returning -1')
         return -1
 
     if add_hotel: # this is the simpler case
-        print('Looking to improve ',asset.name,' by adding a hotel.')
+        logger.debug('Looking to improve '+asset.name+' by adding a hotel.')
         if asset.num_hotels == 1:
-            print('There is already a hotel here. You are only permitted one. Returning -1')
+            logger.debug('There is already a hotel here. You are only permitted one. Returning -1')
             return -1
         elif asset.num_houses != 4:
-            print('You need to have four houses before you can build a hotel...Returning -1')
+            logger.debug('You need to have four houses before you can build a hotel...Returning -1')
             return -1
         flag = True
         for same_colored_asset in current_gameboard['color_assets'][asset.color]:
@@ -355,11 +373,11 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
                 flag = False
                 break
         if flag:
-            print('Improving asset and updating num_total_hotels and num_total_houses.')
+            logger.debug('Improving asset and updating num_total_hotels and num_total_houses.')
             player.num_total_hotels += 1
             player.num_total_houses -= asset.num_houses
-            print(player.player_name,' now has num_total_hotels ',str(player.num_total_hotels),' and num_total_houses ',str(player.num_total_houses))
-            print('Charging player for improvements.')
+            logger.debug(player.player_name+' now has num_total_hotels '+str(player.num_total_hotels)+' and num_total_houses '+str(player.num_total_houses))
+            logger.debug('Charging player for improvements.')
             player.charge_player(asset.price_per_house)
             # add to game history
             current_gameboard['history']['function'].append(player.charge_player)
@@ -369,20 +387,20 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
 
-            print('Updating houses and hotels on the asset')
+            logger.debug('Updating houses and hotels on the asset')
             asset.num_houses = 0
             asset.num_hotels = 1
-            print('Player has successfully improved property. Returning 1')
+            logger.debug('Player has successfully improved property. Returning 1')
             return 1
 
         else:
-            print('All same-colored properties must be informly improved first before you can build a hotel on this property. Returning -1')
+            logger.debug('All same-colored properties must be informly improved first before you can build a hotel on this property. Returning -1')
             return -1
 
     elif add_house:
-        print('Looking to improve ', asset.name, ' by adding a house.')
+        logger.debug('Looking to improve '+asset.name+' by adding a house.')
         if asset.num_hotels == 1 or asset.num_houses == 4:
-            print('There is already a hotel or 4 houses here. You are not permitted another house. Returning -1')
+            logger.debug('There is already a hotel or 4 houses here. You are not permitted another house. Returning -1')
             return -1
         flag = True
         current_asset_num_houses = asset.num_houses
@@ -393,11 +411,11 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
                 flag = False
                 break
         if flag:
-            print('Improving asset and updating num_total_houses.')
+            logger.debug('Improving asset and updating num_total_houses.')
             player.num_total_houses += 1
-            print(player.player_name, ' now has num_total_hotels ', str(
-                player.num_total_hotels), ' and num_total_houses ', str(player.num_total_houses))
-            print('Charging player for improvements.')
+            logger.debug(player.player_name+ ' now has num_total_hotels '+ str(
+                player.num_total_hotels)+ ' and num_total_houses '+ str(player.num_total_houses))
+            logger.debug('Charging player for improvements.')
             player.charge_player(asset.price_per_house)
             # add to game history
             current_gameboard['history']['function'].append(player.charge_player)
@@ -407,13 +425,13 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
 
-            print('Updating houses and hotels on the asset')
+            logger.debug('Updating houses and hotels on the asset')
             asset.num_houses += 1
-            print('Player has successfully improved property. Returning 1')
+            logger.debug('Player has successfully improved property. Returning 1')
             return 1
 
         else:
-            print('All same-colored properties must be informly improved first before you can build a hotel on this property. Returning -1')
+            logger.debug('All same-colored properties must be informly improved first before you can build a hotel on this property. Returning -1')
             return -1
 
 
@@ -427,29 +445,29 @@ def use_get_out_of_jail_card(player, current_gameboard):
     """
     import copy
     if not player.currently_in_jail:
-        print('Player is not currently in jail and cannot use the card. Returning -1')
+        logger.debug('Player is not currently in jail and cannot use the card. Returning -1')
         return -1  # simple check. note that player will still have the card(s)
 
     if player.has_get_out_of_jail_chance_card:  # we give first preference to chance, then community chest
-        print('Player has get_out_of_jail_chance card. Removing card and setting player jail status to False')
+        logger.debug('Player has get_out_of_jail_chance card. Removing card and setting player jail status to False')
         player.has_get_out_of_jail_chance_card = False
         player.currently_in_jail = False
-        print('Adding the card back again to the chance pack.')
+        logger.debug('Adding the card back again to the chance pack.')
         current_gameboard['chance_cards'].add(
             copy.deepcopy(current_gameboard['chance_card_objects']['get_out_of_jail_free']))
-        print('Returning 1')
+        logger.debug('Returning 1')
         return 1
     elif player.has_get_out_of_jail_community_chest_card:
-        print('Player has get_out_of_jail_community_chest card. Removing card and setting player jail status to False')
+        logger.debug('Player has get_out_of_jail_community_chest card. Removing card and setting player jail status to False')
         player.has_get_out_of_jail_community_chest_card = False
         player.currently_in_jail = False
-        print('Adding the card back again to the community chest pack.')
+        logger.debug('Adding the card back again to the community chest pack.')
         current_gameboard['community_chest_cards'].add(
             copy.deepcopy(current_gameboard['community_chest_card_objects']['get_out_of_jail_free']))
-        print('Returning 1')
+        logger.debug('Returning 1')
         return 1
     else:
-        print('Player does not possess a get_out_of_jail free card! Returning -1')
+        logger.debug('Player does not possess a get_out_of_jail free card! Returning -1')
         return -1
 
 
@@ -469,11 +487,11 @@ def pay_jail_fine(player, current_gameboard):
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
 
-        print('Player has been charged the fine. Setting currently_in_status to False and returning 1')
+        logger.debug('Player has been charged the fine. Setting currently_in_status to False and returning 1')
         player.currently_in_jail = False
         return 1
     else:
-        print("Either you are not in jail, or you don't have the cash for the fine. Returning -1")
+        logger.debug("Either you are not in jail, or you don't have the cash for the fine. Returning -1")
         return -1
 
 
@@ -484,7 +502,7 @@ def roll_die(die_objects, choice):
     :param choice: The numpy choice function.
     :return:
     """
-    print('rolling die...')
+    logger.debug('rolling die...')
     output_vector = list()
     for d in die_objects:
         if d.die_state_distribution == 'uniform':
@@ -492,7 +510,7 @@ def roll_die(die_objects, choice):
         elif d.die_state_distribution == 'biased':
             output_vector.append(_biased_die_roll_1(d.die_state, choice))
         else:
-            raise Exception
+            logger.error("Exception")
 
     return output_vector
 
@@ -509,7 +527,7 @@ def buy_property(player, asset, current_gameboard):
     up going to auction (in the latter case, the player may still succeed in obtaining the asset!)
     """
     if asset.owned_by != current_gameboard['bank']:
-        print(asset.name,' is not owned by Bank! Resetting option_to_buy for player and returning code -1')
+        logger.debug(asset.name+' is not owned by Bank! Resetting option_to_buy for player and returning code -1')
         player.reset_option_to_buy()
         # add to game history
         current_gameboard['history']['function'].append(player.reset_option_to_buy)
@@ -532,7 +550,7 @@ def buy_property(player, asset, current_gameboard):
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
 
-        print(asset.name, ' is going up for auction since ', player.player_name, ' does not have enough cash to purchase this property. Conducting auction and returning -1')
+        logger.debug(asset.name+ ' is going up for auction since '+ player.player_name+ ' does not have enough cash to purchase this property. Conducting auction and returning -1')
         current_gameboard['bank'].auction(starting_player_index, current_gameboard, asset)
         # add to game history
         current_gameboard['history']['function'].append(current_gameboard['bank'].auction)
@@ -546,7 +564,7 @@ def buy_property(player, asset, current_gameboard):
 
         return -1 # this is a -1 even though you may still succeed in buying the property at auction
     else:
-        print('Charging ',player.player_name, ' amount ',str(asset.price),' for asset ',asset.name)
+        logger.debug('Charging '+player.player_name+ ' amount '+str(asset.price)+' for asset '+asset.name)
         player.charge_player(asset.price)
         # add to game history
         current_gameboard['history']['function'].append(player.charge_player)
@@ -566,7 +584,7 @@ def buy_property(player, asset, current_gameboard):
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
 
-        print(asset.name, ' ownership has been updated! Resetting option_to_buy for player and returning code 1')
+        logger.debug(asset.name+ ' ownership has been updated! Resetting option_to_buy for player and returning code 1')
         player.reset_option_to_buy()
         # add to game history
         current_gameboard['history']['function'].append(player.reset_option_to_buy)
@@ -580,6 +598,8 @@ def buy_property(player, asset, current_gameboard):
 def _biased_die_roll_1(die_state, choice):
     p = list()
     die_total = sum(die_state)
+    logger.debug ("die_tot"+str(die_total))
+    logger.debug (die_state)
     for i in die_state:
         p.append(i*1.0/die_total)
     return choice(a=die_state, p=p)

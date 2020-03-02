@@ -12,37 +12,52 @@ import sys
 from monopoly_simulator.player import Player
 from monopoly_simulator import card
 import copy
+import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
 
 def initialize_board(game_schema, player_decision_agents):
 
     game_elements = dict()
-    print('Beginning game set up...')
+    logger.debug('Beginning game set up...')
 
     # Step 0: initialize bank
     _initialize_bank(game_elements)
-    print('Successfully instantiated and initialized bank.')
+    logger.debug('Successfully instantiated and initialized bank.')
 
     # Step 1: set locations
     _initialize_locations(game_elements, game_schema)
-    print('Successfully instantiated and initialized all locations on board.')
+    logger.debug('Successfully instantiated and initialized all locations on board.')
 
 
     # Step 2: set dice
     _initialize_dies(game_elements, game_schema)
-    print('Successfully instantiated and initialized dies')
+    logger.debug('Successfully instantiated and initialized dies')
 
     # Step 3: set cards
     _initialize_cards(game_elements, game_schema)
-    print('Successfully instantiated and initialized cards')
+    logger.debug('Successfully instantiated and initialized cards')
 
     # Step 4: set players
     _initialize_players(game_elements, game_schema, player_decision_agents)
-    print('Successfully instantiated and initialized players and decision agents')
+    logger.debug('Successfully instantiated and initialized players and decision agents')
 
     # Step 5: set history data structures
     _initialize_game_history_structs(game_elements)
-    print('Successfully instantiated game history data structures')
+    logger.debug('Successfully instantiated game history data structures')
 
     return game_elements
 
@@ -93,8 +108,8 @@ def _initialize_locations(game_elements, game_schema):
             location_objects[l['name']] = location.UtilityLocation(**utility_args)
 
         else:
-            print('encountered unexpected location class: ', l['loc_class'])
-            raise Exception
+            logger.debug('encountered unexpected location class: '+ l['loc_class'])
+            logger.error("Exception")
 
     for i in range(0, len(game_schema['location_sequence'])):
         loc = location_objects[game_schema['location_sequence'][i]]
@@ -113,13 +128,13 @@ def _initialize_locations(game_elements, game_schema):
     game_elements['utility_positions'] = utility_positions
 
     if len(location_sequence) != game_schema['locations']['location_count']:
-        print('location count: ', str(game_schema['locations']['location_count']), ', length of location sequence: ',
-        str(len(location_sequence)), ' are unequal.')
-        raise Exception
+        logger.debug('location count: '+ str(game_schema['locations']['location_count'])+ ', length of location sequence: '+
+        str(len(location_sequence))+ ' are unequal.')
+        logger.error("Exception")
 
     if location_sequence[game_schema['go_position']].name != 'Go':
-        print('go positions are not aligned')
-        raise Exception
+        logger.debug('go positions are not aligned')
+        logger.error("Exception")
     else:
         game_elements['go_position'] = game_schema['go_position']
         game_elements['go_increment'] = game_schema['go_increment']
@@ -131,8 +146,8 @@ def _initialize_locations(game_elements, game_schema):
         if o.color is None:
             continue
         elif o.color not in game_schema['players']['player_states']['full_color_sets_possessed'][0]:
-            print(o.color)
-            raise Exception
+            logger.debug(o.color)
+            logger.error("Exception")
         else:
             if o.color not in color_assets:
                 color_assets[o.color] = set()
@@ -143,8 +158,8 @@ def _initialize_locations(game_elements, game_schema):
 
 def _initialize_dies(game_elements, game_schema):
     if len(game_schema['die']['die_state']) != game_schema['die']['die_count']:
-        print('dice count is unequal to number of specified dice state-vectors...')
-        raise Exception
+        logger.debug('dice count is unequal to number of specified dice state-vectors...')
+        logger.error("Exception")
     die_count = game_schema['die']['die_count']
     die_objects = list()
     for i in range(0, die_count):
@@ -214,13 +229,13 @@ def _initialize_cards(game_elements, game_schema):
                 community_chest_cards.add(card_obj)
         else:
 
-            print('community chest card type is not recognized: ', specific_card['card_type'])
-            raise Exception
+            logger.debug('community chest card type is not recognized: '+ specific_card['card_type'])
+            logger.error("Exception")
 
         community_chest_card_objects[card_obj.name] = copy.deepcopy(card_obj)
 
     if len(community_chest_cards) != game_schema['cards']['community_chest']['card_count']:
-        print('community chest card count and number of items in community chest card set are inconsistent')
+        logger.debug('community chest card count and number of items in community chest card set are inconsistent')
 
     for specific_card in game_schema['cards']['chance']['card_states']:
         card_obj = None
@@ -284,13 +299,13 @@ def _initialize_cards(game_elements, game_schema):
                 card_obj = card.CashFromPlayersCard(**card_args)
                 chance_cards.add(card_obj)
         else:
-            print('chance card type is not recognized: ', specific_card['card_type'])
-            raise Exception
+            logger.debug('chance card type is not recognized: '+ specific_card['card_type'])
+            logger.error("Exception")
 
         chance_card_objects[card_obj.name] = copy.deepcopy(card_obj)
 
     if len(chance_cards) != game_schema['cards']['chance']['card_count']:
-        print('chance card count and number of items in chance card set are inconsistent')
+        logger.debug('chance card count and number of items in chance card set are inconsistent')
 
     game_elements['chance_cards'] = chance_cards
     game_elements['community_chest_cards'] = community_chest_cards

@@ -1,5 +1,21 @@
 from monopoly_simulator.bank import Bank
 from monopoly_simulator.card_utility_actions import calculate_mortgage_owed
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
 
 class Location(object):
 
@@ -47,8 +63,8 @@ class Location(object):
         cash_due = self.price / 2
         cash_owed = 0
         if self.loc_class == 'real_estate' and (self.num_houses > 0 or self.num_hotels > 0):
-            print('Bank error!', self.name,' being sold has improvements on it. Raising Exception')
-            raise Exception
+            logger.debug('Bank error!'+ self.name+' being sold has improvements on it. Raising Exception')
+            logger.error("Exception")
         if self.is_mortgaged:
             cash_owed = self.calculate_mortgage_owed(self, current_gameboard)
             self.is_mortgaged = False
@@ -98,13 +114,13 @@ class Location(object):
         :param current_gameboard: A dict. The global gameboard data structure
         :return: None
         """
-        print('attempting to update asset ', self.name, ' to reflect new owner: ', player.player_name)
+        logger.debug('attempting to update asset '+ self.name+ ' to reflect new owner: '+ player.player_name)
         if self.loc_class == 'real_estate' or self.loc_class == 'railroad' or self.loc_class == 'utility':
             if self.owned_by == player:
-                print(player.player_name,' already owns this asset! Raising exception...')
-                raise Exception
+                logger.debug(player.player_name+' already owns this asset! Raising exception...')
+                logger.error("Exception")
             elif type(self.owned_by) != Bank: # not owned by this player or by the bank.
-                print('Asset is owned by ',self.owned_by.player_name,'. Attempting to remove...')
+                logger.debug('Asset is owned by '+self.owned_by.player_name+'. Attempting to remove...')
                 self.owned_by.remove_asset(self)
                 # add to game history
                 current_gameboard['history']['function'].append(self.owned_by.remove_asset)
@@ -127,10 +143,10 @@ class Location(object):
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
 
-            print('Asset ownership update succeeded.')
+            logger.debug('Asset ownership update succeeded.')
         else:
-            print('Asset ',self.name,' is non-purchaseable!')
-            raise Exception
+            logger.debug('Asset ',self.name+' is non-purchaseable!')
+            logger.error("Exception")
 
 
 class DoNothingLocation(Location):
@@ -228,18 +244,18 @@ class RealEstateLocation(Location):
         situations applies.
         :return: An integer. The rent due.
         """
-        print('calculating rent for ',self.name)
+        logger.debug('calculating rent for '+self.name)
         ans = self.rent # unimproved-non-monopolized rent (the default)
         if self.num_hotels == 1:
-            print('property has a hotel. Updating rent.')
+            logger.debug('property has a hotel. Updating rent.')
             ans = self.rent_hotel
         elif self.num_houses > 0: # later we can replace these with reflections
-            print('property has ',str(self.num_houses),' houses. Updating rent.')
+            logger.debug('property has '+str(self.num_houses)+' houses. Updating rent.')
             ans = self._house_rent_dict[self.num_houses] # if for some reason you have more than 4 houses, you'll get a key error
         elif self.color in self.owned_by.full_color_sets_possessed:
             ans = self.rent*2 # charge twice the rent on unimproved monopolized properties.
-            print('property has color ', self.color, ' which is monopolized by ',self.owned_by.player_name,'. Updating rent.')
-        print('rent is calculated to be ',str(ans))
+            logger.debug('property has color '+ self.color+ ' which is monopolized by '+self.owned_by.player_name+'. Updating rent.')
+        logger.debug('rent is calculated to be '+str(ans))
         return ans
 
 
@@ -295,15 +311,15 @@ class RailroadLocation(Location):
         Compute dues if a player lands on railroad owned by another player.
         :return: An integer. Specifies railroad dues
         """
-        print('calculating railroad dues for ',self.name)
+        logger.debug('calculating railroad dues for '+self.name)
         if self.owned_by.num_railroads_possessed > 4 or self.owned_by.num_railroads_possessed < 0:
-            print('Error! num railroads possessed by ', self.owned_by.player_name, ' is ', \
-                str(self.owned_by.num_railroads_possessed),', which is impossible')
+            logger.debug('Error! num railroads possessed by '+ self.owned_by.player_name+ ' is '+ \
+                str(self.owned_by.num_railroads_possessed)+', which is impossible')
 
-            raise Exception
+            logger.error("Exception")
         dues = self._railroad_dues[self.owned_by.num_railroads_possessed]
 
-        print('railroad dues are ',str(dues))
+        logger.debug('railroad dues are '+str(dues))
         return dues
 
 
@@ -340,15 +356,15 @@ class UtilityLocation(Location):
         :param die_total: An integer. The dice total (if there's more than 1 dice as there is in the default game)
         :return: An integer. Specifies utility dues.
         """
-        print('calculating utility dues for ', self.name)
+        logger.debug('calculating utility dues for '+ self.name)
         if self.owned_by.num_utilities_possessed > 2 or self.owned_by.num_utilities_possessed < 0:
-                print('Error! num utilities possessed by ',self.owned_by.player_name,' is ', \
-                    str(self.owned_by.num_utilities_possessed), ', which is impossible')
+                logger.debug('Error! num utilities possessed by '+self.owned_by.player_name+' is '+ \
+                    str(self.owned_by.num_utilities_possessed)+ ', which is impossible')
 
-                raise Exception
+                logger.error("Exception")
 
         dues = die_total*self._die_multiples[self.owned_by.num_utilities_possessed]
-        print('utility dues are ', str(dues))
+        logger.debug('utility dues are '+ str(dues))
         return dues
 
 

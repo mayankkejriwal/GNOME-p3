@@ -9,6 +9,23 @@ from monopoly_simulator import diagnostics
 from monopoly_simulator import novelty_generator
 from monopoly_simulator.agent import Agent
 import xlsxwriter
+import logging
+
+#delete existing log file before running the program
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
 
 def write_history_to_file(game_board, workbook):
     worksheet = workbook.add_worksheet()
@@ -55,8 +72,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     # One reason to modify go_increment is if your decision agent is not aggressively trying to monopolize. Since go_increment
     # by default is 200 it can lead to runaway cash increases for simple agents like ours.
 
-    print('players will play in the following order: ','->'.join([p.player_name for p in game_elements['players']]))
-    print('Beginning play. Rolling first die...')
+    logger.debug('players will play in the following order: '+'->'.join([p.player_name for p in game_elements['players']]))
+    logger.debug('Beginning play. Rolling first die...')
     current_player_index = 0
     num_active_players = 4
     winner = None
@@ -117,7 +134,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
 
         num_die_rolls += 1
         game_elements['current_die_total'] = sum(r)
-        print('dies have come up ',str(r))
+        logger.debug('dies have come up ' + str(r))
         if not current_player.currently_in_jail:
             check_for_go = True
             move_player_after_die_roll(current_player, sum(r), game_elements, check_for_go)
@@ -195,14 +212,14 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     if workbook:
         write_history_to_file(game_elements, workbook)
     # let's print some numbers
-    print('printing final asset owners: ')
+    logger.debug('printing final asset owners: ')
     diagnostics.print_asset_owners(game_elements)
-    print('number of dice rolls: ',str(num_die_rolls))
-    print('printing final cash balances: ')
+    logger.debug('number of dice rolls: '+ str(num_die_rolls))
+    logger.debug('printing final cash balances: ')
     diagnostics.print_player_cash_balances(game_elements)
 
     if winner:
-        print('We have a winner: ', winner.player_name)
+        logger.debug('We have a winner: '+ winner.player_name)
 
     return
 
@@ -233,6 +250,9 @@ def inject_class_novelty_1(current_gameboard, novelty_schema=None):
 # this is where everything begins. Assign decision agents to your players, set up the board and start simulating! You can
 # control any number of players you like, and assign the rest to the simple agent. We plan to release a more sophisticated
 # but still relatively simple agent soon.
+
+
+#delete existing log file before running the program
 player_decision_agents = dict()
 # for p in ['player_1','player_3']:
 #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
@@ -240,11 +260,11 @@ player_decision_agents['player_1'] = Agent(**background_agent_v1.decision_agent_
 player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
 player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
 player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
-game_elements = set_up_board('/Users/mayankkejriwal/git-projects/GNOME-p3/monopoly_game_schema_v1-2.json',
+game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                              player_decision_agents)
-inject_class_novelty_1(game_elements)
+#inject_class_novelty_1(game_elements)
 simulate_game_instance(game_elements)
-
+logger.debug("GAME OVER")
 #just testing history.
 # print(len(game_elements['history']['function']))
 # print(len(game_elements['history']['param']))

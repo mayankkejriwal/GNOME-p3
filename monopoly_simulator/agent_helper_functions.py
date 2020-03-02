@@ -1,4 +1,19 @@
+import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
 
 def will_property_complete_set(player, asset, current_gameboard):
     """
@@ -16,8 +31,8 @@ def will_property_complete_set(player, asset, current_gameboard):
             if player.num_utilities_possessed == 1:
                 return True
         else:
-            print('This asset does not have a color and is neither utility nor railroad')
-            raise Exception
+            logger.error('This asset does not have a color and is neither utility nor railroad')
+            logger.error("Exception")
     else:
         c = asset.color
         c_assets = current_gameboard['color_assets'][c]
@@ -105,8 +120,8 @@ def is_property_lone(player, asset):
             if player.num_utilities_possessed == 1:
                 return True
         else:
-            print('This asset does not have a color and is neither utility nor railroad')
-            raise Exception
+            logger.error('This asset does not have a color and is neither utility nor railroad')
+            logger.error("Exception")
     else:
         c = asset.color
         for c_asset in player.assets:
@@ -217,8 +232,8 @@ def can_asset_be_improved(asset, same_color_assets):
     count = 0
     for c_asset in same_color_assets:
         if c_asset.color != asset.color:
-            print('asset color is not the same as the color of the set')
-            raise Exception # if this has happened, it probably indicates a problem in the code. That's why we don't return false
+            logger.error('asset color is not the same as the color of the set')
+            logger.error("Exception") # if this has happened, it probably indicates a problem in the code. That's why we don't return false
         if c_asset == asset:
             continue
         if c_asset.num_hotels > 0 and asset.num_houses == 4 :
@@ -243,7 +258,7 @@ def asset_incremental_improvement_rent(asset):
     we do not check if we 'can' improve it, we return assuming that we can.
     """
     if asset.num_hotels > 0:
-        raise Exception # there is no incremental improvement possible. how did we get here?
+        logger.error("Exception") # there is no incremental improvement possible. how did we get here?
     if asset.num_houses == 4:
         return asset.rent_hotel-asset.rent_4_houses
     elif asset.num_houses == 3:

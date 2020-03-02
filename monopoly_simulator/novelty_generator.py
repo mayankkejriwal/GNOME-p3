@@ -2,7 +2,22 @@ from monopoly_simulator.dice import Dice
 from monopoly_simulator.novelty_functions import *
 import copy
 import sys
+import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
 """
 The novelty methods in here should be called after an initial game board has been set up, but before simulate has
 been called within gameplay. It is unsafe to introduce novelty in the middle of a 'game'. The novelties should
@@ -222,8 +237,8 @@ class NumberClassNovelty(ClassNovelty):
         :return: None
         """
         if len(die_state_vector) != die_count:
-            print('die states are unequal to die count. Raising exception...')
-            raise Exception
+            logger.error('die states are unequal to die count. Raising exception...')
+            logger.error("Exception")
 
         current_gameboard['dies'] = list() # wipe out what was there before.
         for i in range(0, die_count):
@@ -268,11 +283,11 @@ class TypeClassNovelty(ClassNovelty):
         :return: None
         """
         if len(die_state_distribution_vector) != len(die_type_vector):
-            print('die state distributions are unequal to die types. Raising exception...')
-            raise Exception
+            logger.error('die state distributions are unequal to die types. Raising exception...')
+            logger.error("Exception")
         if len(die_state_distribution_vector) != len(current_gameboard['dies']):
-            print('die state distributions and die types are unequal to number of dies in board. Raising exception...')
-            raise Exception
+            logger.error('die state distributions and die types are unequal to number of dies in board. Raising exception...')
+            logger.error("Exception")
 
         for i in range(0, len(die_state_distribution_vector)):
             current_gameboard['dies'][i].die_state_distribution = die_state_distribution_vector[i]
@@ -336,7 +351,7 @@ class SpatialRepresentationNovelty(RepresentationNovelty):
                 new_location_sequence_dict[loc.name] = relative_location_list[count]
                 count += 1
         if count != len(relative_location_list):
-            raise Exception # the number of items in the dictionary should correspond to the length of the list, otherwise something is going wrong
+            logger.error("Exception") # the number of items in the dictionary should correspond to the length of the list, otherwise something is going wrong
 
         for index in range(0, len(new_location_sequence)):
             loc = new_location_sequence[index]
@@ -344,7 +359,7 @@ class SpatialRepresentationNovelty(RepresentationNovelty):
                 new_location_sequence[index] = new_location_sequence_dict[loc]
 
         if len(set(new_location_sequence)) != len(new_location_sequence):
-            raise Exception # somehow we've ended up introducing duplicate names in the list.
+            logger.error("Exception") # somehow we've ended up introducing duplicate names in the list.
 
         self.global_reordering(current_gameboard, new_location_sequence)
 

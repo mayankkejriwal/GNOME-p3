@@ -2,6 +2,23 @@ from monopoly_simulator import action_choices
 from monopoly_simulator import agent_helper_functions # helper functions are internal to the agent and will not be recorded in the function log.
 from monopoly_simulator import diagnostics
 from monopoly_simulator import hypothetical_simulator
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
+
 
 """
 All external decision_agent functions must have the exact signatures we have indicated in this document. Beyond
@@ -51,11 +68,11 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
         param['player'] = player
         param['current_gameboard'] = current_gameboard
         if action_choices.use_get_out_of_jail_card in allowable_moves:
-            print(player.player_name,': I am using get out of jail card.')
+            logger.debug(player.player_name+': I am using get out of jail card.')
             player.agent._agent_memory['previous_action'] = action_choices.use_get_out_of_jail_card
             return (action_choices.use_get_out_of_jail_card, param)
         elif action_choices.pay_jail_fine in allowable_moves:
-            print(player.player_name, ': I am going to pay jail fine.')
+            logger.debug(player.player_name+': I am going to pay jail fine.')
             player.agent._agent_memory['previous_action'] = action_choices.pay_jail_fine
             return (action_choices.pay_jail_fine, param)
 
@@ -71,22 +88,22 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
         # player_decision_agents['player_3'] = simple_decision_agent_1.decision_agent_methods
         # player_decision_agents['player_4'] = simple_decision_agent_1.decision_agent_methods
         # alternate_univ = hypothetical_simulator.initialize_hypothetical_universe(current_gameboard, player_decision_agents)
-        # print(player.player_name,' has spawned alternate universe to try out things.')
+        # logger.debug(player.player_name,' has spawned alternate universe to try out things.')
         # hypothetical_winner = hypothetical_simulator.simulate_hypothetical_game(hypothetical_gameboard=alternate_univ,
         #                         die_roll_substitute=hypothetical_simulator.die_roll_substitute,num_total_die_rolls=15) # we will only run for fifteen die rolls.
         # if hypothetical_winner is None:
-        #     print(diagnostics.print_player_cash_balances(alternate_univ))
+        #     logger.debug(diagnostics.logger.debug_player_cash_balances(alternate_univ))
         # else:
-        #     print(hypothetical_winner.player_name)
-        print(player.player_name, ': I am skipping turn')
+        #     logger.debug(hypothetical_winner.player_name)
+        logger.debug(player.player_name+ ': I am skipping turn')
         player.agent._agent_memory['previous_action'] = action_choices.skip_turn
         return (action_choices.skip_turn, dict())
     elif action_choices.concluded_actions in allowable_moves:
         # player.agent._agent_memory['previous_action'] = action_choices.concluded_actions
-        print(player.player_name, ': I am concluding actions')
+        logger.debug(player.player_name+ ': I am concluding actions')
         return (action_choices.concluded_actions, dict())
     else:
-        raise Exception
+        logger.error("Exception")
 
 
 def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
@@ -110,23 +127,23 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
         param['player'] = player
         param['current_gameboard'] = current_gameboard
         # we accept an offer under one of two conditions:
-        print(player.player_name, ': Should I accept the offer by ',player.outstanding_property_offer['from_player'].player_name,' to buy ',\
-            player.outstanding_property_offer['asset'].name,' for ',str(player.outstanding_property_offer['price']),'?')
-        print('(',player.player_name,' currently has cash balance of ',str(player.current_cash),')')
+        logger.debug(player.player_name+ ': Should I accept the offer by '+player.outstanding_property_offer['from_player'].player_name+' to buy '+\
+            player.outstanding_property_offer['asset'].name+' for '+str(player.outstanding_property_offer['price'])+'?')
+        logger.debug('('+player.player_name+' currently has cash balance of '+str(player.current_cash)+')')
         if player.outstanding_property_offer['asset'].is_mortgaged or player.outstanding_property_offer['price']>player.current_cash:
             pass # ignore the offer if the property is mortgaged or will result in insolvency. This pass doesn't require 'filling' in.
         elif player.current_cash-player.outstanding_property_offer['price'] >= current_gameboard['go_increment'] and \
             player.outstanding_property_offer['price']<=player.outstanding_property_offer['asset'].price:
             # 1. we can afford it, and it's at or below market rate so let's buy it
-            print(player.player_name, ': I am accepting the offer to buy ',player.outstanding_property_offer['asset'].name,' since I can afford' \
+            logger.debug(player.player_name+ ': I am accepting the offer to buy '+player.outstanding_property_offer['asset'].name+' since I can afford' \
                                                     'it and it is being offered at or below market rate.')
             player.agent._agent_memory['previous_action'] = action_choices.accept_sell_property_offer
             return (action_choices.accept_sell_property_offer, param)
         elif agent_helper_functions.will_property_complete_set(player, player.outstanding_property_offer['asset'],current_gameboard):
             # 2. less affordable, but we stand to gain by monopoly
             if player.current_cash - player.outstanding_property_offer['price'] >= current_gameboard['go_increment']/2: # risky, but worth it
-                print(player.player_name, ': I am accepting the offer to buy ', player.outstanding_property_offer[
-                    'asset'].name, ' since I can afford ' \
+                logger.debug(player.player_name+ ': I am accepting the offer to buy '+ player.outstanding_property_offer[
+                    'asset'].name+ ' since I can afford ' \
                                    'it (albeit barely so) and it will let me complete my color set.')
                 player.agent._agent_memory['previous_action'] = action_choices.accept_sell_property_offer
                 return (action_choices.accept_sell_property_offer, param)
@@ -136,9 +153,9 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
             param = agent_helper_functions.identify_improvement_opportunity(player, current_gameboard)
             if param:
                 if player.agent._agent_memory['previous_action'] == action_choices.improve_property and code == -1:
-                    print(player.player_name, ': I want to improve property ',param['asset'].name, ' but I cannot, due to reasons I do not understand. Aborting improvement attempt...')
+                    logger.debug(player.player_name+ ': I want to improve property '+param['asset'].name+ ' but I cannot, due to reasons I do not understand. Aborting improvement attempt...')
                 else:
-                    print(player.player_name, ': I am going to improve property ',param['asset'].name)
+                    logger.debug(player.player_name+ ': I am going to improve property '+param['asset'].name)
                     player.agent._agent_memory['previous_action'] = action_choices.improve_property
                     return (action_choices.improve_property, param)
 
@@ -149,7 +166,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
                 param['player'] = player
                 param['asset'] = m
                 param['current_gameboard'] = current_gameboard
-                print(player.player_name, ': I am going to free mortgage on ', param['asset'].name)
+                logger.debug(player.player_name+ ': I am going to free mortgage on '+ param['asset'].name)
                 player.agent._agent_memory['previous_action'] = action_choices.free_mortgage
                 return (action_choices.free_mortgage, param)
 
@@ -164,7 +181,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
                 param = agent_helper_functions.identify_sale_opportunity_to_player(player, current_gameboard)
                 if param and player.agent._agent_memory['previous_action'] != action_choices.make_sell_property_offer: # we only make one offer per turn. Otherwise we'd
                     # be stuck in a loop
-                    print(player.player_name, ': I am making an offer to sell ',param['asset'].name,' to ',param['to_player'].player_name,'for '+str(param['price'])+' dollars')
+                    logger.debug(player.player_name+ ': I am making an offer to sell '+param['asset'].name+' to '+param['to_player'].player_name+'for '+str(param['price'])+' dollars')
                     player.agent._agent_memory['previous_action'] = action_choices.make_sell_property_offer
                     return (action_choices.make_sell_property_offer, param)
         elif action_choices.make_sell_property_offer in allowable_moves: # let's try to see if we can sell property to other players at an insane premium
@@ -172,23 +189,23 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
             param = agent_helper_functions.identify_sale_opportunity_to_player(player, current_gameboard)
             if param and player.agent._agent_memory['previous_action'] != action_choices.make_sell_property_offer:  # we only make one offer per turn. Otherwise we'd
                 # be stuck in a loop
-                print(player.player_name, ': I am making an offer to sell ', param['asset'].name, ' to ', param[
-                    'to_player'].player_name, 'for '+str(param['price'])+' dollars')
+                logger.debug(player.player_name+ ': I am making an offer to sell '+ param['asset'].name+ ' to '+ param[
+                    'to_player'].player_name+ 'for '+str(param['price'])+' dollars')
                 player.agent._agent_memory['previous_action'] = action_choices.make_sell_property_offer
                 return (action_choices.make_sell_property_offer, param)
 
 
     # if we ran the gamut, and did not return, then it's time to skip turn or conclude actions
     if action_choices.skip_turn in allowable_moves:
-        print(player.player_name, ': I am skipping turn')
+        logger.debug(player.player_name+ ': I am skipping turn')
         player.agent._agent_memory['previous_action'] = action_choices.skip_turn
         return (action_choices.skip_turn, dict())
     elif action_choices.concluded_actions in allowable_moves:
-        print(player.player_name, ': I am concluding actions')
+        logger.debug(player.player_name+ ': I am concluding actions')
         # player.agent._agent_memory['previous_action'] = action_choices.concluded_actions
         return (action_choices.concluded_actions, dict())
     else:
-        raise Exception
+        logger.error("Exception")
 
 
 def make_post_roll_move(player, current_gameboard, allowable_moves, code):
@@ -223,7 +240,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
     current_location = current_gameboard['location_sequence'][player.current_position]
     if action_choices.buy_property in allowable_moves:
         if code == -1:
-            print(player.player_name,': I did not succeed the last time in buying this property. Concluding actions...')
+            logger.debug(player.player_name+': I did not succeed the last time in buying this property. Concluding actions...')
             return (action_choices.concluded_actions, dict())
 
         params = dict()
@@ -232,7 +249,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
         params['current_gameboard'] = current_gameboard
 
         if make_buy_property_decision(player, current_gameboard, params['asset']):
-            print(player.player_name, ': I am attempting to buy property ',params['asset'].name)
+            logger.debug(player.player_name+ ': I am attempting to buy property '+params['asset'].name)
             player.agent._agent_memory['previous_action'] = action_choices.buy_property
             return (action_choices.buy_property, params)
         else:
@@ -242,7 +259,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
                 to_mortgage = agent_helper_functions.identify_potential_mortgage(player,current_location.price,True)
                 if to_mortgage:
                     params['asset'] = to_mortgage
-                    print(player.player_name, ': I am attempting to mortgage property ', params['asset'].name)
+                    logger.debug(player.player_name+ ': I am attempting to mortgage property '+ params['asset'].name)
                     player.agent._agent_memory['previous_action'] = action_choices.mortgage_property
                     return (action_choices.mortgage_property, params)
 
@@ -250,7 +267,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
                     to_sell = agent_helper_functions.identify_potential_sale(player, current_location.price,True)
                     if to_sell:
                         params['asset'] = to_sell
-                        print(player.player_name, ': I am attempting to sell property ', params['asset'].name,' to the bank')
+                        logger.debug(player.player_name+ ': I am attempting to sell property '+ params['asset'].name+' to the bank')
                         player.agent._agent_memory['previous_action'] = action_choices.sell_property
                         return (action_choices.sell_property, params)
 
@@ -259,7 +276,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
         return (action_choices.concluded_actions, dict())
 
     else:
-        raise Exception
+        logger.error("Exception")
 
 
 def make_buy_property_decision(player, current_gameboard, asset):
@@ -280,11 +297,11 @@ def make_buy_property_decision(player, current_gameboard, asset):
     """
     decision = False
     if player.current_cash - asset.price >= current_gameboard['go_increment']:  # case 1: can we afford it?
-        print(player.player_name, ': I will attempt to buy ', asset.name, ' from the bank.')
+        logger.debug(player.player_name+ ': I will attempt to buy '+ asset.name+ ' from the bank.')
         decision = True
     elif asset.price <= player.current_cash and \
             agent_helper_functions.will_property_complete_set(player,asset,current_gameboard):
-        print(player.player_name, ': I will attempt to buy ', asset.name, ' from the bank.')
+        logger.debug(player.player_name+ ': I will attempt to buy '+ asset.name+ ' from the bank.')
         decision = True
 
     return decision

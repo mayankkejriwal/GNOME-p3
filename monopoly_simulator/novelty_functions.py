@@ -1,4 +1,19 @@
+import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
 
 def alternate_contingency_function_1(player, card, current_gameboard):
     """
@@ -9,7 +24,7 @@ def alternate_contingency_function_1(player, card, current_gameboard):
     undergo changes (but the syntax and function it substitutes will not change).
     :return:
     """
-    print('calculating alternative street repair cost for ', player.player_name)
+    logger.debug('calculating alternative street repair cost for '+ player.player_name)
     cost_per_house = 70
     cost_per_hotel = 145
     cost = player.num_total_houses * cost_per_house + player.num_total_hotels * cost_per_hotel

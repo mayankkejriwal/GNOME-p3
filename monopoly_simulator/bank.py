@@ -1,3 +1,20 @@
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
+
 class Bank(object):
     def __init__(self):
         self.mortgage_percentage = 0.1
@@ -13,7 +30,7 @@ class Bank(object):
         :return: None
         """
 
-        print('Entering auctioning for asset ',asset.name)
+        logger.debug('Entering auctioning for asset '+asset.name)
 
         current_bid = 0
         players_out_of_auction = set()
@@ -25,7 +42,7 @@ class Bank(object):
             if p.status == 'lost':
                 players_out_of_auction.add(p)
             else:
-                print(p.player_name,' is an auction participant.')
+                logger.debug(p.player_name+' is an auction participant.')
 
         count = 0
         while count < len(current_gameboard['players']):
@@ -37,10 +54,10 @@ class Bank(object):
                 break
 
         if bidding_player_index is None: # no one left to auction. This is a failsafe, the code should never get here.
-            print('No one is left in the game that can participate in the auction! Why are we here?')
+            logger.debug('No one is left in the game that can participate in the auction! Why are we here?')
             return
         else:
-            print(current_gameboard['players'][bidding_player_index].player_name,' will place the first bid')
+            logger.debug(current_gameboard['players'][bidding_player_index].player_name+' will place the first bid')
 
         while len(players_out_of_auction) < len(current_gameboard['players'])-1: # we iterate and bid till just one player remains
             bidding_player = current_gameboard['players'][bidding_player_index]
@@ -59,21 +76,21 @@ class Bank(object):
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(proposed_bid)
 
-            print(bidding_player.player_name,' proposed bid ',str(proposed_bid))
+            logger.debug(bidding_player.player_name+' proposed bid '+str(proposed_bid))
 
             if proposed_bid == 0:
                 players_out_of_auction.add(bidding_player)
-                print(bidding_player.player_name, ' is out of the auction.')
+                logger.debug(bidding_player.player_name+' is out of the auction.')
                 bidding_player_index = (bidding_player_index + 1) % len(current_gameboard['players'])
                 continue
             elif proposed_bid <= current_bid: # the <= serves as a forcing function to ensure the proposed bid must be non-zero
                 players_out_of_auction.add(bidding_player)
-                print(bidding_player.player_name, ' is out of the auction.')
+                logger.debug(bidding_player.player_name+ ' is out of the auction.')
                 bidding_player_index = (bidding_player_index + 1) % len(current_gameboard['players'])
                 continue
 
             current_bid = proposed_bid
-            print('The current highest bid is ',str(current_bid), ' and is held with ',bidding_player.player_name)
+            logger.debug('The current highest bid is '+str(current_bid)+ ' and is held with '+bidding_player.player_name)
             winning_player = bidding_player
             bidding_player_index = (bidding_player_index + 1) % len(current_gameboard['players'])
 
@@ -98,5 +115,5 @@ class Bank(object):
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
         else:
-            print('Auction did not succeed in a sale.')
+            logger.debug('Auction did not succeed in a sale.')
         return

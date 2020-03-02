@@ -1,5 +1,22 @@
 from . import action_choices
+from monopoly_simulator.action_choices import *
+from monopoly_simulator.location import  RealEstateLocation, UtilityLocation, RailroadLocation
+import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
 """
 All external decision_agent functions must have the exact signatures we have indicated in this document. Beyond
 that, we impose no restrictions (you can make the decision agent as complex as you like (including maintaining state), and we use good faith to ensure
@@ -44,7 +61,7 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
 
         return (action_choices.skip_turn, dict())
     else:
-        raise Exception
+        logger.error("Exception")
 
 
 def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
@@ -66,7 +83,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
     if action_choices.skip_turn in allowable_moves:
         return (action_choices.skip_turn, dict())
     else:
-        raise Exception
+        logger.error("Exception")
 
 
 def make_post_roll_move(player, current_gameboard, allowable_moves, code):
@@ -91,9 +108,9 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
         """
     current_location = current_gameboard['location_sequence'][player.current_position]
     if action_choices.buy_property in allowable_moves and current_location.price < player.current_cash:
-        print(player.player_name,': We will attempt to buy ',current_gameboard['location_sequence'][player.current_position].name,' from the bank.')
+        logger.debug(player.player_name+': We will attempt to buy '+current_gameboard['location_sequence'][player.current_position].name+' from the bank.')
         if code == -1:
-            print('Did not succeed the last time. Concluding actions...')
+            logger.debug('Did not succeed the last time. Concluding actions...')
             return (action_choices.concluded_actions, dict())
         params = dict()
         params['player'] = player
@@ -103,7 +120,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
     elif action_choices.concluded_actions in allowable_moves:
         return (action_choices.concluded_actions, dict())
     else:
-        raise Exception
+        logger.error("Exception")
 
 
 def make_buy_property_decision(player, current_gameboard, asset):

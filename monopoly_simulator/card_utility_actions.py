@@ -1,3 +1,20 @@
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+
+file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
+
 """
 This is an important file that contains many functions (not including internal functions that start with _) that
 either correspond to an action or contingency contained in a card (e.g., go to jail)  or an action that must be taken
@@ -16,7 +33,7 @@ def calculate_mortgage_owed(mortgaged_property, current_gameboard=None):
     :return:
     """
     if not mortgaged_property.is_mortgaged:
-        raise Exception
+        logger.error("Exception")
     else:
         if current_gameboard['bank'].total_mortgage_rule is False:
             return (1.0+current_gameboard['bank'].mortgage_percentage) * mortgaged_property.mortgage
@@ -36,7 +53,7 @@ def go_to_jail(player, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print('execute go_to_jail action for ',player.player_name)
+    logger.debug('execute go_to_jail action for '+player.player_name)
     player.send_to_jail(current_gameboard)
     # add to game history
     current_gameboard['history']['function'].append(player.send_to_jail)
@@ -71,16 +88,16 @@ def pick_card_from_community_chest(player, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print(player.player_name,' is picking card from community chest.')
+    logger.debug(player.player_name+' is picking card from community chest.')
     card_rand = np.random.RandomState(current_gameboard['card_seed'])
     set_cc_cards_copy = current_gameboard['community_chest_cards'].copy()
     list_community_chest_cards = _set_to_sorted_list_func(set_cc_cards_copy)
     card = card_rand.choice(list_community_chest_cards)
     # card = card_rand.choice(list(current_gameboard['community_chest_cards']))
     current_gameboard['card_seed'] += 1
-    print(player.player_name,' picked card ',card.name)
+    logger.debug(player.player_name+' picked card '+card.name)
     if card.name == 'get_out_of_jail_free':
-        print('removing get_out_of_jail card from community chest pack')
+        logger.debug('removing get_out_of_jail card from community chest pack')
         current_gameboard['community_chest_cards'].remove(card)
         card.action(player, card, current_gameboard, pack='community_chest')
         params = dict()
@@ -110,16 +127,16 @@ def pick_card_from_chance(player, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print(player.player_name, ' is picking card from chance.')
+    logger.debug(player.player_name+ ' is picking card from chance.')
     card_rand = np.random.RandomState(current_gameboard['card_seed'])
     set_chance_cards_copy = current_gameboard['chance_cards'].copy()
     list_chance_cards = _set_to_sorted_list_func(set_chance_cards_copy)
     card = card_rand.choice(list_chance_cards)
     # card = card_rand.choice(list(current_gameboard['chance_cards']))
     current_gameboard['card_seed'] += 1
-    print(player.player_name, ' picked card ', card.name)
+    logger.debug(player.player_name+ ' picked card '+ card.name)
     if card.name == 'get_out_of_jail_free':
-        print('removing get_out_of_jail card from chance pack')
+        logger.debug('removing get_out_of_jail card from chance pack')
         current_gameboard['chance_cards'].remove(card)
         card.action(player, card, current_gameboard, pack='chance')
         params = dict()
@@ -149,8 +166,8 @@ def move_player(player, card, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print('executing move_player for ',player.player_name)
-    print('destination specified on card is ',card.destination.name)
+    logger.debug('executing move_player for '+player.player_name)
+    logger.debug('destination specified on card is '+card.destination.name)
     new_position = card.destination.start_position
     jail_position = current_gameboard['jail_position']
     if new_position == jail_position:
@@ -175,16 +192,16 @@ def set_get_out_of_jail_card_status(player, card, current_gameboard, pack):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print('executing set_get_out_of_jail_card_status for ',player.player_name)
+    logger.debug('executing set_get_out_of_jail_card_status for '+player.player_name)
     if pack == 'community_chest' and card.name == 'get_out_of_jail_free': # remember, this is an object equality test
         player.has_get_out_of_jail_community_chest_card = True
-        print(player.player_name,' now has get_out_of_jail community_chest card')
+        logger.debug(player.player_name+' now has get_out_of_jail community_chest card')
     elif pack == 'chance' and card.name == 'get_out_of_jail_free': # remember, this is an object equality test
         player.has_get_out_of_jail_chance_card = True
-        print(player.player_name, ' now has get_out_of_jail chance card')
+        logger.debug(player.player_name+ ' now has get_out_of_jail chance card')
     else: # if we arrive here, it means that the card we have is either not get out of jail free, or something else has gone wrong.
-        print('something has gone wrong in set_get_out_of_jail_card_status. That is all I know.')
-        raise Exception
+        logger.debug('something has gone wrong in set_get_out_of_jail_card_status. That is all I know.')
+        logger.error("Exception")
 
 
 def bank_cash_transaction(player, card, current_gameboard):
@@ -195,7 +212,7 @@ def bank_cash_transaction(player, card, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure. In this function it is unused.
     :return: None
     """
-    print('executing bank_cash_transaction for ', player.player_name)
+    logger.debug('executing bank_cash_transaction for '+ player.player_name)
     if card.amount < 0:
         player.charge_player(-1*card.amount)
         # add to game history
@@ -215,8 +232,8 @@ def bank_cash_transaction(player, card, current_gameboard):
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
     else:
-        print('Something broke in bank_cash_transaction. That is all I know.')
-        raise Exception
+        logger.debug('Something broke in bank_cash_transaction. That is all I know.')
+        logger.error("Exception")
 
 
 def player_cash_transaction(player, card, current_gameboard):
@@ -227,7 +244,7 @@ def player_cash_transaction(player, card, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print('executing player_cash_transaction for ', player.player_name)
+    logger.debug('executing player_cash_transaction for '+ player.player_name)
     if card.amount_per_player < 0:
         for p in current_gameboard['players']:
             if p == player or p.status == 'lost':
@@ -284,7 +301,7 @@ def contingent_bank_cash_transaction(player, card, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print('executing contingent_bank_cash_transaction for ', player.player_name)
+    logger.debug('executing contingent_bank_cash_transaction for '+ player.player_name)
     card.contingency(player, card, current_gameboard)
     # add to game history
     current_gameboard['history']['function'].append(card.contingency)
@@ -304,7 +321,7 @@ def calculate_street_repair_cost(player, card, current_gameboard): # assesses, n
     :param current_gameboard: A dict. The global gameboard data structure. In this function it is unused.
     :return: None
     """
-    print('executing calculate_street_repair_cost for ',player.player_name)
+    logger.debug('executing calculate_street_repair_cost for '+player.player_name)
     cost_per_house = 40
     cost_per_hotel = 115
     cost = player.num_total_houses*cost_per_house+player.num_total_hotels*cost_per_hotel
@@ -326,8 +343,8 @@ def move_player__check_for_go(player, card, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print('executing move_player__check_for_go for ',player.player_name)
-    print('destination specified on card is ', card.destination.name)
+    logger.debug('executing move_player__check_for_go for '+player.player_name)
+    logger.debug('destination specified on card is '+ card.destination.name)
     new_position = card.destination.start_position
     _move_player__check_for_go(player, new_position, current_gameboard)
 
@@ -343,7 +360,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print('executing move_to_nearest_utility__pay_or_buy__check_for_go ', player.player_name)
+    logger.debug('executing move_to_nearest_utility__pay_or_buy__check_for_go '+ player.player_name)
     utility_positions = current_gameboard['utility_positions']
     min_utility_position = utility_positions[0]
     min_utility_distance = _calculate_board_distance(player.current_position, min_utility_position)
@@ -353,16 +370,16 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
             min_utility_distance = dist
             min_utility_position = u
 
-    print('The utility position that player is being moved to is ',current_gameboard['location_sequence'][min_utility_position].name)
+    logger.debug('The utility position that player is being moved to is '+current_gameboard['location_sequence'][min_utility_position].name)
     _move_player__check_for_go(player, min_utility_position, current_gameboard)
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
     if current_loc.loc_class != 'utility':  # simple check
-        print('location is supposed to be a utility...what happened?')
-        raise Exception
+        logger.debug('location is supposed to be a utility...what happened?')
+        logger.error("Exception")
 
     if 'bank.Bank' in str(type(current_loc.owned_by)): # we're forced to use this hack to avoid an import.
-        print('utility is owned by bank. Player will have option to purchase.')
+        logger.debug('utility is owned by bank. Player will have option to purchase.')
         player.process_move_consequences(current_gameboard)
         # add to game history
         current_gameboard['history']['function'].append(player.process_move_consequences)
@@ -405,7 +422,7 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print('executing move_to_nearest_railroad__pay_double_or_buy__check_for_go for ', player.player_name)
+    logger.debug('executing move_to_nearest_railroad__pay_double_or_buy__check_for_go for '+ player.player_name)
     railroad_positions = current_gameboard['railroad_positions']
     min_railroad_position = railroad_positions[0]
     min_railroad_distance = _calculate_board_distance(player.current_position, railroad_positions[0])
@@ -415,17 +432,17 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
             min_railroad_distance = dist
             min_railroad_position = u
 
-    print('The railroad position that player is being moved to is ', current_gameboard['location_sequence'][
+    logger.debug('The railroad position that player is being moved to is '+ current_gameboard['location_sequence'][
         min_railroad_position].name)
     _move_player__check_for_go(player, min_railroad_position, current_gameboard)
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
     if current_loc.loc_class != 'railroad': # simple check
-        print('location is supposed to be a railroad...what happened?')
-        raise Exception
+        logger.debug('location is supposed to be a railroad...what happened?')
+        logger.error("Exception")
 
     if 'bank.Bank' in str(type(current_loc.owned_by)):  # we're forced to use this hack to avoid an import.
-        print('railroad is owned by bank. Player will have option to purchase.')
+        logger.debug('railroad is owned by bank. Player will have option to purchase.')
         player.process_move_consequences(current_gameboard)
         # add to game history
         current_gameboard['history']['function'].append(player.process_move_consequences)
@@ -465,7 +482,7 @@ def calculate_general_repair_cost(player, card, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure. In this function it is unused.
     :return: None
     """
-    print('executing calculate_general_repair_cost action for ', player.player_name)
+    logger.debug('executing calculate_general_repair_cost action for '+ player.player_name)
     cost_per_house = 25
     cost_per_hotel = 100
     cost = player.num_total_houses * cost_per_house + player.num_total_hotels * cost_per_hotel
@@ -487,7 +504,7 @@ def move_player_relative(player, card, current_gameboard):
     :param current_gameboard: A dict. The global gameboard data structure
     :return: None
     """
-    print('executing move_player_relative action for ',player.player_name)
+    logger.debug('executing move_player_relative action for '+player.player_name)
     move_player_after_die_roll(player, card.new_relative_position, current_gameboard, True)
     # add to game history
     current_gameboard['history']['function'].append(move_player_after_die_roll)
@@ -514,7 +531,7 @@ def move_player_after_die_roll(player, rel_move, current_gameboard, check_for_go
     go_increment if we land on go or pass it.
     :return:
     """
-    print('executing move_player_after_die_roll for ',player.player_name,' by ',str(rel_move),' relative steps forward.')
+    logger.debug('executing move_player_after_die_roll for '+player.player_name+' by '+str(rel_move)+' relative steps forward.')
     num_locations = len(current_gameboard['location_sequence'])
     go_position = current_gameboard['go_position']
     go_increment = current_gameboard['go_increment']
@@ -523,7 +540,7 @@ def move_player_after_die_roll(player, rel_move, current_gameboard, check_for_go
 
     if check_for_go:
         if _has_player_passed_go(player.current_position, new_position, go_position):
-            print(player.player_name,' passes Go.')
+            logger.debug(player.player_name+' passes Go.')
             player.receive_cash(go_increment)
             # add to game history
             current_gameboard['history']['function'].append(player.receive_cash)
