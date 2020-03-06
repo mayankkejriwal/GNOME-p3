@@ -191,8 +191,8 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
         if flag:
             logger.debug('Selling house and updating num_total_houses.')
             player.num_total_houses -= 1
-            logger.debug(player.player_name+ ' now has num_total_hotels ', str(
-                player.num_total_hotels), ' and num_total_houses ', str(player.num_total_houses))
+            logger.debug(player.player_name+ ' now has num_total_hotels '+ str(
+                player.num_total_hotels)+ ' and num_total_houses '+ str(player.num_total_houses))
             logger.debug('Paying player for sale.')
             player.receive_cash(asset.price_per_house/2)
             # add to game history
