@@ -419,10 +419,14 @@ class GranularityRepresentationNovelty(RepresentationNovelty):
 
         # now let's repair the other fields
         new_location_sequence = list()
+        forbidden_loc_names = set()
 
         for loc in current_gameboard['location_sequence']:
+            if loc.name in forbidden_loc_names :
+                new_location_sequence.append(loc)
+                continue
             new_start_position = len(new_location_sequence) # the new start position is the current length of the new sequence
-            new_end_position = new_start_position + (loc.end_position - loc.start_position) # the new end position is the new start position + difference
+            new_end_position = new_start_position + (loc.end_position - loc.start_position) # the new end position is the new start position + difference'
             for i in range(loc.start_position, loc.end_position):
                 new_location_sequence.append(loc)
                 if loc.loc_class == 'railroad':
@@ -436,9 +440,11 @@ class GranularityRepresentationNovelty(RepresentationNovelty):
                 if loc.name == 'Go':
                     current_gameboard['go_position'] = len(new_location_sequence)-1
 
+                if (loc.name!=location.name):
+                    break
+
             loc.start_position = new_start_position
             loc.end_position = new_end_position
-
-
+            forbidden_loc_names.add(loc.name)
         current_gameboard['location_sequence'] = new_location_sequence
 
