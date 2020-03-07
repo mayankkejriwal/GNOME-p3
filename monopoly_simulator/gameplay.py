@@ -3,7 +3,7 @@ from monopoly_simulator.action_choices import roll_die
 import numpy as np
 from monopoly_simulator.card_utility_actions import move_player_after_die_roll
 from monopoly_simulator import background_agent_v1
-# import simple_decision_agent_1
+from monopoly_simulator import simple_decision_agent_1
 import json
 from monopoly_simulator import diagnostics
 from monopoly_simulator import novelty_generator
@@ -61,6 +61,12 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     :param np_seed: The numpy seed to use to control randomness.
     :return: None
     """
+    logger.debug("size of board "+ str(len(game_elements['location_sequence'])))
+    for i in range(len(game_elements['location_sequence'])):
+        logger.debug(game_elements['location_sequence'][i].name)
+    logger.debug("start pos: " + str(game_elements['location_objects']['States Avenue'].start_position) + " end pos: " + str(game_elements['location_objects']['States Avenue'].end_position))
+    logger.debug("start pos: " + str(game_elements['location_objects']['Virginia Avenue'].start_position) + " end pos: " + str(game_elements['location_objects']['Virginia Avenue'].end_position))
+    logger.debug("start pos: " + str(game_elements['location_objects']['Pennsylvania Railroad'].start_position) + " end pos: " + str(game_elements['location_objects']['Pennsylvania Railroad'].end_position))
     np.random.seed(np_seed)
     np.random.shuffle(game_elements['players'])
     game_elements['seed'] = np_seed
@@ -80,6 +86,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     workbook = None
     if history_log_file:
         workbook = xlsxwriter.Workbook(history_log_file)
+
 
     while num_active_players > 1:
         current_player = game_elements['players'][current_player_index]
@@ -239,6 +246,13 @@ def inject_class_novelty_1(current_gameboard, novelty_schema=None):
     file and its functions.
     :return: None
     """
+
+    ###Below are examples of Level 1, Level 2 and Level 3 Novelties
+    ###Uncomment only the Level of novelty that needs to run (i.e, either Level1 or Level 2 or Level 3). Do not mix up novelties from different levels.
+
+    '''
+    #Level 1 Novelty
+    
     numberDieNovelty = novelty_generator.NumberClassNovelty()
     numberDieNovelty.die_novelty(current_gameboard, 4, die_state_vector=[[1,2,3,4,5],[1,2,3,4],[5,6,7],[2,3,4]])
 
@@ -246,6 +260,44 @@ def inject_class_novelty_1(current_gameboard, novelty_schema=None):
     die_state_distribution_vector = ['uniform','uniform','biased','biased']
     die_type_vector = ['odd_only','even_only','consecutive','consecutive']
     classDieNovelty.die_novelty(current_gameboard, die_state_distribution_vector, die_type_vector)
+
+    classCardNovelty = novelty_generator.TypeClassNovelty()
+    novel_cc = dict()
+    novel_cc["street_repairs"] = "alternate_contingency_function_1"
+    novel_chance = dict()
+    novel_chance["general_repairs"] = "alternate_contingency_function_1"
+    classCardNovelty.card_novelty(current_gameboard, novel_cc, novel_chance)
+    '''
+
+    '''
+    #Level 2 Novelty
+
+    #The below combination reassigns property groups and individual properties to different colors.
+    #On playing the game it is verified that the newly added property to the color group is taken into account for monopolizing a color group,
+    # i,e the orchid color group now has Baltic Avenue besides St. Charles Place, States Avenue and Virginia Avenue. The player acquires a monopoly
+    # only on the ownership of all the 4 properties in this case.
+    inanimateNovelty = novelty_generator.InanimateAttributeNovelty()
+    inanimateNovelty.map_property_set_to_color(current_gameboard, [current_gameboard['location_objects']['Park Place'], current_gameboard['location_objects']['Boardwalk']], 'Brown')
+    inanimateNovelty.map_property_to_color(current_gameboard, current_gameboard['location_objects']['Baltic Avenue'], 'Orchid')
+
+    #setting new rents for Indiana Avenue
+    inanimateNovelty.rent_novelty(current_gameboard['location_objects']['Indiana Avenue'], {'rent': 50, 'rent_1_house': 150})
+    '''
+
+    '''
+    #Level 3 Novelty
+
+    granularityNovelty = novelty_generator.GranularityRepresentationNovelty()
+    granularityNovelty.granularity_novelty(current_gameboard, current_gameboard['location_objects']['Baltic Avenue'], 6)
+    granularityNovelty.granularity_novelty(current_gameboard, current_gameboard['location_objects']['States Avenue'], 20)
+    granularityNovelty.granularity_novelty(current_gameboard, current_gameboard['location_objects']['Tennessee Avenue'], 27)
+    
+    spatialNovelty = novelty_generator.SpatialRepresentationNovelty()
+    spatialNovelty.color_reordering(current_gameboard, ['Boardwalk', 'Park Place'], 'Blue')
+    
+    granularityNovelty.granularity_novelty(current_gameboard, current_gameboard['location_objects']['Park Place'], 52)
+    '''
+
 
 # this is where everything begins. Assign decision agents to your players, set up the board and start simulating! You can
 # control any number of players you like, and assign the rest to the simple agent. We plan to release a more sophisticated
@@ -262,7 +314,8 @@ player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_
 player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
 game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                              player_decision_agents)
-#inject_class_novelty_1(game_elements)
+inject_class_novelty_1(game_elements)
+
 simulate_game_instance(game_elements)
 logger.debug("GAME OVER")
 #just testing history.
