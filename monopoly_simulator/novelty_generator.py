@@ -241,8 +241,11 @@ class NumberClassNovelty(ClassNovelty):
             logger.error("Exception")
 
         current_gameboard['dies'] = list() # wipe out what was there before.
+        die_dict = dict()
         for i in range(0, die_count):
             current_gameboard['dies'].append(Dice(die_state_vector[i]))
+            die_dict[i] = []
+        current_gameboard['die_dict'] = die_dict
 
     def card_novelty(self, current_gameboard, community_chest_cards_num, chance_cards_num):
         """

@@ -87,7 +87,6 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     if history_log_file:
         workbook = xlsxwriter.Workbook(history_log_file)
 
-
     while num_active_players > 1:
         current_player = game_elements['players'][current_player_index]
         while current_player.status == 'lost':
@@ -120,7 +119,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
             game_elements['history']['param'].append(params)
             game_elements['history']['return'].append(oot_code)
 
-            if  oot_code == 2:
+            if oot_code == 2:
                 skip_turn += 1
             else:
                 skip_turn = 0
@@ -129,8 +128,10 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
         # now we roll the dice and get into the post_roll phase,
         # but only if we're not in jail.
 
-
         r = roll_die(game_elements['dies'], np.random.choice)
+        for i in range(len(r)):
+            game_elements['die_dict'][i].append(r[i])
+
         # add to game history
         game_elements['history']['function'].append(roll_die)
         params = dict()
@@ -249,7 +250,6 @@ def inject_class_novelty_1(current_gameboard, novelty_schema=None):
 
     ###Below are examples of Level 1, Level 2 and Level 3 Novelties
     ###Uncomment only the Level of novelty that needs to run (i.e, either Level1 or Level 2 or Level 3). Do not mix up novelties from different levels.
-
     '''
     #Level 1 Novelty
     
