@@ -126,8 +126,8 @@ class InanimateAttributeNovelty(AttributeNovelty):
         :return: None
         """
         for k, v in rent_dict.items():
-            att = getattr(location, k)
-            location.att = v
+            setattr(location, k, v)
+
 
     def mortgage_novelty(self, location, new_mortgage):
         """
