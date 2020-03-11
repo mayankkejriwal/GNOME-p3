@@ -54,6 +54,12 @@ def write_history_to_file(game_board, workbook):
     workbook.close()
     print("History logged into history_log.xlsx file.")
 
+def disable_history(game_elements):
+    game_elements['history'] = dict()
+    game_elements['history']['function'] = list()
+    game_elements['history']['param'] = list()
+    game_elements['history']['return'] = list()
+
 def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     """
     Simulate a game instance.
@@ -88,6 +94,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
         workbook = xlsxwriter.Workbook(history_log_file)
 
     while num_active_players > 1:
+        # disable_history(game_elements) # comment this out when you want history to stay. Currently, it has high memory consumption, we are working to solve the problem (most likely due to deep copy run-off).
         current_player = game_elements['players'][current_player_index]
         while current_player.status == 'lost':
             current_player_index += 1
@@ -237,7 +244,7 @@ def set_up_board(game_schema_file_path, player_decision_agents):
     return initialize_game_elements.initialize_board(game_schema, player_decision_agents)
 
 
-def inject_class_novelty_1(current_gameboard, novelty_schema=None):
+def inject_novelty(current_gameboard, novelty_schema=None):
     """
     Function for illustrating how we inject novelty
     :param current_gameboard: the current gameboard into which novelty will be injected. This gameboard will be modified
@@ -314,7 +321,7 @@ player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_
 player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
 game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                              player_decision_agents)
-inject_class_novelty_1(game_elements)
+inject_novelty(game_elements)
 
 simulate_game_instance(game_elements)
 logger.debug("GAME OVER")
