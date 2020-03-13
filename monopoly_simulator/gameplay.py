@@ -134,10 +134,11 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
 
         # now we roll the dice and get into the post_roll phase,
         # but only if we're not in jail.
+        # but only if we're not in jail.
 
         r = roll_die(game_elements['dies'], np.random.choice)
         for i in range(len(r)):
-            game_elements['die_dict'][i].append(r[i])
+            game_elements['die_sequence'][i].append(r[i])
 
         # add to game history
         game_elements['history']['function'].append(roll_die)

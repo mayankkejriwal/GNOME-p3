@@ -157,7 +157,7 @@ def _initialize_locations(game_elements, game_schema):
 
 
 def _initialize_dies(game_elements, game_schema):
-    die_dict = dict()
+    die_sequence = []
     if len(game_schema['die']['die_state']) != game_schema['die']['die_count']:
         logger.debug('dice count is unequal to number of specified dice state-vectors...')
         logger.error("Exception")
@@ -165,11 +165,11 @@ def _initialize_dies(game_elements, game_schema):
     die_objects = list()
     for i in range(0, die_count):
         die_objects.append(Dice(game_schema['die']['die_state'][i])) # send in the vector
-        die_dict[i] = []
+        die_sequence.append([])
 
     game_elements['dies'] = die_objects
     game_elements['current_die_total'] = 0
-    game_elements['die_dict'] = die_dict
+    game_elements['die_sequence'] = die_sequence
 
 
 def _initialize_cards(game_elements, game_schema):
