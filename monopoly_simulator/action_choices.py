@@ -159,6 +159,7 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
             logger.debug(player.player_name+' now has num_total_hotels '+str(player.num_total_hotels)+' and num_total_houses '+str(player.num_total_houses))
             logger.debug('Paying player for sale.')
             player.receive_cash((asset.price_per_house*4)/2) # player only gets half the initial cost back. Recall that you can sell the entire hotel or not at all.
+            current_gameboard['bank'].total_hotels += 1   #incrementing the bank's total_hotels number since a hotel has been returned.
             # add to game history
             current_gameboard['history']['function'].append(player.receive_cash)
             params = dict()
@@ -195,6 +196,7 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
                 player.num_total_hotels)+ ' and num_total_houses '+ str(player.num_total_houses))
             logger.debug('Paying player for sale.')
             player.receive_cash(asset.price_per_house/2)
+            current_gameboard['bank'].total_houses += 1   #incrementing the bank's total_houses number since a house has been returned.
             # add to game history
             current_gameboard['history']['function'].append(player.receive_cash)
             params = dict()
@@ -373,25 +375,33 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
                 flag = False
                 break
         if flag:
-            logger.debug('Improving asset and updating num_total_hotels and num_total_houses.')
-            player.num_total_hotels += 1
-            player.num_total_houses -= asset.num_houses
-            logger.debug(player.player_name+' now has num_total_hotels '+str(player.num_total_hotels)+' and num_total_houses '+str(player.num_total_houses))
-            logger.debug('Charging player for improvements.')
-            player.charge_player(asset.price_per_house)
-            # add to game history
-            current_gameboard['history']['function'].append(player.charge_player)
-            params = dict()
-            params['self'] = player
-            params['amount'] = asset.price_per_house
-            current_gameboard['history']['param'].append(params)
-            current_gameboard['history']['return'].append(None)
+            if current_gameboard['bank'].total_hotels > 0:
+                logger.debug('Improving asset and updating num_total_hotels and num_total_houses.')
+                player.num_total_hotels += 1
+                player.num_total_houses -= asset.num_houses
+                logger.debug(player.player_name+' now has num_total_hotels '+str(player.num_total_hotels)+' and num_total_houses '+str(player.num_total_houses))
+                logger.debug('Charging player for improvements.')
+                player.charge_player(asset.price_per_house)
+                current_gameboard['bank'].total_hotels -= 1
+                current_gameboard['bank'].total_houses += asset.num_houses
+                logger.debug('Bank now has ' + str(current_gameboard['bank'].total_houses) + ' houses and ' + str(current_gameboard['bank'].total_hotels) + ' hotels left.')
+                # add to game history
+                current_gameboard['history']['function'].append(player.charge_player)
+                params = dict()
+                params['self'] = player
+                params['amount'] = asset.price_per_house
+                current_gameboard['history']['param'].append(params)
+                current_gameboard['history']['return'].append(None)
 
-            logger.debug('Updating houses and hotels on the asset')
-            asset.num_houses = 0
-            asset.num_hotels = 1
-            logger.debug('Player has successfully improved property. Returning 1')
-            return 1
+                logger.debug('Updating houses and hotels on the asset')
+                asset.num_houses = 0
+                asset.num_hotels = 1
+                logger.debug('Player has successfully improved property. Returning 1')
+                return 1
+
+            else:
+                logger.debug('Bank has no hotels left for purchase. Kindly wait till someone returns a hotel to the bank.')
+                return -1
 
         else:
             logger.debug('All same-colored properties must be informly improved first before you can build a hotel on this property. Returning -1')
@@ -411,24 +421,31 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
                 flag = False
                 break
         if flag:
-            logger.debug('Improving asset and updating num_total_houses.')
-            player.num_total_houses += 1
-            logger.debug(player.player_name+ ' now has num_total_hotels '+ str(
-                player.num_total_hotels)+ ' and num_total_houses '+ str(player.num_total_houses))
-            logger.debug('Charging player for improvements.')
-            player.charge_player(asset.price_per_house)
-            # add to game history
-            current_gameboard['history']['function'].append(player.charge_player)
-            params = dict()
-            params['self'] = player
-            params['amount'] = asset.price_per_house
-            current_gameboard['history']['param'].append(params)
-            current_gameboard['history']['return'].append(None)
+            if current_gameboard['bank'].total_houses > 0:
+                logger.debug('Improving asset and updating num_total_houses.')
+                player.num_total_houses += 1
+                logger.debug(player.player_name+ ' now has num_total_hotels '+ str(
+                    player.num_total_hotels)+ ' and num_total_houses '+ str(player.num_total_houses))
+                logger.debug('Charging player for improvements.')
+                player.charge_player(asset.price_per_house)
+                current_gameboard['bank'].total_houses -= 1
+                logger.debug('Bank now has ' + str(current_gameboard['bank'].total_houses) + ' houses and ' + str(current_gameboard['bank'].total_hotels) + ' hotels left.')
+                # add to game history
+                current_gameboard['history']['function'].append(player.charge_player)
+                params = dict()
+                params['self'] = player
+                params['amount'] = asset.price_per_house
+                current_gameboard['history']['param'].append(params)
+                current_gameboard['history']['return'].append(None)
 
-            logger.debug('Updating houses and hotels on the asset')
-            asset.num_houses += 1
-            logger.debug('Player has successfully improved property. Returning 1')
-            return 1
+                logger.debug('Updating houses and hotels on the asset')
+                asset.num_houses += 1
+                logger.debug('Player has successfully improved property. Returning 1')
+                return 1
+
+            else:
+                logger.debug('Bank has no houses left for purchase. Kindly wait till someone returns a house to the bank.')
+                return -1
 
         else:
             logger.debug('All same-colored properties must be informly improved first before you can build a hotel on this property. Returning -1')

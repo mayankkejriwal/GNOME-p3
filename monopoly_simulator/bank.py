@@ -19,6 +19,8 @@ class Bank(object):
     def __init__(self):
         self.mortgage_percentage = 0.1
         self.total_mortgage_rule = False  # if true, then mortgage will be calculated as a percentage of total debt the player has outstanding
+        self.total_houses = 32
+        self.total_hotels = 12
 
     def auction(self, starting_player_index, current_gameboard, asset):
         """

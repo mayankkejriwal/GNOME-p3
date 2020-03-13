@@ -169,7 +169,7 @@ class Player(object):
                 # if there were improvements on it. But we include this code just in case, and to flag errors later.
             elif asset.num_hotels > 0:
                 self.num_total_hotels += asset.num_hotels
-                logger.debug('incrementing '+ self.player_name+ "'s num_total_hotels count by "+str(asset.num_hotels)+
+                logger.debug('incrementing '+ self.player_name+ "'s num_total_hotels coadd_assunt by "+str(asset.num_hotels)+
                     ". Total hotels now owned by player now is "+ str(self.num_total_hotels))
         else:
             logger.error('You are attempting to add non-purchaseable asset to player\'s portfolio!')
@@ -260,8 +260,12 @@ class Player(object):
                 asset.is_mortgaged = False
                 if asset.loc_class == 'real_estate':
                     asset.owned_by = current_gameboard['bank']
+                    logger.debug("Discharging " + str(asset.num_houses) + " houses and " + str(asset.num_hotels) + " hotels to the bank.")
+                    current_gameboard['bank'].total_houses += asset.num_houses
                     asset.num_houses = 0
+                    current_gameboard['bank'].total_hotels += asset.num_hotels
                     asset.num_hotels = 0
+                    logger.debug('Bank now has ' + str(current_gameboard['bank'].total_houses) + ' houses and ' + str(current_gameboard['bank'].total_hotels) + ' hotels left.')
                 elif asset.loc_class == 'utility' or asset.loc_class == 'railroad':
                     asset.owned_by = current_gameboard['bank']
                 else:
@@ -541,7 +545,7 @@ class Player(object):
         if self.currently_in_jail and self.current_cash >= 50:
             allowable_actions.add(pay_jail_fine)
 
-        if len(self.full_color_sets_possessed) > 0:
+        if len(self.full_color_sets_possessed) > 0 :
             allowable_actions.add(improve_property) # there is a chance this is not dynamically allowable because you've improved a property to its maximum.
             # However, you have to make this check in your decision agent.
 
@@ -621,7 +625,7 @@ class Player(object):
     def make_pre_roll_moves(self, current_gameboard):
         """
         The player's pre-roll phase. The function will only return either if the player skips the turn on the first move,
-        or till the player returns concluded_actions (if the first move was not skip_turn). Otherwise, it keeps prompting
+        or till the player returns concluded_actions (if the first move was not skip_turn). Otherwiscurrent_gameboard['bank'].total_houses += asset.num_houses e, it keeps prompting
         the player's decision agent.
         :param current_gameboard: A dict. The global data structure representing the current game board.
         :return: An integer. 2 if the turn is skipped or 1 for concluded actions. No other code should safely
@@ -656,7 +660,7 @@ class Player(object):
 
 
         allowable_actions.add(concluded_actions)
-        allowable_actions.remove(skip_turn) # from this time on, skip turn is not allowed.
+        allowable_actions.remove(skip_turn) # from this time on, skip turn is not allowed.current_gameboard['bank'].total_houses += asset.num_houses
         count = 0
         while count < 50: # the player is allowed up to 50 actions before we force conclude actions.
             count += 1
