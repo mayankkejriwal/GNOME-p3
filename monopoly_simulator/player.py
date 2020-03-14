@@ -72,6 +72,16 @@ class Player(object):
         # decide whether to accept the offer (if you don't, the offer will get rejected, and the field will get re-set)
         # the details of who is offering what and at what price are in outstanding_property_offer
 
+        outstanding_trade_offer = dict()
+        outstanding_trade_offer['property_set_offered'] = set()
+        outstanding_trade_offer['property_set_wanted'] = set()
+        outstanding_trade_offer['cash_offered'] = 0
+        outstanding_trade_offer['cash_wanted'] = 0
+        outstanding_trade_offer['from_player'] = None
+
+        self.outstanding_trade_offer = outstanding_trade_offer
+        self.is_trade_offer_outstanding = False
+
         self.mortgaged_assets = set() # the set of assets that are currently mortgaged.
 
         self._option_to_buy = False # this option will turn true when  the player lands on a property that could be bought.
@@ -113,10 +123,17 @@ class Player(object):
         self.outstanding_property_offer['asset'] = None
         self.outstanding_property_offer['price'] = -1
 
+        self.outstanding_trade_offer['property_set_offered'] = set()
+        self.outstanding_trade_offer['property_set_wanted'] = set()
+        self.outstanding_trade_offer['cash_offered'] = 0
+        self.outstanding_trade_offer['cash_wanted'] = 0
+        self.outstanding_trade_offer['from_player'] = None
+
         if self._option_to_buy:
             logger.debug('Warning! option to buy is set to true for '+self.player_name+' even in bankruptcy proceedings.')
         self._option_to_buy = False
         self.is_property_offer_outstanding = False
+        self.is_trade_offer_outstanding = False
 
         if self.has_get_out_of_jail_chance_card:  # we give first preference to chance, then community chest
             self.has_get_out_of_jail_chance_card = False
@@ -527,6 +544,9 @@ class Player(object):
         if self.is_property_offer_outstanding is True:
             allowable_actions.add(accept_sell_property_offer)
 
+        if self.is_trade_offer_outstanding is True:
+            allowable_actions.add(accept_trade_offer)
+
         if self.num_total_hotels > 0 or self.num_total_houses > 0:
             allowable_actions.add(sell_house_hotel)
 
@@ -549,6 +569,7 @@ class Player(object):
             allowable_actions.add(improve_property) # there is a chance this is not dynamically allowable because you've improved a property to its maximum.
             # However, you have to make this check in your decision agent.
 
+        allowable_actions.add(make_trade_offer)
         return allowable_actions
 
     def compute_allowable_out_of_turn_actions(self, current_gameboard):
@@ -571,6 +592,9 @@ class Player(object):
         if self.is_property_offer_outstanding is True:
             allowable_actions.add(accept_sell_property_offer)
 
+        if self.is_trade_offer_outstanding is True:
+            allowable_actions.add(accept_trade_offer)
+
         if self.num_total_hotels > 0 or self.num_total_houses > 0:
             allowable_actions.add(sell_house_hotel)
 
@@ -583,13 +607,12 @@ class Player(object):
         if len(self.mortgaged_assets) > 0:
             allowable_actions.add(free_mortgage)
 
-
-
         if len(self.full_color_sets_possessed) > 0:
             allowable_actions.add(
                 improve_property)  # there is a chance this is not dynamically allowable because you've improved a property to its maximum.
             # However, you have to make this check in your decision agent.
 
+        allowable_actions.add(make_trade_offer)
         return allowable_actions
 
     def compute_allowable_post_roll_actions(self, current_gameboard):
@@ -656,6 +679,14 @@ class Player(object):
                 self.outstanding_property_offer['asset'] = None
                 self.outstanding_property_offer['price'] = -1
 
+            if self.is_trade_offer_outstanding:
+                self.is_trade_offer_outstanding = False
+                self.outstanding_trade_offer['property_set_offered'] = set()
+                self.outstanding_trade_offer['property_set_wanted'] = set()
+                self.outstanding_trade_offer['cash_offered'] = 0
+                self.outstanding_trade_offer['cash_wanted'] = 0
+                self.outstanding_trade_offer['from_player'] = None
+
             return self._execute_action(action_to_execute, parameters, current_gameboard)
 
 
@@ -671,6 +702,14 @@ class Player(object):
                     self.outstanding_property_offer['from_player'] = None
                     self.outstanding_property_offer['asset'] = None
                     self.outstanding_property_offer['price'] = -1
+
+                if self.is_trade_offer_outstanding:
+                    self.is_trade_offer_outstanding = False
+                    self.outstanding_trade_offer['property_set_offered'] = set()
+                    self.outstanding_trade_offer['property_set_wanted'] = set()
+                    self.outstanding_trade_offer['cash_offered'] = 0
+                    self.outstanding_trade_offer['cash_wanted'] = 0
+                    self.outstanding_trade_offer['from_player'] = None
                 return self._execute_action(action_to_execute, parameters, current_gameboard)
             else:
                 code = self._execute_action(action_to_execute, parameters, current_gameboard)
@@ -695,6 +734,14 @@ class Player(object):
             self.outstanding_property_offer['from_player'] = None
             self.outstanding_property_offer['asset'] = None
             self.outstanding_property_offer['price'] = -1
+
+        if self.is_trade_offer_outstanding:
+            self.is_trade_offer_outstanding = False
+            self.outstanding_trade_offer['property_set_offered'] = set()
+            self.outstanding_trade_offer['property_set_wanted'] = set()
+            self.outstanding_trade_offer['cash_offered'] = 0
+            self.outstanding_trade_offer['cash_wanted'] = 0
+            self.outstanding_trade_offer['from_player'] = None
         return self._execute_action(concluded_actions, dict(), current_gameboard)  # now we can conclude actions
 
     def make_out_of_turn_moves(self, current_gameboard):
@@ -730,6 +777,14 @@ class Player(object):
                 self.outstanding_property_offer['from_player'] = None
                 self.outstanding_property_offer['asset'] = None
                 self.outstanding_property_offer['price'] = -1
+
+            if self.is_trade_offer_outstanding:
+                self.is_trade_offer_outstanding = False
+                self.outstanding_trade_offer['property_set_offered'] = set()
+                self.outstanding_trade_offer['property_set_wanted'] = set()
+                self.outstanding_trade_offer['cash_offered'] = 0
+                self.outstanding_trade_offer['cash_wanted'] = 0
+                self.outstanding_trade_offer['from_player'] = None
             return self._execute_action(action_to_execute, parameters, current_gameboard)
 
         allowable_actions.add(concluded_actions)
@@ -744,6 +799,14 @@ class Player(object):
                     self.outstanding_property_offer['from_player'] = None
                     self.outstanding_property_offer['asset'] = None
                     self.outstanding_property_offer['price'] = -1
+
+                if self.is_trade_offer_outstanding:
+                    self.is_trade_offer_outstanding = False
+                    self.outstanding_trade_offer['property_set_offered'] = set()
+                    self.outstanding_trade_offer['property_set_wanted'] = set()
+                    self.outstanding_trade_offer['cash_offered'] = 0
+                    self.outstanding_trade_offer['cash_wanted'] = 0
+                    self.outstanding_trade_offer['from_player'] = None
                 return self._execute_action(action_to_execute, parameters, current_gameboard)
             else:
                 code = self._execute_action(action_to_execute, parameters, current_gameboard)
@@ -768,6 +831,14 @@ class Player(object):
             self.outstanding_property_offer['from_player'] = None
             self.outstanding_property_offer['asset'] = None
             self.outstanding_property_offer['price'] = -1
+
+        if self.is_trade_offer_outstanding:
+            self.is_trade_offer_outstanding = False
+            self.outstanding_trade_offer['property_set_offered'] = set()
+            self.outstanding_trade_offer['property_set_wanted'] = set()
+            self.outstanding_trade_offer['cash_offered'] = 0
+            self.outstanding_trade_offer['cash_wanted'] = 0
+            self.outstanding_trade_offer['from_player'] = None
         return self._execute_action(concluded_actions, dict(), current_gameboard)  # now we can conclude actions
 
 

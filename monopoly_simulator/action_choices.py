@@ -622,4 +622,156 @@ def _biased_die_roll_1(die_state, choice):
     return choice(a=die_state, p=p)
 
 
+def make_trade_offer(from_player, offer, to_player):
+    """
+    Action for one player to make a trade offer to another player to trade cash or properties or both. Note that
+    the trade is processed only if to_player invokes accept_trade_offer when it is their turn next.
+    :param from_player: Player instance. The player who is offering to sell.
+    :param asset: purchaseable Location instance. The asset on which the offer is being made.
+    :param to_player: Player instance. The player to whom the offer is being made.
+    :param price: An integer. The price at which from_player is offering to sell asset to to_player
+    :return: 1 if the player succeeds in making the offer (doesn't mean the other player has to accept), otherwise -1
+    """
 
+    if to_player.is_trade_offer_outstanding:
+        logger.debug(to_player.player_name+' already has a trade offer. You must wait. Returning -1')
+        return -1
+
+    elif offer['cash_offered']<0 or offer['cash_wanted']<0:
+        logger.debug('Cash offered or cash wanted amounts cannot be negative. Only positive amounts allowed. Returning -1')
+        return -1
+
+    else:
+        logger.debug('Instantiating data structures outstanding_trade_offer and setting is_trade_offer_outstanding to True to enable trade offer to '+to_player.player_name)
+        if len(offer['property_set_offered'])==0:
+            logger.debug(from_player.player_name + ' has no properties to offer to ' + to_player.player_name)
+        else:
+            offer_prop_set = set()
+            for item in offer['property_set_offered']:
+                if item.owned_by != from_player:
+                    logger.debug(from_player.player_name+' player does not own ' + item.name +' . Hence cannot make an offer on this property.')
+                elif item.loc_class == 'real_estate' and (item.num_houses > 0 or item.num_hotels > 0):
+                    logger.debug(item.name+' has improvements. Clear them before making an offer! Not including this property in offer set')
+                else:
+                    offer_prop_set.add(item)
+            to_player.outstanding_trade_offer['property_set_offered'] = offer_prop_set
+
+        if len(offer['property_set_wanted'])==0:
+            logger.debug(from_player.player_name + ' wants no properties from ' + to_player.player_name)
+        else:
+            want_prop_set = set()
+            for item in offer['property_set_wanted']:
+                if item.owned_by != to_player:
+                    logger.debug(to_player.player_name+' player does not own ' + item.name +'. Invalid property requested.')
+                elif item.loc_class == 'real_estate' and (item.num_houses > 0 or item.num_hotels > 0):
+                    logger.debug(item.name+' has improvements. Can request for unimproved properties only. Not including this property in offer set')
+                else:
+                    want_prop_set.add(item)
+            to_player.outstanding_trade_offer['property_set_wanted'] = want_prop_set
+
+        to_player.outstanding_trade_offer['cash_offered'] = offer['cash_offered']
+        to_player.outstanding_trade_offer['cash_wanted'] = offer['cash_wanted']
+        to_player.outstanding_trade_offer['from_player'] = from_player
+        to_player.is_property_offer_outstanding = True
+        logger.debug('Offer has been made.')
+        return 1 # offer has been madehas no wanted
+
+
+def accept_trade_offer(player, current_gameboard):
+    """
+    Action for player to decide whether they should accept an outstanding property offer.
+    :param player: Player instance. player must decide whether to accept an outstanding phas no wantedroperty offer. If the offer is accepted,
+    we will begin property transfer.
+    :param current_gameboard: A dict. The global data structure representing the current game board.
+    :return: 1 if the property offer is accepted and property is successfully transferred, otherwise -1.
+    """
+    if not player.is_trade_offer_outstanding:
+        logger.debug(player.player_name+' does not have outstanding trade offers to accept. Returning -1')
+        return -1
+    else:
+        flag_cash_wanted = 0
+        flag_cash_offered = 1
+        flag_properties_offered = 1
+        flag_properties_wanted = 1
+        if player.outstanding_trade_offer['cash_wanted']<player.current_cash:
+            flag_cash_wanted = 1
+        for item in player.outstanding_trade_offer['property_set_wanted']:
+            if item.owned_by != player:
+                flag_properties_wanted = 0
+                logger.debug(player.player_name+ ' doesnot own ' + item.name + '. Cannot accept sell trade offer.')
+                break
+        for item in player.outstanding_trade_offer['property_set_offered']:
+            if item.owned_by != player.outstanding_trade_offer['from_player']:
+                flag_properties_offered = 0
+                logger.debug(player.outstanding_trade_offer['from_player'].player_name+ ' doesnot own ' + item.name + '. Cannot accept sell trade offer.')
+                break
+        if (flag_cash_offered and flag_cash_wanted and flag_properties_offered and flag_properties_wanted):
+            logger.debug('Initiating trade offer transfer...')
+            for item in player.outstanding_trade_offer['property_set_offered']:
+                func_asset = item
+                func = func_asset.transfer_property_between_players
+                func(player.outstanding_trade_offer['from_player'], player, current_gameboard)
+                # add to game history
+                current_gameboard['history']['function'].append(func)
+                params = dict()
+                params['self'] = func_asset
+                params['from_player'] = player.outstanding_trade_offer['from_player']
+                params['to_player'] = player
+                params['current_gameboard'] = current_gameboard
+                current_gameboard['history']['param'].append(params)
+                current_gameboard['history']['return'].append(None)
+
+            for item in player.outstanding_trade_offer['property_set_wanted']:
+                func_asset = item
+                func = func_asset.transfer_property_between_players
+                func(player, player.outstanding_trade_offer['from_player'], current_gameboard)
+                # add to game history
+                current_gameboard['history']['function'].append(func)
+                params = dict()
+                params['self'] = func_asset
+                params['from_player'] = player
+                params['to_player'] = player.outstanding_trade_offer['from_player']
+                params['current_gameboard'] = current_gameboard
+                current_gameboard['history']['param'].append(params)
+                current_gameboard['history']['return'].append(None)
+
+            player.charge_player(player.outstanding_trade_offer['cash_wanted'])
+            current_gameboard['history']['function'].append(player.charge_player)
+            params = dict()
+            params['self'] = player
+            params['amount'] = player.outstanding_trade_offer['cash_wanted']
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(None)
+
+            player.outstanding_trade_offer['from_player'].receive_cash(player.outstanding_trade_offer['cash_wanted'])
+            current_gameboard['history']['function'].append(player.outstanding_trade_offer['from_player'].receive_cash)
+            params = dict()
+            params['self'] = player.outstanding_trade_offer['from_player']
+            params['amount'] = player.outstanding_trade_offer['cash_wanted']
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(None)
+
+            player.receive_cash(player.outstanding_trade_offer['cash_offered'])
+            current_gameboard['history']['function'].append(player.receive_cash)
+            params = dict()
+            params['self'] = player
+            params['amount'] = player.outstanding_trade_offer['cash_offered']
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(None)
+
+            player.outstanding_trade_offer['from_player'].charge_player(player.outstanding_trade_offer['cash_offered'])
+            current_gameboard['history']['function'].append(player.outstanding_trade_offer['from_player'].charge_player)
+            params = dict()
+            params['self'] = player.outstanding_trade_offer['from_player']
+            params['amount'] = player.outstanding_trade_offer['cash_offered']
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(None)
+
+            logger.debug('Transaction successful. Nulling outstanding trade offers data structures and returning 1')
+            player.is_trade_offer_outstanding = False
+            player.outstanding_trade_offer['from_player'] = None
+            player.outstanding_trade_offer['property_set_offered'] = set()
+            player.outstanding_trade_offer['property_set_wanted'] = set()
+            player.outstanding_trade_offer['cash_wanted'] = 0
+            player.outstanding_trade_offer['cash_offered'] = 0
+            return 1
