@@ -11,13 +11,13 @@ from monopoly_simulator.agent import Agent
 import xlsxwriter
 import logging
 
-#delete existing log file before running the program
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
 
 file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+# file_handler = logging.FileHandler(log_file, mode='a')
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 
@@ -27,38 +27,41 @@ stream_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 
+
 def write_history_to_file(game_board, workbook):
     worksheet = workbook.add_worksheet()
     col = 0
     for key in game_board['history']:
-        if key=='param':
+        if key == 'param':
             col += 1
             row = 0
             worksheet.write(row, col, key)
-            worksheet.write(row, col+1, 'current_player')
+            worksheet.write(row, col + 1, 'current_player')
             for item in game_board['history'][key]:
-                worksheet.write(row+1, col, str(item))
+                worksheet.write(row + 1, col, str(item))
                 try:
-                    worksheet.write(row+1, col+1, item['player'].player_name)
+                    worksheet.write(row + 1, col + 1, item['player'].player_name)
                 except:
                     pass
                 row += 1
-            col+=1
+            col += 1
         else:
             col += 1
             row = 0
             worksheet.write(row, col, key)
             for item in game_board['history'][key]:
-                worksheet.write(row+1, col, str(item))
+                worksheet.write(row + 1, col, str(item))
                 row += 1
     workbook.close()
     print("History logged into history_log.xlsx file.")
+
 
 def disable_history(game_elements):
     game_elements['history'] = dict()
     game_elements['history']['function'] = list()
     game_elements['history']['param'] = list()
     game_elements['history']['return'] = list()
+
 
 def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     """
@@ -67,12 +70,18 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     :param np_seed: The numpy seed to use to control randomness.
     :return: None
     """
-    logger.debug("size of board "+ str(len(game_elements['location_sequence'])))
+    logger.debug("size of board " + str(len(game_elements['location_sequence'])))
     for i in range(len(game_elements['location_sequence'])):
         logger.debug(game_elements['location_sequence'][i].name)
-    logger.debug("start pos: " + str(game_elements['location_objects']['States Avenue'].start_position) + " end pos: " + str(game_elements['location_objects']['States Avenue'].end_position))
-    logger.debug("start pos: " + str(game_elements['location_objects']['Virginia Avenue'].start_position) + " end pos: " + str(game_elements['location_objects']['Virginia Avenue'].end_position))
-    logger.debug("start pos: " + str(game_elements['location_objects']['Pennsylvania Railroad'].start_position) + " end pos: " + str(game_elements['location_objects']['Pennsylvania Railroad'].end_position))
+    logger.debug(
+        "start pos: " + str(game_elements['location_objects']['States Avenue'].start_position) + " end pos: " + str(
+            game_elements['location_objects']['States Avenue'].end_position))
+    logger.debug(
+        "start pos: " + str(game_elements['location_objects']['Virginia Avenue'].start_position) + " end pos: " + str(
+            game_elements['location_objects']['Virginia Avenue'].end_position))
+    logger.debug("start pos: " + str(
+        game_elements['location_objects']['Pennsylvania Railroad'].start_position) + " end pos: " + str(
+        game_elements['location_objects']['Pennsylvania Railroad'].end_position))
     np.random.seed(np_seed)
     np.random.shuffle(game_elements['players'])
     game_elements['seed'] = np_seed
@@ -84,7 +93,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     # One reason to modify go_increment is if your decision agent is not aggressively trying to monopolize. Since go_increment
     # by default is 200 it can lead to runaway cash increases for simple agents like ours.
 
-    logger.debug('players will play in the following order: '+'->'.join([p.player_name for p in game_elements['players']]))
+    logger.debug(
+        'players will play in the following order: ' + '->'.join([p.player_name for p in game_elements['players']]))
     logger.debug('Beginning play. Rolling first die...')
     current_player_index = 0
     num_active_players = 4
@@ -94,7 +104,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
         workbook = xlsxwriter.Workbook(history_log_file)
 
     while num_active_players > 1:
-        # disable_history(game_elements) # comment this out when you want history to stay. Currently, it has high memory consumption, we are working to solve the problem (most likely due to deep copy run-off).
+        disable_history(
+            game_elements)  # comment this out when you want history to stay. Currently, it has high memory consumption, we are working to solve the problem (most likely due to deep copy run-off).
         current_player = game_elements['players'][current_player_index]
         while current_player.status == 'lost':
             current_player_index += 1
@@ -106,14 +117,14 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
         # till we get num_active_players skip turns in a row.
 
         skip_turn = 0
-        if current_player.make_pre_roll_moves(game_elements) == 2: # 2 is the special skip-turn code
+        if current_player.make_pre_roll_moves(game_elements) == 2:  # 2 is the special skip-turn code
             skip_turn += 1
         out_of_turn_player_index = current_player_index + 1
         out_of_turn_count = 0
-        while skip_turn != num_active_players and out_of_turn_count<=200:
+        while skip_turn != num_active_players and out_of_turn_count <= 200:
             out_of_turn_count += 1
             # print('checkpoint 1')
-            out_of_turn_player = game_elements['players'][out_of_turn_player_index%len(game_elements['players'])]
+            out_of_turn_player = game_elements['players'][out_of_turn_player_index % len(game_elements['players'])]
             if out_of_turn_player.status == 'lost':
                 out_of_turn_player_index += 1
                 continue
@@ -121,8 +132,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
             # add to game history
             game_elements['history']['function'].append(out_of_turn_player.make_out_of_turn_moves)
             params = dict()
-            params['self']=out_of_turn_player
-            params['current_gameboard']=game_elements
+            params['self'] = out_of_turn_player
+            params['current_gameboard'] = game_elements
             game_elements['history']['param'].append(params)
             game_elements['history']['return'].append(oot_code)
 
@@ -184,7 +195,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
             game_elements['history']['return'].append(None)
 
         else:
-            current_player.currently_in_jail = False # the player is only allowed to skip one turn (i.e. this one)
+            current_player.currently_in_jail = False  # the player is only allowed to skip one turn (i.e. this one)
 
         if current_player.current_cash < 0:
             code = current_player.agent.handle_negative_cash_balance(current_player, game_elements)
@@ -217,10 +228,11 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
         else:
             current_player.status = 'waiting_for_move'
 
-        current_player_index = (current_player_index+1)%len(game_elements['players'])
+        current_player_index = (current_player_index + 1) % len(game_elements['players'])
 
-        if diagnostics.max_cash_balance(game_elements) > 300000: # this is our limit for runaway cash for testing purposes only.
-                                                                 # We print some diagnostics and return if any player exceeds this.
+        if diagnostics.max_cash_balance(
+                game_elements) > 300000:  # this is our limit for runaway cash for testing purposes only.
+            # We print some diagnostics and return if any player exceeds this.
             diagnostics.print_asset_owners(game_elements)
             diagnostics.print_player_cash_balances(game_elements)
             return
@@ -230,14 +242,15 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     # let's print some numbers
     logger.debug('printing final asset owners: ')
     diagnostics.print_asset_owners(game_elements)
-    logger.debug('number of dice rolls: '+ str(num_die_rolls))
+    logger.debug('number of dice rolls: ' + str(num_die_rolls))
     logger.debug('printing final cash balances: ')
     diagnostics.print_player_cash_balances(game_elements)
 
     if winner:
-        logger.debug('We have a winner: '+ winner.player_name)
+        logger.debug('We have a winner: ' + winner.player_name)
+        return winner.player_name
 
-    return
+    return None
 
 
 def set_up_board(game_schema_file_path, player_decision_agents):
@@ -248,6 +261,7 @@ def set_up_board(game_schema_file_path, player_decision_agents):
 def inject_novelty(current_gameboard, novelty_schema=None):
     """
     Function for illustrating how we inject novelty
+    ONLY FOR ILLUSTRATIVE PURPOSES
     :param current_gameboard: the current gameboard into which novelty will be injected. This gameboard will be modified
     :param novelty_schema: the novelty schema json, read in from file. It is more useful for running experiments at scale
     rather than in functions like these. For the most part, we advise writing your novelty generation routines, just like
@@ -258,9 +272,10 @@ def inject_novelty(current_gameboard, novelty_schema=None):
 
     ###Below are examples of Level 1, Level 2 and Level 3 Novelties
     ###Uncomment only the Level of novelty that needs to run (i.e, either Level1 or Level 2 or Level 3). Do not mix up novelties from different levels.
+
     '''
     #Level 1 Novelty
-    
+
     numberDieNovelty = novelty_generator.NumberClassNovelty()
     numberDieNovelty.die_novelty(current_gameboard, 4, die_state_vector=[[1,2,3,4,5],[1,2,3,4],[5,6,7],[2,3,4]])
 
@@ -299,34 +314,60 @@ def inject_novelty(current_gameboard, novelty_schema=None):
     granularityNovelty.granularity_novelty(current_gameboard, current_gameboard['location_objects']['Baltic Avenue'], 6)
     granularityNovelty.granularity_novelty(current_gameboard, current_gameboard['location_objects']['States Avenue'], 20)
     granularityNovelty.granularity_novelty(current_gameboard, current_gameboard['location_objects']['Tennessee Avenue'], 27)
-    
+
     spatialNovelty = novelty_generator.SpatialRepresentationNovelty()
     spatialNovelty.color_reordering(current_gameboard, ['Boardwalk', 'Park Place'], 'Blue')
-    
+
     granularityNovelty.granularity_novelty(current_gameboard, current_gameboard['location_objects']['Park Place'], 52)
     '''
 
 
-# this is where everything begins. Assign decision agents to your players, set up the board and start simulating! You can
-# control any number of players you like, and assign the rest to the simple agent. We plan to release a more sophisticated
-# but still relatively simple agent soon.
+def play_game():
+    """
+    Use this function if you want to test a single game instance and control lots of things. For experiments, we will directly
+    call some of the functions in gameplay from test_harness.py.
+
+    This is where everything begins. Assign decision agents to your players, set up the board and start simulating! You can
+    control any number of players you like, and assign the rest to the simple agent. We plan to release a more sophisticated
+    but still relatively simple agent soon.
+    :return: String. the name of the player who won the game, if there was a winner, otherwise None.
+    """
+
+    player_decision_agents = dict()
+    # for p in ['player_1','player_3']:
+    #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
+    player_decision_agents['player_1'] = Agent(**background_agent_v1.decision_agent_methods)
+    player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
+    player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
+    player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
+    game_elements = set_up_board('monopoly_game_schema_v1-2.json',
+                                 player_decision_agents)
+    inject_novelty(game_elements)
+
+    winner = simulate_game_instance(game_elements)
+    logger.debug("GAME OVER")
+    return winner
+    # just testing history.
+    # print(len(game_elements['history']['function']))
+    # print(len(game_elements['history']['param']))
+    # print(len(game_elements['history']['return']))
 
 
-#delete existing log file before running the program
-player_decision_agents = dict()
-# for p in ['player_1','player_3']:
-#     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
-player_decision_agents['player_1'] = Agent(**background_agent_v1.decision_agent_methods)
-player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
-player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
-player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
-game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
-                             player_decision_agents)
-inject_novelty(game_elements)
+def play_game_in_tournament(game_seed, inject_novelty_function=None):
+    player_decision_agents = dict()
+    # for p in ['player_1','player_3']:
+    #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
+    player_decision_agents['player_1'] = Agent(**background_agent_v1.decision_agent_methods)
+    player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
+    player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
+    player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
+    game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
+                                 player_decision_agents)
+    if inject_novelty_function:
+        inject_novelty_function(game_elements)
 
-simulate_game_instance(game_elements)
-logger.debug("GAME OVER")
-#just testing history.
-# print(len(game_elements['history']['function']))
-# print(len(game_elements['history']['param']))
-# print(len(game_elements['history']['return']))
+    winner = simulate_game_instance(game_elements, np_seed=game_seed)
+    logger.debug("GAME OVER")
+    return winner
+
+    # play_game()
