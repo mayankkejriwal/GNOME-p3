@@ -5,14 +5,14 @@ logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
 
-file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
+#file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+#file_handler.setLevel(logging.DEBUG)
+#file_handler.setFormatter(formatter)
 
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 
-logger.addHandler(file_handler)
+#logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 
 
@@ -626,10 +626,9 @@ def make_trade_offer(from_player, offer, to_player):
     """
     Action for one player to make a trade offer to another player to trade cash or properties or both. Note that
     the trade is processed only if to_player invokes accept_trade_offer when it is their turn next.
-    :param from_player: Player instance. The player who is offering to sell.
-    :param asset: purchaseable Location instance. The asset on which the offer is being made.
+    :param from_player: Player instance. The player who is offering to make the trade offer.
+    :param offer: a dictionary with the trade requirements  - property_set_offered, property_set_wanted, cash_offered, cash_wanted
     :param to_player: Player instance. The player to whom the offer is being made.
-    :param price: An integer. The price at which from_player is offering to sell asset to to_player
     :return: 1 if the player succeeds in making the offer (doesn't mean the other player has to accept), otherwise -1
     """
 
@@ -674,14 +673,14 @@ def make_trade_offer(from_player, offer, to_player):
         to_player.outstanding_trade_offer['from_player'] = from_player
         to_player.is_property_offer_outstanding = True
         logger.debug('Offer has been made.')
-        return 1 # offer has been madehas no wanted
+        return 1 # offer has been made
 
 
 def accept_trade_offer(player, current_gameboard):
     """
-    Action for player to decide whether they should accept an outstanding property offer.
-    :param player: Player instance. player must decide whether to accept an outstanding phas no wantedroperty offer. If the offer is accepted,
-    we will begin property transfer.
+    Action for player to decide whether they should accept an outstanding trade offer.
+    :param player: Player instance. player must decide whether to accept an outstanding trade offer. If the offer is accepted,
+    we will begin property and cash transfers.
     :param current_gameboard: A dict. The global data structure representing the current game board.
     :return: 1 if the property offer is accepted and property is successfully transferred, otherwise -1.
     """

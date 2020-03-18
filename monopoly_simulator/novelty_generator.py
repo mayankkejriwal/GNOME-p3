@@ -9,15 +9,16 @@ logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
 
-file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
+#file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
+#file_handler.setLevel(logging.DEBUG)
+#file_handler.setFormatter(formatter)
 
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 
-logger.addHandler(file_handler)
+#logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
+
 """
 The novelty methods in here should be called after an initial game board has been set up, but before simulate has
 been called within gameplay. It is unsafe to introduce novelty in the middle of a 'game'. The novelties should
