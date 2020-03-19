@@ -10,22 +10,7 @@ from monopoly_simulator import novelty_generator
 from monopoly_simulator.agent import Agent
 import xlsxwriter
 import logging
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
-
-#file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
-#file_handler.setLevel(logging.DEBUG)
-#file_handler.setFormatter(formatter)
-
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
-
-#logger.addHandler(file_handler)
-logger.addHandler(stream_handler)
-
+logger = logging.getLogger('monopoly_simulator.logging_info.gameplay')
 
 def write_history_to_file(game_board, workbook):
     worksheet = workbook.add_worksheet()
@@ -339,7 +324,7 @@ def play_game():
     player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
     player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
     player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
-    game_elements = set_up_board('monopoly_game_schema_v1-2.json',
+    game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                                  player_decision_agents)
     inject_novelty(game_elements)
 
@@ -353,6 +338,7 @@ def play_game():
 
 
 def play_game_in_tournament(game_seed, inject_novelty_function=None):
+    logger.debug('seed used: ' + str(game_seed))
     player_decision_agents = dict()
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
@@ -369,4 +355,4 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
     logger.debug("GAME OVER")
     return winner
 
-play_game()
+    #play_game()

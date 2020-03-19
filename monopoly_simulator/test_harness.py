@@ -1,6 +1,9 @@
 import numpy as np
 from monopoly_simulator import gameplay
 from monopoly_simulator import novelty_generator
+from monopoly_simulator.logging_info import log_file_create
+import os
+import shutil
 
 def play_tournament_without_novelty(tournament_log_folder=None, meta_seed=5, num_games=100):
     """
@@ -15,13 +18,34 @@ def play_tournament_without_novelty(tournament_log_folder=None, meta_seed=5, num
     np.random.shuffle(big_list)
     tournament_seeds = big_list[0:num_games]
     winners = list()
-    for t in tournament_seeds:
-        winners.append(gameplay.play_game_in_tournament(t))
+    count = 1
 
+    folder_name = tournament_log_folder + 'meta_seed_' + str(meta_seed)
+    try:
+        os.makedirs(folder_name)
+    except:
+        print('Folder already exists. Clearing folder before logging new files.')
+        shutil.rmtree(folder_name)
+        os.makedirs(folder_name)
+
+    for t in tournament_seeds:
+        name_part = folder_name.split('/')
+        name = name_part[1] + '_' + name_part[2] + '_num_games_' + str(count) + '.log'
+        filename = folder_name + '/' + name
+        logger = log_file_create(filename)
+        winners.append(gameplay.play_game_in_tournament(t))
+        handlers_copy = logger.handlers[:]
+        for handler in handlers_copy:
+            logger.removeHandler(handler)
+            handler.close()
+            handler.flush()
+        count += 1
+
+    print(winners)
     print_win_ratio(winners)
 
 
-def play_tournament_with_novelty_1(tournament_log_folder='',meta_seed=5, num_games=100,novelty_index=23):
+def play_tournament_with_novelty_1(tournament_log_folder='', meta_seed=5, num_games=100, novelty_index=23):
     """
 
     :param tournament_log_folder:
@@ -35,15 +59,47 @@ def play_tournament_with_novelty_1(tournament_log_folder='',meta_seed=5, num_gam
     np.random.shuffle(big_list)
     tournament_seeds = big_list[0:num_games]
     winners = list()
+    count = 1
+
+    folder_name = tournament_log_folder + 'meta_seed_' + str(meta_seed) + '/novelty_index_' + str(novelty_index)
+    try:
+        os.makedirs(folder_name)
+    except:
+        print('Folder already exists. Clearing folder before logging new files.')
+        shutil.rmtree(folder_name)
+        os.makedirs(folder_name)
+
     for t in range(0,novelty_index):
+        name_part = folder_name.split('/')
+        name = name_part[1] + '_' + name_part[2] + '_' + name_part[3] + '_without_novelty' + '_num_games_' + str(count) + '.log'
+        filename = folder_name + '/' + name
+        logger = log_file_create(filename)
         winners.append(gameplay.play_game_in_tournament(tournament_seeds[t]))
+        handlers_copy = logger.handlers[:]
+        for handler in handlers_copy:
+            logger.removeHandler(handler)
+            handler.close()
+            handler.flush()
+        count += 1
+
 
     print('pre-novelty stats:')
     print_win_ratio(winners)
 
     new_winners = list()
     for t in range(novelty_index, len(tournament_seeds)):
+        name_part = folder_name.split('/')
+        name = name_part[1] + '_' + name_part[2] + '_' + name_part[3] + '_with_novelty' + '_num_games_' + str(count) + '.log'
+        filename = folder_name + '/' + name
+        logger = log_file_create(filename)
         new_winners.append(gameplay.play_game_in_tournament(tournament_seeds[t], class_novelty_1))
+        handlers_copy = logger.handlers[:]
+        for handler in handlers_copy:
+            logger.removeHandler(handler)
+            handler.close()
+            handler.flush()
+        count += 1
+
 
     print('pre-novelty stats:')
     print_win_ratio(winners)
@@ -80,4 +136,7 @@ def print_win_ratio(winners):
     for w, v in win_dict.items():
         print(w, ' has win-ratio ', str(v * 1.0 / total))
 
-play_tournament_with_novelty_1()
+
+#play_tournament_without_novelty('../tournament_without_novelty/')
+
+play_tournament_with_novelty_1('../tournament_with_novelty/')

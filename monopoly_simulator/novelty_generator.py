@@ -3,21 +3,7 @@ from monopoly_simulator.novelty_functions import *
 import copy
 import sys
 import logging
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
-
-#file_handler = logging.FileHandler('gameplay_logs.log', mode='a')
-#file_handler.setLevel(logging.DEBUG)
-#file_handler.setFormatter(formatter)
-
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
-
-#logger.addHandler(file_handler)
-logger.addHandler(stream_handler)
+logger = logging.getLogger('monopoly_simulator.logging_info.novelty_gen')
 
 """
 The novelty methods in here should be called after an initial game board has been set up, but before simulate has
