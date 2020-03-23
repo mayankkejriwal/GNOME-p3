@@ -13,6 +13,11 @@ def play_tournament_without_novelty(tournament_log_folder=None, meta_seed=5, num
     :param num_games: The number of games to simulate in a tournament
     :return: None. Will print out the win-loss metrics, and will write out game logs
     """
+
+    if not tournament_log_folder:
+        print("No logging folder specified, cannot log tournaments. Provide a logging folder path.")
+        raise Exception
+
     np.random.seed(meta_seed)
     big_list = list(range(0,1000000))
     np.random.shuffle(big_list)
@@ -137,6 +142,6 @@ def print_win_ratio(winners):
         print(w, ' has win-ratio ', str(v * 1.0 / total))
 
 
-#play_tournament_without_novelty('../tournament_without_novelty/')
+play_tournament_without_novelty('../tournament_without_novelty/')
 
-play_tournament_with_novelty_1('../tournament_with_novelty/')
+#play_tournament_with_novelty_1('../tournament_with_novelty/')

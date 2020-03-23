@@ -1,4 +1,10 @@
 
+GAME LOGGING:
+
+GNOME-p3 currently supports logging of gameplay in a logfile as well as on the console.
+A file handler and stream handler takes care of the above functionalities respectively.
+This has been implemented in the ../monopoly_simulator/logging_info.py file. 
+Each tournament is logged into a seperate folder based on the use of novelty and meta_seeds.
 
 MONOPOLY SIMULATOR:
 

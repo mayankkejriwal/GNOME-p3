@@ -9,8 +9,12 @@ from monopoly_simulator import diagnostics
 from monopoly_simulator import novelty_generator
 from monopoly_simulator.agent import Agent
 import xlsxwriter
+from monopoly_simulator.logging_info import log_file_create
+import os
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.gameplay')
+
+logger = logging.getLogger('monopoly_simulator.logging_info')
+
 
 def write_history_to_file(game_board, workbook):
     worksheet = workbook.add_worksheet()
@@ -317,6 +321,13 @@ def play_game():
     :return: String. the name of the player who won the game, if there was a winner, otherwise None.
     """
 
+    try:
+        os.makedirs('../single_tournament/')
+        print('Creating folder and logging gameplay.')
+    except:
+        print('Logging gameplay.')
+
+    logger = log_file_create('../single_tournament/seed_6.log')
     player_decision_agents = dict()
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
@@ -330,6 +341,12 @@ def play_game():
 
     winner = simulate_game_instance(game_elements)
     logger.debug("GAME OVER")
+
+    handlers_copy = logger.handlers[:]
+    for handler in handlers_copy:
+            logger.removeHandler(handler)
+            handler.close()
+            handler.flush()
     return winner
     # just testing history.
     # print(len(game_elements['history']['function']))
@@ -355,4 +372,4 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
     logger.debug("GAME OVER")
     return winner
 
-    #play_game()
+#play_game()

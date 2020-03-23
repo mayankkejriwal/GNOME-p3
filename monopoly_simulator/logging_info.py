@@ -15,7 +15,12 @@ def log_file_create(filename):
     stream_handler.setFormatter(formatter)
 
     logger.addHandler(file_handler)
-    logger.addHandler(stream_handler)
+
+    """
+    Currently logging gameplay only in log file. Uncomment below line to log gameplay on console as well. 
+    """
+    #logger.addHandler(stream_handler)
+
     return logger
 
 
