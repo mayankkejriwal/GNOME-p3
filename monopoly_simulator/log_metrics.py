@@ -101,7 +101,6 @@ def print_win_ratio(winners_matrix, player_name=None):
             if list_l[index]==1 and ('player_' + str(index + 1)) in win_dict:
                 win_dict['player_' + str(index + 1)] += 1
                 total += 1
-    print(total)
     if not player_name:
         for w, v in win_dict.items():
             print(w, ' has win-ratio ', str(v * 1.0 / total))
@@ -153,6 +152,6 @@ If no player name is specified, then statistics of all the players will be print
 '''
 
 
-compute_win_loss_ratio("../tournament_logs/", 'player_1')
+compute_win_loss_ratio("../tournament_logs/")
 #compute_average_rank_of_player("../tournament_logs/tournament_without_novelty_4")
 #compute_average_rank_of_player("../tournament_logs/", 'player_1')
