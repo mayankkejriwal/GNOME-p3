@@ -188,10 +188,11 @@ def _build_decision_agent_methods_dict():
     ans = dict()
     ans['handle_negative_cash_balance'] = handle_negative_cash_balance
     ans['make_pre_roll_move'] = make_pre_roll_move
-    ans['make_out_of_turn_move'] =  make_out_of_turn_move
+    ans['make_out_of_turn_move'] = make_out_of_turn_move
     ans['make_post_roll_move'] = make_post_roll_move
     ans['make_buy_property_decision'] = make_buy_property_decision
     ans['make_bid'] = make_bid
+    ans['type'] = "decision_agent_methods"
     return ans
 
 

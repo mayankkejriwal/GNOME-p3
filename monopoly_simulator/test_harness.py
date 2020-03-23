@@ -4,6 +4,8 @@ from monopoly_simulator import novelty_generator
 from monopoly_simulator.logging_info import log_file_create
 import os
 import shutil
+import json
+
 
 def play_tournament_without_novelty(tournament_log_folder=None, meta_seed=5, num_games=100):
     """
@@ -25,18 +27,31 @@ def play_tournament_without_novelty(tournament_log_folder=None, meta_seed=5, num
     winners = list()
     count = 1
 
-    folder_name = tournament_log_folder + 'meta_seed_' + str(meta_seed)
+    folder_name = "../tournament_logs" + tournament_log_folder
     try:
         os.makedirs(folder_name)
+        print('Logging gameplay')
     except:
-        print('Folder already exists. Clearing folder before logging new files.')
+        print('Given logging folder already exists. Clearing folder before logging new files.')
         shutil.rmtree(folder_name)
         os.makedirs(folder_name)
 
+    metadata_dict = {
+        "function": "play_tournament_without_novelty",
+        "parameters": {
+            "meta_seed": meta_seed,
+            "num_game": num_games
+        }
+    }
+
+    json_filename = folder_name + "tournament_meta_data.json"
+    out_file = open(json_filename, "w")
+    json.dump(metadata_dict, out_file, indent=4)
+    out_file.close()
+
     for t in tournament_seeds:
-        name_part = folder_name.split('/')
-        name = name_part[1] + '_' + name_part[2] + '_num_games_' + str(count) + '.log'
-        filename = folder_name + '/' + name
+        print('Logging gameplay for seed: ', str(t))
+        filename = folder_name + "meta_seed_" + str(meta_seed) + '_num_games_' + str(count) + '.log'
         logger = log_file_create(filename)
         winners.append(gameplay.play_game_in_tournament(t))
         handlers_copy = logger.handlers[:]
@@ -47,10 +62,9 @@ def play_tournament_without_novelty(tournament_log_folder=None, meta_seed=5, num
         count += 1
 
     print(winners)
-    print_win_ratio(winners)
 
 
-def play_tournament_with_novelty_1(tournament_log_folder='', meta_seed=5, num_games=100, novelty_index=23):
+def play_tournament_with_novelty_1(tournament_log_folder=None, meta_seed=5, num_games=100, novelty_index=23):
     """
 
     :param tournament_log_folder:
@@ -59,6 +73,11 @@ def play_tournament_with_novelty_1(tournament_log_folder='', meta_seed=5, num_ga
     :param novelty_index: an integer between 1 and num_games-1. We will play this many games BEFORE introducing novelty.
     :return:
     """
+
+    if not tournament_log_folder:
+        print("No logging folder specified, cannot log tournaments. Provide a logging folder path.")
+        raise Exception
+
     np.random.seed(meta_seed)
     big_list = list(range(0, 1000000))
     np.random.shuffle(big_list)
@@ -66,18 +85,32 @@ def play_tournament_with_novelty_1(tournament_log_folder='', meta_seed=5, num_ga
     winners = list()
     count = 1
 
-    folder_name = tournament_log_folder + 'meta_seed_' + str(meta_seed) + '/novelty_index_' + str(novelty_index)
+    folder_name = "../tournament_logs" + tournament_log_folder
     try:
         os.makedirs(folder_name)
+        print('Logging gameplay')
     except:
-        print('Folder already exists. Clearing folder before logging new files.')
+        print('Given logging folder already exists. Clearing folder before logging new files.')
         shutil.rmtree(folder_name)
         os.makedirs(folder_name)
 
+    metadata_dict = {
+        "function": "play_tournament_with_novelty_1",
+        "parameters": {
+            "meta_seed": meta_seed,
+            "novelty_index": novelty_index,
+            "num_game": num_games
+        }
+    }
+
+    json_filename = folder_name + "tournament_meta_data.json"
+    out_file = open(json_filename, "w")
+    json.dump(metadata_dict, out_file, indent=4)
+    out_file.close()
+
     for t in range(0,novelty_index):
-        name_part = folder_name.split('/')
-        name = name_part[1] + '_' + name_part[2] + '_' + name_part[3] + '_without_novelty' + '_num_games_' + str(count) + '.log'
-        filename = folder_name + '/' + name
+        print('Logging gameplay for seed: ', str(t))
+        filename = folder_name + "meta_seed_" + str(meta_seed) + '_without_novelty' + '_num_games_' + str(count) + '.log'
         logger = log_file_create(filename)
         winners.append(gameplay.play_game_in_tournament(tournament_seeds[t]))
         handlers_copy = logger.handlers[:]
@@ -87,15 +120,10 @@ def play_tournament_with_novelty_1(tournament_log_folder='', meta_seed=5, num_ga
             handler.flush()
         count += 1
 
-
-    print('pre-novelty stats:')
-    print_win_ratio(winners)
-
     new_winners = list()
     for t in range(novelty_index, len(tournament_seeds)):
-        name_part = folder_name.split('/')
-        name = name_part[1] + '_' + name_part[2] + '_' + name_part[3] + '_with_novelty' + '_num_games_' + str(count) + '.log'
-        filename = folder_name + '/' + name
+        print('Logging gameplay for seed: ', str(t))
+        filename = folder_name + "meta_seed_" + str(meta_seed) + '_with_novelty' + '_num_games_' + str(count) + '.log'
         logger = log_file_create(filename)
         new_winners.append(gameplay.play_game_in_tournament(tournament_seeds[t], class_novelty_1))
         handlers_copy = logger.handlers[:]
@@ -105,16 +133,11 @@ def play_tournament_with_novelty_1(tournament_log_folder='', meta_seed=5, num_ga
             handler.flush()
         count += 1
 
-
-    print('pre-novelty stats:')
-    print_win_ratio(winners)
-    print('post-novelty stats:')
-    print_win_ratio(new_winners)
-
+    print('pre_novelty winners', winners)
+    print('post_novelty_winners', new_winners)
 
 
 def class_novelty_1(current_gameboard):
-
     classCardNovelty = novelty_generator.TypeClassNovelty()
     novel_cc = dict()
     novel_cc["street_repairs"] = "alternate_contingency_function_1"
@@ -122,26 +145,13 @@ def class_novelty_1(current_gameboard):
     novel_chance["general_repairs"] = "alternate_contingency_function_1"
     classCardNovelty.card_novelty(current_gameboard, novel_cc, novel_chance)
 
-def print_win_ratio(winners):
-    """
 
-    :param winners: a list of player names (can also contain None, these will not be counted) who have won the game played at that index in the tourney.
-    :return: None. Prints out the win ratios of the different players in winners.
-    """
-    win_dict = dict()
-    win_dict['player_1'] = 0
-    win_dict['player_2'] = 0
-    win_dict['player_3'] = 0
-    win_dict['player_4'] = 0
-    total = 0
-    for w in winners:
-        if w in win_dict:
-            win_dict[w] += 1
-            total += 1
-    for w, v in win_dict.items():
-        print(w, ' has win-ratio ', str(v * 1.0 / total))
+#All the tournaments get logged in seperate folders inside ../tournament_logs folder
+try:
+    os.makedirs("../tournament_logs/")
+except:
+    pass
 
-
-play_tournament_without_novelty('../tournament_without_novelty/')
-
-#play_tournament_with_novelty_1('../tournament_with_novelty/')
+#Specify the name of the folder in which the tournament games has to be logged in the following format: "/name_of_your_folder/"
+play_tournament_without_novelty('/tournament_without_novelty_4/', meta_seed=10, num_games=10)
+#play_tournament_with_novelty_1('/tournament_with_novelty/')
