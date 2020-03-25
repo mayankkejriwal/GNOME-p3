@@ -165,6 +165,9 @@ def _initialize_cards(game_elements, game_schema):
     community_chest_card_objects = dict() # key is a community chest card name and value is an object
     chance_card_objects = dict() # key is a chance card name and value is an object
 
+    picked_community_chest_cards = []  #list of all picked community chest cards throughout the gameplay
+    picked_chance_cards = []  #list of all picked chance cards throughout the gameplay
+
     # note that the number of keys in community_chest_card_objects may be different from the number of items in
     # community_chest_cards (same for chance), since if there is more than one card with the same name, we will end up having
     # fewer keys in the _objects data structure. In the _cards data structure we directly add the objects, so even
@@ -300,6 +303,8 @@ def _initialize_cards(game_elements, game_schema):
     game_elements['community_chest_cards'] = community_chest_cards
     game_elements['chance_card_objects'] = chance_card_objects
     game_elements['community_chest_card_objects'] = community_chest_card_objects
+    game_elements['picked_chance_cards'] = picked_chance_cards
+    game_elements['picked_community_chest_cards'] = picked_community_chest_cards
 
 
 def _initialize_players(game_elements, game_schema, player_decision_agents):

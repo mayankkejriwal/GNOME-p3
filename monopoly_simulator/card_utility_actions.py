@@ -79,6 +79,7 @@ def pick_card_from_community_chest(player, current_gameboard):
     set_cc_cards_copy = current_gameboard['community_chest_cards'].copy()
     list_community_chest_cards = _set_to_sorted_list_func(set_cc_cards_copy)
     card = card_rand.choice(list_community_chest_cards)
+    current_gameboard['picked_community_chest_cards'].append(current_gameboard['community_chest_card_objects'][card.name])
     # card = card_rand.choice(list(current_gameboard['community_chest_cards']))
     current_gameboard['card_seed'] += 1
     logger.debug(player.player_name+' picked card '+card.name)
@@ -118,6 +119,7 @@ def pick_card_from_chance(player, current_gameboard):
     set_chance_cards_copy = current_gameboard['chance_cards'].copy()
     list_chance_cards = _set_to_sorted_list_func(set_chance_cards_copy)
     card = card_rand.choice(list_chance_cards)
+    current_gameboard['picked_chance_cards'].append(current_gameboard['chance_card_objects'][card.name])
     # card = card_rand.choice(list(current_gameboard['chance_cards']))
     current_gameboard['card_seed'] += 1
     logger.debug(player.player_name+ ' picked card '+ card.name)
