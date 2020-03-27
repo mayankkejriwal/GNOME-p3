@@ -358,6 +358,25 @@ def identify_property_trade_wanted_from_player(player, current_gameboard):
 
 
 def curate_trade_offer(player, potential_offer_list, potential_request_list, current_gameboard, purpose_flag):
+    """
+    Generates a trade offer from the potential offer list, potential request list and the purpose indicated by
+    the purpose flag
+    :param player: player who wanted to make the trade offer
+    :param potential_offer_list: List of potential property offers that can be made to other players because they are lone properties
+    for me and will result in a monopoly to the player to whom it is being offered. These offers are sorted in descending order of the
+    amount of cash I'd get if they accept the offer. The first property yields me the most cash.
+    :param potential_request_list: List of potential properties that I would like to buy because they are lone properties for the players
+    to whom I raise a buy request and will lead me into getting a monopoly. These are sorted in the ascending order of the amount I am willing
+    to pay for the property. The property that cost me the least is on the top of the list.
+    :param current_gameboard:
+    :purpose_flag: indicates the purpose of making the trade.
+    purpose_flag=1 implies that it is purely a make_sell_property_offer because
+    I am urgently in need of cash or I am trying to see if I can get to sell one of my lone properties at a high premium because the other
+    player gets a monopoly.
+    purpose_flag=2 implies that it can be a buy offer or exchange of properties and cash to increase number of monopolies.
+    :return: a parameter dictionary or None. The parameter dictionary, if returned, can be directly sent into
+    action_choices.make_sell_property_offer by the calling function.
+    """
     param = dict()
     trade_offer = dict()
     trade_offer['property_set_offered'] = set()
