@@ -639,6 +639,7 @@ def make_trade_offer(from_player, offer, to_player):
                     logger.debug(item.name+' has improvements. Clear them before making an offer! Not including this property in offer set')
                 else:
                     offer_prop_set.add(item)
+            logger.debug(from_player.player_name + ' wants to offer properties to ' + to_player.player_name + ' for cash = ' + str(offer['cash_wanted']))
             to_player.outstanding_trade_offer['property_set_offered'] = offer_prop_set
 
         if len(offer['property_set_wanted'])==0:
@@ -652,12 +653,13 @@ def make_trade_offer(from_player, offer, to_player):
                     logger.debug(item.name+' has improvements. Can request for unimproved properties only. Not including this property in offer set')
                 else:
                     want_prop_set.add(item)
+            logger.debug(from_player.player_name + ' wants properties from ' + to_player.player_name + ' by offering cash = ' + str(offer['cash_offered']))
             to_player.outstanding_trade_offer['property_set_wanted'] = want_prop_set
 
         to_player.outstanding_trade_offer['cash_offered'] = offer['cash_offered']
         to_player.outstanding_trade_offer['cash_wanted'] = offer['cash_wanted']
         to_player.outstanding_trade_offer['from_player'] = from_player
-        to_player.is_property_offer_outstanding = True
+        to_player.is_trade_offer_outstanding = True
         logger.debug('Offer has been made.')
         return 1 # offer has been made
 

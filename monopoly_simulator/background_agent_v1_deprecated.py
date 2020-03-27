@@ -108,46 +108,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
     The dictionary must exactly contain the keys and expected value types expected by that action in
     action_choices
     """
-
-    '''
-    NOTE: The background agent that could make_sell_property_offer is deprecated (available as background_agent_v1_deprecated.py)
-    This version of the agent can only make_trade_offer and accept trade offer. Trade involves buy or sell or exchange property offers.
-    Accept_sell_property_offer function is still available in case some different agent decides to make a sell property offer.
-    Ideally, accept_sell_property_offer() function should never enter allowable moves.
-    Make sell property offer can be replicated by making a trade offer that only offers to sell properties in return for cash
-    and doesnot involve a buy property or exchange property offer.
-    A buy property offer can be duplicated by including only requested properties by offering cash without offering properties.
-    Properties and cash can be exchanged which lets both players get an advantage of increasing their respective number of monopolies.
-    This version of the agent background_agent_v1 only supports making sell property offers in return for cash via make_trade_offer. 
-    Buy and exchange property offers are not involved in the trade.
-    '''
-    if action_choices.accept_trade_offer in allowable_moves:
-        param = dict()
-        param['player'] = player
-        param['current_gameboard'] = current_gameboard
-        logger.debug(player.player_name+ ': Should I accept the offer by '+player.outstanding_trade_offer['from_player'].player_name+' to buy '+\
-            list(player.outstanding_trade_offer['property_set_offered'])[0].name+' for '+str(player.outstanding_trade_offer['cash_wanted'])+'?')
-        logger.debug('('+player.player_name+' currently has cash balance of '+str(player.current_cash)+')')
-        if list(player.outstanding_trade_offer['property_set_offered'])[0].is_mortgaged or player.outstanding_trade_offer['cash_wanted']>player.current_cash:
-            pass # ignore the offer if the property is mortgaged or will result in insolvency. This pass doesn't require 'filling' in.
-        elif player.current_cash-player.outstanding_trade_offer['cash_wanted'] >= current_gameboard['go_increment'] and \
-            player.outstanding_trade_offer['cash_wanted']<=list(player.outstanding_trade_offer['property_set_offered'])[0].price:
-            # 1. we can afford it, and it's at or below market rate so let's buy it
-            logger.debug(player.player_name+ ': I am accepting the offer to buy '+list(player.outstanding_trade_offer['property_set_offered'])[0].name+' since I can afford' \
-                                                    'it and it is being offered at or below market rate.')
-            player.agent._agent_memory['previous_action'] = action_choices.accept_sell_property_offer
-            return (action_choices.accept_trade_offer, param)
-        elif agent_helper_functions.will_property_complete_set(player, list(player.outstanding_trade_offer['property_set_offered'])[0],current_gameboard):
-            # 2. less affordable, but we stand to gain by monopoly
-            if player.current_cash - player.outstanding_trade_offer['cash_wanted'] >= current_gameboard['go_increment']/2: # risky, but worth it
-                logger.debug(player.player_name+ ': I am accepting the offer to buy '+ list(player.outstanding_trade_offer['property_set_offered'])[0].name+ ' since I can afford ' \
-                                   'it (albeit barely so) and it will let me complete my color set.')
-                player.agent._agent_memory['previous_action'] = action_choices.accept_trade_offer
-                return (action_choices.accept_trade_offer, param)
-
     if action_choices.accept_sell_property_offer in allowable_moves:
-        ## Ideally accept_sell_offer should never enter allowable moves since henceforth make_trade_offer also takes care of make_sell_offer and
-        ## accept_trade_offer takes care of accept_sell_offer.
         param = dict()
         param['player'] = player
         param['current_gameboard'] = current_gameboard
@@ -197,34 +158,27 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
 
 
     else: # it is our current move. We should raise money if necessary, especially if we're low on cash.
-        if player.current_cash < current_gameboard['go_increment'] and action_choices.make_trade_offer in allowable_moves:
-            # let's try to see if we can sell property to other players at a premium using make_trade_offer without wanting any properties
+        if player.current_cash < current_gameboard['go_increment'] and \
+            action_choices.make_sell_property_offer in allowable_moves: # let's try to see if we can sell property to other players at a premium
             # the current agent does not try to raise money any other way. The reason is that selling houses, hotels, properties
             # or mortgaging properties are all available to us both in post-roll and also in handle_negative_cash_balance. A more proactive
             # agent (which isn't us) may want to make sure cash reserves are high before rolling the dice. Similarly, a more opportunistic
             # agent may choose to make a sell offer even if cash reserves aren't too low.
-            potential_offer_list = agent_helper_functions.identify_property_trade_offer_to_player(player, current_gameboard)
-            potential_request_list = None
-            param = agent_helper_functions.curate_trade_offer(player, potential_offer_list, potential_request_list, current_gameboard, purpose_flag=1)
-            if param and player.agent._agent_memory['previous_action'] != action_choices.make_trade_offer: # we only make one offer per turn. Otherwise we'd
-                # be stuck in a loop
-                logger.debug(player.player_name+ ': I am making an offer to trade '+list(param['offer']['property_set_offered'])[0].name+' to '+
-                         param['to_player'].player_name+' for '+str(param['offer']['cash_wanted'])+' dollars')
-                logger.debug(param['offer'])
-                player.agent._agent_memory['previous_action'] = action_choices.make_trade_offer
-                return (action_choices.make_trade_offer, param)
-        elif action_choices.make_trade_offer in allowable_moves: # let's try to see if we can sell property to other players at an insane premium
+                param = agent_helper_functions.identify_sale_opportunity_to_player(player, current_gameboard)
+                if param and player.agent._agent_memory['previous_action'] != action_choices.make_sell_property_offer: # we only make one offer per turn. Otherwise we'd
+                    # be stuck in a loop
+                    logger.debug(player.player_name+ ': I am making an offer to sell '+param['asset'].name+' to '+param['to_player'].player_name+'for '+str(param['price'])+' dollars')
+                    player.agent._agent_memory['previous_action'] = action_choices.make_sell_property_offer
+                    return (action_choices.make_sell_property_offer, param)
+        elif action_choices.make_sell_property_offer in allowable_moves: # let's try to see if we can sell property to other players at an insane premium
             # even though we don't 'need' the money
-            potential_offer_list = agent_helper_functions.identify_property_trade_offer_to_player(player, current_gameboard)
-            potential_request_list = None
-            param = agent_helper_functions.curate_trade_offer(player, potential_offer_list, potential_request_list, current_gameboard, purpose_flag=1)
-            if param and player.agent._agent_memory['previous_action'] != action_choices.make_trade_offer: # we only make one offer per turn. Otherwise we'd
+            param = agent_helper_functions.identify_sale_opportunity_to_player(player, current_gameboard)
+            if param and player.agent._agent_memory['previous_action'] != action_choices.make_sell_property_offer:  # we only make one offer per turn. Otherwise we'd
                 # be stuck in a loop
-                logger.debug(player.player_name+ ': I am making an offer to trade '+list(param['offer']['property_set_offered'])[0].name+' to '+
-                         param['to_player'].player_name+' for '+str(param['offer']['cash_wanted'])+' dollars')
-                logger.debug(param['offer'])
-                player.agent._agent_memory['previous_action'] = action_choices.make_trade_offer
-                return (action_choices.make_trade_offer, param)
+                logger.debug(player.player_name+ ': I am making an offer to sell '+ param['asset'].name+ ' to '+ param[
+                    'to_player'].player_name+ 'for '+str(param['price'])+' dollars')
+                player.agent._agent_memory['previous_action'] = action_choices.make_sell_property_offer
+                return (action_choices.make_sell_property_offer, param)
 
 
     # if we ran the gamut, and did not return, then it's time to skip turn or conclude actions

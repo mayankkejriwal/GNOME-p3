@@ -13,9 +13,13 @@ def will_property_complete_set(player, asset, current_gameboard):
         if asset.loc_class == 'railroad':
             if player.num_railroads_possessed == 3:
                 return True
+            else:
+                return False
         elif asset.loc_class == 'utility':
             if player.num_utilities_possessed == 1:
                 return True
+            else:
+                return False
         else:
             logger.error('This asset does not have a color and is neither utility nor railroad')
             logger.error("Exception")
@@ -257,8 +261,177 @@ def asset_incremental_improvement_rent(asset):
         return asset.rent_1_house - (asset.rent*2) # remember, if the house can be improved, then it is monopolized, so twice the rent is being charged even without houses.
 
 
+def identify_property_trade_offer_to_player(player, current_gameboard):
+    """
+    Identify an opportunity to sell a property currently owned by player to another player by making a
+    trade offer. This is a 'strategic' function; there
+    are many other ways/strategies to identify such sales than the one we use here. All we do is identify if
+    there is a player who needs a single property to complete a full color set and if that property is a 'lone'
+    property for us. If such a player exists for some such
+    property that we own, we offer it to the player at 50% markup. We do not offer mortgaged properties for sale.
+    For simplicity, we do not offer railroads or utilities for sale either. Other agents may consider more sophisticated
+    strategies to handle railroads and utilities.
+    :param player:
+    :param current_gameboard:
+    :return: a parameter dictionary or None. The parameter dictionary, if returned, can be directly sent into
+    action_choices.make_sell_property_offer by the calling function.
+    """
+    potentials = list()
+    for a in player.assets:
+        if a.loc_class != 'real_estate' or a.is_mortgaged:
+            continue
+        if a.color in player.full_color_sets_possessed:
+            continue
+        if is_property_lone(player, a):
+            for p in current_gameboard['players']:
+                if p == player or p.status == 'lost':
+                    continue
+                elif will_property_complete_set(p, a, current_gameboard):
+                    # we make an offer!
+                    param = dict()
+                    param['from_player'] = player
+                    param['asset'] = a
+                    param['to_player'] = p
+                    param['price'] = a.price*1.5 # 50% markup on market price.
+                    if param['price'] < param['to_player'].current_cash / 2:
+                        param['price'] = param['to_player'].current_cash / 2  # how far would you go for a monopoly?
+                    elif param['price'] > param['to_player'].current_cash:
+                        # no point offering this to the player; they don't have money.
+                        continue
+                    potentials.append((param, param['price']))
+
+    if not potentials:
+        return None
+    else:
+        sorted_potentials = sorted(potentials, key=lambda x: x[1], reverse=True)  # sort in descending order
+        return sorted_potentials
 
 
+def identify_property_trade_wanted_from_player(player, current_gameboard):
+    """
+    Identify an opportunity to buy a property currently owned another player by making a
+    trade offer for the purpose of increasing the number of monopolies. This is a 'strategic' function; there
+    are many other ways/strategies to identify such sales than the one we use here. All we do is identify if
+    there is a player who has a lone property which will help us acquire a monopoly for that color group.
+    If such a player exists for some such
+    property, we request to buy it from the player using trading strategies based on the situation.
+    We do not request to buy mortgaged properties.
+    For simplicity, we do not request for railroads or utilities either. Other agents may consider more sophisticated
+    strategies to handle railroads and utilities.
+    :param player:
+    :param current_gameboard:
+    :return: a parameter dictionary or None. The parameter dictionary, if returned, can be directly sent into
+    action_choices.make_sell_property_offer by the calling function.
+    """
+    potentials = list()
+    for p in current_gameboard['players']:
+        if p == player or p.status == 'lost':
+            continue
+        else:
+            for a in p.assets:
+                if a.loc_class != 'real_estate' or a.is_mortgaged:
+                    continue
+                if a.color in p.full_color_sets_possessed:
+                    continue
+                if is_property_lone(p, a):
+                    if will_property_complete_set(player, a, current_gameboard):
+                        # we request for the property!
+                        param = dict()
+                        param['from_player'] = p
+                        param['asset'] = a
+                        param['to_player'] = player
+                        param['price'] = a.price*0.75 # willing to buy at 0.75 times the market price since other properties leading to monopoly are being offered
+                        # and this is a good enough incentive to release a lone property at the advantage of gaining a monopoly. Hence only 0.75*market_price is offered.
+                        #But if I have no properties to offer to the other player while curating the trade offer in the curate_trade_offer function,
+                        # then this basically becomes a buy offer and the price offered will be higher than the market price since the other player has no other incentive
+                        # to sell it to me besides a price better than the market price. (this is taken care of in the curate trade offer.)
+                        if param['price'] > player.current_cash:
+                            # I don't have money to buy this property even at a reduced price.
+                            continue
+                        potentials.append((param, param['price']))
+
+    if not potentials:
+        return None
+    else:
+        sorted_potentials = sorted(potentials, key=lambda x: x[1], reverse=False)  # sort in ascending order
+        return sorted_potentials
 
 
+def curate_trade_offer(player, potential_offer_list, potential_request_list, current_gameboard, purpose_flag):
+    param = dict()
+    trade_offer = dict()
+    trade_offer['property_set_offered'] = set()
+    trade_offer['property_set_wanted'] = set()
+    trade_offer['cash_offered'] = 0
+    trade_offer['cash_wanted'] = 0
+    if purpose_flag == 1:
+        #goal - somehow increase current cash since I am almost broke
+        #we just made an offer to a player whose property can yield us maximum money and will also enable that player to gain a monopoly at the cost of a premium price.
+        if not potential_offer_list:
+            return None
+        else:
+            trade_offer['property_set_offered'].add(potential_offer_list[0][0]['asset'])
+            trade_offer['cash_wanted'] = potential_offer_list[0][0]['price']
+            param['from_player'] = player
+            param['to_player'] = potential_offer_list[0][0]['to_player']
+            param['offer'] = trade_offer
+    elif purpose_flag == 2:
+        #goal - increase monopolies since I have sufficient cash in hand
+        #constraint - I will only trade and request only 1 property at a time.
+        if not potential_offer_list and not potential_request_list:
+            return None
 
+        elif not potential_offer_list and potential_request_list:
+            #constraint = request only 1 property
+            #nothing to offer (I have no lone properties that could lead other players into getting a monopoly) but I want some
+            #properties that could lead me into getting a monopoly, then I will request the property at 1.125 times the market price
+            #provided that offer doesnot make me broke (Note that if I had properties to offer to the other player to help him or her get a monopoly
+            #then I would only pay 0.75 times the market price. But now its my need, so I am willing to pay 1.25 times the market price.)
+
+            if player.current_cash - potential_request_list[0][0]['price']*1.25 > current_gameboard['go_increment']/2:
+                trade_offer['cash_offered'] = potential_request_list[0][0]['price']*1.5  #(0.75*1.5=1.125)
+                trade_offer['property_set_wanted'].add(potential_request_list[0][0]['asset'])
+                param['from_player'] = player
+                param['to_player'] = potential_request_list[0][0]['from_player']
+                param['offer'] = trade_offer
+            else:
+                return None #No cash to make the trade
+
+        elif not potential_request_list and potential_offer_list:
+            #try giving away one lone property for a very high premium which was already calculated in identify_property_trade_offer_to_player function
+            trade_offer['property_set_offered'].add(potential_offer_list[0][0]['asset'])
+            trade_offer['cash_wanted'] = potential_offer_list[0][0]['price']
+            param['from_player'] = player
+            param['to_player'] = potential_offer_list[0][0]['to_player']
+            param['offer'] = trade_offer
+
+        else:
+            # want to make a trade offer such that I lose less cash and gain max cash and also get a monopoly
+            # potential_request_list is sorted in ascending order of cash offered for the respective requested property
+            # potential_offer_list is sorted in descending order of cash received for the respective offered property
+            found_player_flag = 0
+            saw_players = []
+            for req in potential_request_list:
+                player_2 = req[0]['from_player']
+                if player_2 not in saw_players:
+                    saw_players.append(player_2)
+                    for off in potential_offer_list:
+                        if off[0]['to_player'] == player_2:
+                            found_player_flag = 1
+                            trade_offer['property_set_offered'].add(off[0]['asset'])
+                            trade_offer['cash_wanted'] = off[0]['price']
+                            trade_offer['property_set_wanted'].add(req[0]['asset'])
+                            trade_offer['cash_offered'] = req[0]['price']
+                            param['from_player'] = player
+                            param['to_player'] = player_2
+                            param['offer'] = trade_offer
+                            break
+                else:
+                    continue
+                if found_player_flag == 1:
+                    break
+
+            if found_player_flag == 0:
+                return None
+
+    return param
