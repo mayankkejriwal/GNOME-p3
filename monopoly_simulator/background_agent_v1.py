@@ -121,7 +121,12 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
     This version of the agent background_agent_v1 only supports making sell property offers in return for cash via make_trade_offer. 
     Buy and exchange property offers are not involved in the trade.
     '''
+
     if action_choices.accept_trade_offer in allowable_moves:
+        if len(player.outstanding_trade_offer["property_set_wanted"]) or player.outstanding_trade_offer["cash_offered"]>0:
+            logger.debug("I am background_agent_v1 and I can only accept trade offers that involve buying others properties in return for cash to increase"+
+                         "my monopolies. I donot sell my properties to others.")
+    elif action_choices.accept_trade_offer in allowable_moves:
         param = dict()
         param['player'] = player
         param['current_gameboard'] = current_gameboard
@@ -210,7 +215,6 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
                 # be stuck in a loop
                 logger.debug(player.player_name+ ': I am making an offer to trade '+list(param['offer']['property_set_offered'])[0].name+' to '+
                          param['to_player'].player_name+' for '+str(param['offer']['cash_wanted'])+' dollars')
-                logger.debug(param['offer'])
                 player.agent._agent_memory['previous_action'] = action_choices.make_trade_offer
                 return (action_choices.make_trade_offer, param)
         elif action_choices.make_trade_offer in allowable_moves: # let's try to see if we can sell property to other players at an insane premium
@@ -222,7 +226,6 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
                 # be stuck in a loop
                 logger.debug(player.player_name+ ': I am making an offer to trade '+list(param['offer']['property_set_offered'])[0].name+' to '+
                          param['to_player'].player_name+' for '+str(param['offer']['cash_wanted'])+' dollars')
-                logger.debug(param['offer'])
                 player.agent._agent_memory['previous_action'] = action_choices.make_trade_offer
                 return (action_choices.make_trade_offer, param)
 
@@ -411,9 +414,13 @@ def handle_negative_cash_balance(player, current_gameboard):
 
     # if we got here, it means we're still in trouble. Next move is to sell unimproved properties. We don't check if
     # the total will cover our debts, since we're desperate at this point.
+
+    # following sale potentials doesnot include properties from monopolized color groups
     sale_potentials = list()
     for a in player.assets:
-        if a.is_mortgaged:
+        if a.color in player.full_color_sets_possessed:
+            continue
+        elif a.is_mortgaged:
             sale_potentials.append((a, (a.price/2)-(1.1*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
@@ -427,8 +434,85 @@ def handle_negative_cash_balance(player, current_gameboard):
                 return 1 # we're done
             action_choices.sell_property(player, p[0], current_gameboard)
 
+    # if selling properties from non monopolized color groups doesnot relieve the player from debt, then only we start thinking about giving up monopolized groups.
+    # If we come across a unimproved property which belongs to a monopoly, we still have to loop through the other properties from the same color group and
+    # sell the houses and hotels first because we cannot sell this property when the color group has improved properties
+    # We first check if selling houses and hotels one by one on the other improved properties of the same color group relieves the player of his debt. If it does
+    # then we return without selling the current property else we sell the property and the player loses monopoly of that color group.
+    for a in player.assets:
+        if a.is_mortgaged:
+            sale_potentials.append((a, (a.price/2)-(1.1*a.mortgage)))
+        elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
+            continue
+        else:
+            sale_potentials.append((a,a.price/2))
+
+    if sale_potentials:
+        sorted_potentials = sorted(sale_potentials, key=lambda x: x[1])  # sort by mortgage in ascending order
+        for p in sorted_potentials:
+            if player.current_cash >= 0:
+                return 1 # we're done
+            for prop in player.assets:
+                if prop!=p[0] and prop.color==p[0].color and p[0].color in player.full_color_sets_possessed:
+                    if prop.num_hotels>0:
+                        action_choices.sell_house_hotel(player, prop, current_gameboard, False, True)
+                        if player.current_cash >= 0:
+                            return 1
+                    elif prop.num_houses>0:
+                        while prop.num_houses>0:
+                            action_choices.sell_house_hotel(player, prop, current_gameboard, True, False)
+                            if player.current_cash >= 0:
+                                return 1
+                    else:
+                        continue
+            action_choices.sell_property(player, p[0], current_gameboard)
+            if p[0].color in player.full_color_sets_possessed:
+                player.full_color_sets_possessed.remove(p[0].color)
+
+    #we reach here if the player still hasnot cleared his debt. The above loop has now resulted in some more non monopolized properties.
+    #Hence we have to go through the process of looping through these properties once again to decide on the potential properties that can be mortgaged or sold.
+
+    mortgage_potentials = list()
+    max_sum = 0
+    for a in player.assets:
+        if a.is_mortgaged:
+            continue
+        elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
+            continue
+        else:
+            mortgage_potentials.append((a,a.mortgage))
+            max_sum += a.mortgage
+    if mortgage_potentials and max_sum+player.current_cash >= 0: # if the second condition is not met, no point in mortgaging
+        sorted_potentials = sorted(mortgage_potentials, key=lambda x: x[1])  # sort by mortgage in ascending order
+        for p in sorted_potentials:
+            if player.current_cash >= 0:
+                return 1 # we're done
+            action_choices.mortgage_property(player, p[0], current_gameboard)
+
+
+    # following sale potentials loops through the properties that have become unmonopolized due to the above loops and
+    # doesnot include properties from monopolized color groups
+    sale_potentials = list()
+    for a in player.assets:
+        if a.color in player.full_color_sets_possessed:
+            continue
+        elif a.is_mortgaged:
+            sale_potentials.append((a, (a.price/2)-(1.1*a.mortgage)))
+        elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
+            continue
+        else:
+            sale_potentials.append((a,a.price/2))
+
+    if sale_potentials: # if the second condition is not met, no point in mortgaging
+        sorted_potentials = sorted(sale_potentials, key=lambda x: x[1])  # sort by mortgage in ascending order
+        for p in sorted_potentials:
+            if player.current_cash >= 0:
+                return 1 # we're done
+            action_choices.sell_property(player, p[0], current_gameboard)
+
+
     count = 0
-    # if we're STILL not done, then the only option is to start selling houses and hotels, if we have 'em
+    # if we're STILL not done, then the only option is to start selling houses and hotels from the remaining improved monopolized properties, if we have 'em
     while (player.num_total_houses > 0 or player.num_total_hotels > 0) and count <3: # often times, a sale may not succeed due to uniformity requirements. We keep trying till everything is sold,
         # or cash balance turns non-negative.
         count += 1 # there is a slim chance that it is impossible to sell an improvement unless the player does something first (e.g., replace 4 houses with a hotel).
