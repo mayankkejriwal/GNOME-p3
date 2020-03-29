@@ -1,3 +1,32 @@
+GUI:
+
+A new file called gameplay_GUI.py has been added. A single game with a 2D board visualization of the game being played can be run by running gameplay_GUI.py instead of gameplay.py.
+
+Board rules:
+-The GUI version supports almost all the features of the normal gameplay including novelty injection, however a tournament cannot be run. 
+-The GUI is implemented using KIVY and novelty can be injected following the same procedure as in gameplay.py.
+-The only additional package that has to be installed before running gameplay_GUI.py is kivy using "pip install kivy" (the dependencies will automatically be installed).
+-On running the gameplay_GUI.py file, a GUI will be launched.
+-Click the "PLAY" button on the top left corner to start gameplay.
+-Gameplay can be paused and resumed at anytime in between the game (in case you want to observe what's on the board or the console) by clicking the "MONOPOLY PLAY-PAUSE" button on the center of the board. Clicking it once will pause the game and clicking it again will resume the game from where it paused. 
+-The EXIT button on the top right can only be used BEFORE clicking PLAY button or AFTER the game has terminated to close the GUI. NOTE that it doesnot work during gameplay. If clicked during gameplay, it only stops the GUI from rendering further and willnot close it since gameplay is still running in the background.
+-Each of the property tiles are clickable. On clicking each tile, the title deed card for the respective property pops up with all the details such as rent, mortgage, etc (just as on a title deed card) displayed. Clicking anywhere else on the screen pushes the title deed card back in.
+-The GUI window is resizable by clicking the minimize or maximize button on the taskbar (just like in any other window). Note that this works at anytime before the game has terminated. Once the game has terminated, resizing the window doesnot render correctly. 
+
+Dice:
+-Dice and numbers that appear on each dice roll are visible on the right side of the GUI window.
+-If the number of dice are increased by injecting the respective novelty, the GUI also adjusts accordingly.
+
+Players and Properties:
+-The players are indicated by the tiny dots that move along the bottom area of the properties. 
+-Color of the players are maintained as in gameplay.py
+-The leftside of the GUI allocates colored boxes according to the color allocated to each player. These boxes store information about the players current cash, count of houses and hotels, and whether the player possesses a get out of jail card and each of these values get updated on the go.
+-Whenever a player buys a property, a square of the color of the player will be placed on the top left area of the respective property tile to indicate ownership of the property by that player.
+-When a player buys a house on a property after he has monopolized a color group, a WHITE filled circle will be placed beside the square that was placed to show ownership of that property.
+-When a player buys a hotel on a property, the 4 white circles (4 houses) will be replaced by a PINK filled circle adjacent to the square on that property.
+
+The GUI has been implemented mainly for debug purposes to visualize gameplay and injection of novelty and to get an idea of how and where the players and properties move during the game.
+
 
 GAME LOGGING:
 
