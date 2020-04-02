@@ -405,9 +405,8 @@ def curate_trade_offer(player, potential_offer_list, potential_request_list, cur
             #nothing to offer (I have no lone properties that could lead other players into getting a monopoly) but I want some
             #properties that could lead me into getting a monopoly, then I will request the property at 1.125 times the market price
             #provided that offer doesnot make me broke (Note that if I had properties to offer to the other player to help him or her get a monopoly
-            #then I would only pay 0.75 times the market price. But now its my need, so I am willing to pay 1.25 times the market price.)
-
-            if player.current_cash - potential_request_list[0][0]['price']*1.25 > current_gameboard['go_increment']/2:
+            #then I would only pay 0.75 times the market price. But now its my need, so I am willing to pay 1.125 times the market price.)
+            if player.current_cash - potential_request_list[0][0]['price']*1.5 > current_gameboard['go_increment']/2:
                 trade_offer['cash_offered'] = potential_request_list[0][0]['price']*1.5  #(0.75*1.5=1.125)
                 trade_offer['property_set_wanted'].add(potential_request_list[0][0]['asset'])
                 param['from_player'] = player
@@ -450,7 +449,18 @@ def curate_trade_offer(player, potential_offer_list, potential_request_list, cur
                 if found_player_flag == 1:
                     break
 
+            #if found_player_flag=0, that means we werent able to establish a one on one trade offer, ie I couldnot find a player to whom I could sell my property
+            #in return for their property
             if found_player_flag == 0:
-                return None
+                #exchange property not possible --> so we just try to buy property if we have enough cash in order to gain more monopolies at 1.125 times the market price
+                if player.current_cash - potential_request_list[0][0]['price']*1.5 > current_gameboard['go_increment']/2:
+                    trade_offer['cash_offered'] = potential_request_list[0][0]['price']*1.5  #(0.75*1.5=1.125)
+                    trade_offer['property_set_wanted'].add(potential_request_list[0][0]['asset'])
+                    param['from_player'] = player
+                    param['to_player'] = potential_request_list[0][0]['from_player']
+                    param['offer'] = trade_offer
+                else:
+                    return None #No cash to make the trade
 
     return param
+
