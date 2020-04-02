@@ -109,7 +109,7 @@ def play_tournament_with_novelty_1(tournament_log_folder=None, meta_seed=5, num_
     out_file.close()
 
     for t in range(0,novelty_index):
-        print('Logging gameplay for seed: ', str(t), ' ---> Game ' + str(count))
+        print('Logging gameplay without novelty for seed: ', str(t), ' ---> Game ' + str(count))
         filename = folder_name + "meta_seed_" + str(meta_seed) + '_without_novelty' + '_num_games_' + str(count) + '.log'
         logger = log_file_create(filename)
         winners.append(gameplay.play_game_in_tournament(tournament_seeds[t]))
@@ -122,7 +122,7 @@ def play_tournament_with_novelty_1(tournament_log_folder=None, meta_seed=5, num_
 
     new_winners = list()
     for t in range(novelty_index, len(tournament_seeds)):
-        print('Logging gameplay for seed: ', str(t), ' ---> Game ' + str(count))
+        print('Logging gameplay with novelty for seed: ', str(t), ' ---> Game ' + str(count))
         filename = folder_name + "meta_seed_" + str(meta_seed) + '_with_novelty' + '_num_games_' + str(count) + '.log'
         logger = log_file_create(filename)
         new_winners.append(gameplay.play_game_in_tournament(tournament_seeds[t], class_novelty_1))
