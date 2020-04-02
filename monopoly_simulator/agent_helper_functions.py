@@ -360,7 +360,7 @@ def identify_property_trade_wanted_from_player(player, current_gameboard):
 def curate_trade_offer(player, potential_offer_list, potential_request_list, current_gameboard, purpose_flag):
     """
     Generates a trade offer from the potential offer list, potential request list and the purpose indicated by
-    the purpose flag
+    the purpose flag for background_agent_v2
     :param player: player who wanted to make the trade offer
     :param potential_offer_list: List of potential property offers that can be made to other players because they are lone properties
     for me and will result in a monopoly to the player to whom it is being offered. These offers are sorted in descending order of the
@@ -464,3 +464,185 @@ def curate_trade_offer(player, potential_offer_list, potential_request_list, cur
 
     return param
 
+
+def curate_trade_offer_multiple_players(player, potential_offer_list, potential_request_list, current_gameboard, purpose_flag):
+    """
+    Generates trade offers from the potential offer list, potential request list and the purpose indicated by
+    the purpose flag for background_agent_v3.
+    Allows a player to make trade offers to MULTIPLE PLAYERS simultaneously.
+    :param player: player who wanted to make the trade offer
+    :param potential_offer_list: List of potential property offers that can be made to other players because they are lone properties
+    for me and will result in a monopoly to the player to whom it is being offered. These offers are sorted in descending order of the
+    amount of cash I'd get if they accept the offer. The first property yields me the most cash.
+    :param potential_request_list: List of potential properties that I would like to buy because they are lone properties for the players
+    to whom I raise a buy request and will lead me into getting a monopoly. These are sorted in the ascending order of the amount I am willing
+    to pay for the property. The property that cost me the least is on the top of the list.
+    :param current_gameboard:
+    :purpose_flag: indicates the purpose of making the trade.
+    purpose_flag=1 implies that it is purely a make_sell_property_offer because
+    I am urgently in need of cash or I am trying to see if I can get to sell one of my lone properties at a high premium because the other
+    player gets a monopoly.
+    purpose_flag=2 implies that it can be a buy offer or exchange of properties and cash to increase number of monopolies.
+    :return: a list of parameter dictionaries or None. The parameter dictionary, if returned, can be directly sent into
+    action_choices.make_sell_property_offer by the calling function. Each parameter dictionary in the list corresponds to the
+    trade offers to multiple players
+    """
+    param = dict()
+    trade_offer = dict()
+    trade_offer['property_set_offered'] = set()
+    trade_offer['property_set_wanted'] = set()
+    trade_offer['cash_offered'] = 0
+    trade_offer['cash_wanted'] = 0
+    offer_list_multiple_players = []
+
+    if purpose_flag == 1:
+        #goal - somehow increase current cash since I am almost broke
+        #we just made an offer to a player whose property can yield us maximum money and will also enable that player to gain a monopoly at the cost of a premium price.
+        if not potential_offer_list:
+            return None
+        else:
+            player_list = []
+            offer_list_multiple_players = []
+            for item in potential_offer_list:
+                if item[0]['to_player'] not in player_list:
+                    param = dict()
+                    trade_offer = dict()
+                    trade_offer['property_set_offered'] = set()
+                    trade_offer['property_set_wanted'] = set()
+                    trade_offer['cash_offered'] = 0
+                    trade_offer['cash_wanted'] = 0
+
+                    trade_offer['property_set_offered'].add(item[0]['asset'])
+                    trade_offer['cash_wanted'] = item[0]['price']
+                    param['from_player'] = player
+                    param['to_player'] = item[0]['to_player']
+                    param['offer'] = trade_offer
+                    player_list.append(item[0]['to_player'])
+                    offer_list_multiple_players.append(param)
+
+    elif purpose_flag == 2:
+        #goal - increase monopolies since I have sufficient cash in hand
+        #constraint - I will only trade and request only 1 property at a time.
+        if not potential_offer_list and not potential_request_list:
+            return None
+
+        elif not potential_offer_list and potential_request_list:
+            #constraint = request only 1 property
+            #nothing to offer (I have no lone properties that could lead other players into getting a monopoly) but I want some
+            #properties that could lead me into getting a monopoly, then I will request the property at 1.125 times the market price
+            #provided that offer doesnot make me broke (Note that if I had properties to offer to the other player to help him or her get a monopoly
+            #then I would only pay 0.75 times the market price. But now its my need, so I am willing to pay 1.25 times the market price.)
+            player_list = []
+            offer_list_multiple_players = []
+            cash_to_be_offered_during_trade = 0
+            for item in potential_request_list:
+                if item[0]['from_player'] not in player_list:
+                    param = dict()
+                    trade_offer = dict()
+                    trade_offer['property_set_offered'] = set()
+                    trade_offer['property_set_wanted'] = set()
+                    trade_offer['cash_offered'] = 0
+                    trade_offer['cash_wanted'] = 0
+                    cash_to_be_offered_during_trade += item[0]['price']*1.5
+                    if player.current_cash - cash_to_be_offered_during_trade > current_gameboard['go_increment']/2:
+                        trade_offer['cash_offered'] = item[0]['price']*1.5  #(0.75*1.5=1.125)
+                        trade_offer['property_set_wanted'].add(item[0]['asset'])
+                        param['from_player'] = player
+                        param['to_player'] = item[0]['from_player']
+                        param['offer'] = trade_offer
+                        player_list.append(item[0]['to_player'])
+                        offer_list_multiple_players.append(param)
+                    else:
+                        cash_to_be_offered_during_trade -= item[0]['price']*1.5
+
+            if len(offer_list_multiple_players)==0:
+                logger.debug("Wanted to make a trade offer but donot have the money or properties for it, so cannot make one.")
+                return None #No cash to make the trade
+
+        elif not potential_request_list and potential_offer_list:
+            #try giving away one lone property for a very high premium which was already calculated in identify_property_trade_offer_to_player function
+            player_list = []
+            offer_list_multiple_players = []
+            for item in potential_offer_list:
+                if item[0]['to_player'] not in player_list:
+                    param = dict()
+                    trade_offer = dict()
+                    trade_offer['property_set_offered'] = set()
+                    trade_offer['property_set_wanted'] = set()
+                    trade_offer['cash_offered'] = 0
+                    trade_offer['cash_wanted'] = 0
+
+                    trade_offer['property_set_offered'].add(item[0]['asset'])
+                    trade_offer['cash_wanted'] = item[0]['price']
+                    param['from_player'] = player
+                    param['to_player'] = item[0]['to_player']
+                    param['offer'] = trade_offer
+                    player_list.append(item[0]['to_player'])
+                    offer_list_multiple_players.append(param)
+
+        else:
+            # want to make a trade offer such that I lose less cash and gain max cash and also get a monopoly
+            # potential_request_list is sorted in ascending order of cash offered for the respective requested property
+            # potential_offer_list is sorted in descending order of cash received for the respective offered property
+            found_player_flag = 0
+            saw_players = []
+            offer_list_multiple_players = []
+            for req in potential_request_list:
+                player_2 = req[0]['from_player']
+                if player_2 not in saw_players:
+                    saw_players.append(player_2)
+                    for off in potential_offer_list:
+                        if off[0]['to_player'] == player_2:
+                            param = dict()
+                            trade_offer = dict()
+                            trade_offer['property_set_offered'] = set()
+                            trade_offer['property_set_wanted'] = set()
+                            trade_offer['cash_offered'] = 0
+                            trade_offer['cash_wanted'] = 0
+
+                            found_player_flag = 1
+                            trade_offer['property_set_offered'].add(off[0]['asset'])
+                            trade_offer['cash_wanted'] = off[0]['price']
+                            trade_offer['property_set_wanted'].add(req[0]['asset'])
+                            trade_offer['cash_offered'] = req[0]['price']
+                            param['from_player'] = player
+                            param['to_player'] = player_2
+                            param['offer'] = trade_offer
+                            offer_list_multiple_players.append(param)
+                            break
+
+                else:
+                    continue
+
+            #if found_player_flag=0, that means we werent able to establish a one on one trade offer, ie I couldnot find a player to whom I could sell my property
+            #in return for their property
+            if found_player_flag == 0:
+                #exchange property not possible --> so we just try to buy property if we have enough cash in order to gain more monopolies
+                player_list = []
+                offer_list_multiple_players = []
+                cash_to_be_offered_during_trade = 0
+                for item in potential_request_list:
+                    if item[0]['from_player'] not in player_list:
+                        param = dict()
+                        trade_offer = dict()
+                        trade_offer['property_set_offered'] = set()
+                        trade_offer['property_set_wanted'] = set()
+                        trade_offer['cash_offered'] = 0
+                        trade_offer['cash_wanted'] = 0
+                        cash_to_be_offered_during_trade += item[0]['price']*1.5
+                        if player.current_cash - cash_to_be_offered_during_trade > current_gameboard['go_increment']/2:
+                            trade_offer['cash_offered'] = item[0]['price']*1.5  #(0.75*1.5=1.125)
+                            trade_offer['property_set_wanted'].add(item[0]['asset'])
+                            param['from_player'] = player
+                            param['to_player'] = item[0]['from_player']
+                            param['offer'] = trade_offer
+                            player_list.append(item[0]['to_player'])
+                            offer_list_multiple_players.append(param)
+                        else:
+                            cash_to_be_offered_during_trade -= item[0]['price']*1.5
+
+                if len(offer_list_multiple_players)==0:
+                    logger.debug("Wanted to make a trade offer but donot have the money or properties for it, so cannot make one.")
+                    return None #No cash to make the trade
+
+    return offer_list_multiple_players

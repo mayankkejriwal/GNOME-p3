@@ -755,6 +755,11 @@ class Player(object):
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
+        if isinstance(action_to_execute, list):
+            for i in range(len(action_to_execute)):
+                code = self._execute_action(action_to_execute[i], parameters[i], current_gameboard)
+                logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
+            return 1
 
         if action_to_execute == skip_turn:
             if self.is_property_offer_outstanding:
@@ -795,7 +800,12 @@ class Player(object):
                     self.outstanding_trade_offer['from_player'] = None
                 return self._execute_action(action_to_execute, parameters, current_gameboard)
             else:
-                code = self._execute_action(action_to_execute, parameters, current_gameboard)
+                if isinstance(action_to_execute, list):
+                    for i in range(len(action_to_execute)):
+                        code = self._execute_action(action_to_execute[i], parameters[i], current_gameboard)
+                        logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
+                else:
+                    code = self._execute_action(action_to_execute, parameters, current_gameboard)
                 logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
                 allowable_actions = self.compute_allowable_out_of_turn_actions(current_gameboard)
                 action_to_execute, parameters = self.agent.make_out_of_turn_move(self, current_gameboard, allowable_actions, code)
