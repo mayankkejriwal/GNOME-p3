@@ -1,6 +1,7 @@
 GUI:
 
 A new file called gameplay_GUI.py has been added. A single game with a 2D board visualization of the game being played can be run by running gameplay_GUI.py instead of gameplay.py.
+Line 238 in gameplay_GUI.py determines the speed of the game. Setting the argument to a higher value slows the gameplay and setting a lower value makes the game run faster.
 
 Board rules:
 -The GUI version supports almost all the features of the normal gameplay including novelty injection, however a tournament cannot be run. 

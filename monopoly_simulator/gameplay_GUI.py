@@ -17,6 +17,8 @@ from monopoly_simulator.action_choices import roll_die
 import numpy as np
 from monopoly_simulator.card_utility_actions import move_player_after_die_roll
 from monopoly_simulator import background_agent_v1
+from monopoly_simulator import background_agent_v2
+from monopoly_simulator import background_agent_v3
 from monopoly_simulator import simple_decision_agent_1
 from monopoly_simulator import diagnostics
 from monopoly_simulator import novelty_generator
@@ -218,7 +220,7 @@ class CreateBoardWindow(Screen):
             print('PAUSING THE GAME.... CLICK MONOPOLY BUTTON TO RESUME GAME')
 
 
-    def simulate_game_instance(self, history_log_file=None, np_seed=6):
+    def simulate_game_instance(self, history_log_file=None, np_seed=838885):
         """
         Simulate a game instance.
         :param game_elements: The dict output by set_up_board
@@ -375,6 +377,11 @@ class CreateBoardWindow(Screen):
 
                 current_player_index = (current_player_index+1)%len(self.game_elem['players'])
 
+                '''
+                The following line determines the speed of your game visualization and game.
+                0.1 is the default setting for this package.
+                You can reduce it if you want the game to run faster or increase it to slow down the execution.
+                '''
                 time.sleep(0.1)
                 self.update_board()
 
@@ -704,8 +711,8 @@ except:
 logger = log_file_create('../single_tournament/seed_6.log')
 player_decision_agents = dict()
 player_decision_agents['player_1'] = Agent(**background_agent_v1.decision_agent_methods)
-player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
-player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
+player_decision_agents['player_2'] = Agent(**background_agent_v2.decision_agent_methods)
+player_decision_agents['player_3'] = Agent(**background_agent_v3.decision_agent_methods)
 player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
 game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                              player_decision_agents)
