@@ -550,7 +550,7 @@ def curate_trade_offer_multiple_players(player, potential_offer_list, potential_
                         param['from_player'] = player
                         param['to_player'] = item[0]['from_player']
                         param['offer'] = trade_offer
-                        player_list.append(item[0]['to_player'])
+                        player_list.append(item[0]['from_player'])
                         offer_list_multiple_players.append(param)
                     else:
                         cash_to_be_offered_during_trade -= item[0]['price']*1.5
@@ -636,7 +636,7 @@ def curate_trade_offer_multiple_players(player, potential_offer_list, potential_
                             param['from_player'] = player
                             param['to_player'] = item[0]['from_player']
                             param['offer'] = trade_offer
-                            player_list.append(item[0]['to_player'])
+                            player_list.append(item[0]['from_player'])
                             offer_list_multiple_players.append(param)
                         else:
                             cash_to_be_offered_during_trade -= item[0]['price']*1.5
