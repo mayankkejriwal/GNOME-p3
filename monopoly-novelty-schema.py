@@ -61,11 +61,11 @@ def _specify_action_state():
     ans = dict()
     ans['pre_die_roll'] = ['mortgage_property', 'improve_property', 'use_get_out_of_jail_card', 'pay_jail_fine',
                            'skip_turn', 'free_mortgage', 'sell_property', 'sell_house_hotel', 'accept_sell_property_offer'
-                           , 'roll_die', 'concluded_actions', 'make_sell_property_offer']
+                           , 'roll_die', 'concluded_actions', 'make_trade_offer', 'accept_trade_offer']
     ans['post_die_roll'] = ['mortgage_property', 'buy_property', 'sell_property',
                             'sell_house_hotel', 'concluded_actions'] # treat auction as a special case
     ans['out_of_turn'] = ['free_mortgage','sell_property','sell_house_hotel','accept_sell_property_offer',
-                          'make_sell_property_offer','skip_turn', 'concluded_actions', 'mortgage_property', 'improve_property']
+                          'make_trade_offer', 'accept_trade_offer','skip_turn', 'concluded_actions', 'mortgage_property', 'improve_property']
 
     return ans
 
@@ -570,7 +570,7 @@ board_state = dict()
 specify_board_state()
 import json
 
-json.dump(board_state, open('/Users/mayankkejriwal/git-projects/GNOME/monopoly_novelty_schema_v1.json', 'w'))
+json.dump(board_state, open('monopoly_novelty_schema_v2.json', 'w'))
 
 
 
