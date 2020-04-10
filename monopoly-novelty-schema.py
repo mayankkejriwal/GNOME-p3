@@ -570,7 +570,7 @@ board_state = dict()
 specify_board_state()
 import json
 
-json.dump(board_state, open('monopoly_novelty_schema_v2.json', 'w'))
+json.dump(board_state, open('/Users/mayankkejriwal/git-projects/GNOME/monopoly_novelty_schema_v2.json', 'w'))
 
 
 
