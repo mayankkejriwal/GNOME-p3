@@ -3,6 +3,10 @@ from monopoly_simulator.action_choices import roll_die
 import numpy as np
 from monopoly_simulator.card_utility_actions import move_player_after_die_roll
 from monopoly_simulator import background_agent_v1
+from monopoly_simulator import background_agent_v1_deprecated
+from monopoly_simulator import background_agent_v2
+from monopoly_simulator import background_agent_v3
+from monopoly_simulator import background_agent_v4
 from monopoly_simulator import simple_decision_agent_1
 import json
 from monopoly_simulator import diagnostics
@@ -10,6 +14,7 @@ from monopoly_simulator import novelty_generator
 from monopoly_simulator.agent import Agent
 import xlsxwriter
 from monopoly_simulator.logging_info import log_file_create
+from monopoly_simulator.feature_engineering import feature_engg
 import os
 import logging
 
@@ -51,7 +56,7 @@ def disable_history(game_elements):
     game_elements['history']['return'] = list()
 
 
-def simulate_game_instance(game_elements, history_log_file=None, np_seed=5):
+def simulate_game_instance(game_elements, history_log_file=None, np_seed=41782):
     """
     Simulate a game instance.
     :param game_elements: The dict output by set_up_board
@@ -214,6 +219,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=5):
             diagnostics.print_player_cash_balances(game_elements)
             return
 
+        #feature_engg(game_elements, current_player.player_name, phase=2)
+
     if workbook:
         write_history_to_file(game_elements, workbook)
     # let's print some numbers
@@ -320,28 +327,41 @@ def play_game():
     player_decision_agents = dict()
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
-    player_decision_agents['player_1'] = Agent(**background_agent_v1.decision_agent_methods)
-    player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
-    player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
-    player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
+
+    player_decision_agents['player_1'] = Agent(**background_agent_v3.decision_agent_methods)
+    player_decision_agents['player_2'] = Agent(**background_agent_v3.decision_agent_methods)
+    player_decision_agents['player_3'] = Agent(**background_agent_v4.decision_agent_methods)
+    player_decision_agents['player_4'] = Agent(**background_agent_v3.decision_agent_methods)
 
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                                  player_decision_agents)
     inject_novelty(game_elements)
 
-    winner = simulate_game_instance(game_elements)
-    logger.debug("GAME OVER")
-
-    handlers_copy = logger.handlers[:]
-    for handler in handlers_copy:
-            logger.removeHandler(handler)
-            handler.close()
-            handler.flush()
-    return winner
-    # just testing history.
-    # print(len(game_elements['history']['function']))
-    # print(len(game_elements['history']['param']))
-    # print(len(game_elements['history']['return']))
+    if player_decision_agents['player_1'].startup() == -1 or player_decision_agents['player_2'].startup() == -1 or \
+            player_decision_agents['player_3'].startup() == -1 or player_decision_agents['player_4'].startup() == -1:
+        logger.error("Error in initializing agents. Cannot play the game.")
+        return None
+    else:
+        logger.debug("Sucessfully initialized all player agents.")
+        winner = simulate_game_instance(game_elements)
+        if player_decision_agents['player_1'].shutdown() == -1 or player_decision_agents['player_2'].shutdown() == -1 or \
+            player_decision_agents['player_3'].shutdown() == -1 or player_decision_agents['player_4'].shutdown() == -1:
+            logger.error("Error in agent shutdown.")
+            handlers_copy = logger.handlers[:]
+            for handler in handlers_copy:
+                logger.removeHandler(handler)
+                handler.close()
+                handler.flush()
+            return None
+        else:
+            logger.debug("All player agents have been shutdown. ")
+            logger.debug("GAME OVER")
+            handlers_copy = logger.handlers[:]
+            for handler in handlers_copy:
+                logger.removeHandler(handler)
+                handler.close()
+                handler.flush()
+            return winner
 
 
 def play_game_in_tournament(game_seed, inject_novelty_function=None):
@@ -349,17 +369,30 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
     player_decision_agents = dict()
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
-    player_decision_agents['player_1'] = Agent(**background_agent_v1.decision_agent_methods)
-    player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
-    player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
-    player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
+    player_decision_agents['player_1'] = Agent(**background_agent_v4.decision_agent_methods)
+    player_decision_agents['player_2'] = Agent(**background_agent_v3.decision_agent_methods)
+    player_decision_agents['player_3'] = Agent(**background_agent_v3.decision_agent_methods)
+    player_decision_agents['player_4'] = Agent(**background_agent_v3.decision_agent_methods)
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                                  player_decision_agents)
     if inject_novelty_function:
         inject_novelty_function(game_elements)
 
-    winner = simulate_game_instance(game_elements, np_seed=game_seed)
-    logger.debug("GAME OVER")
-    return winner
+    if player_decision_agents['player_1'].startup() == -1 or player_decision_agents['player_2'].startup() == -1 or \
+            player_decision_agents['player_3'].startup() == -1 or player_decision_agents['player_4'].startup() == -1:
+        logger.error("Error in initializing agents. Cannot play the game.")
+        return None
+    else:
+        logger.debug("Sucessfully initialized all player agents.")
+        winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
+        if player_decision_agents['player_1'].shutdown() == -1 or player_decision_agents['player_2'].shutdown() == -1 or \
+            player_decision_agents['player_3'].shutdown() == -1 or player_decision_agents['player_4'].shutdown() == -1:
+            logger.error("Error in agent shutdown.")
+            return None
+        else:
+            logger.debug("All player agents have been shutdown. ")
+            logger.debug("GAME OVER")
+            return winner
 
-#play_game()
+
+play_game()
