@@ -201,6 +201,10 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
                   'You may need to build houses on other properties of the same color before attempting to sell this one. Returning -1')
             return -1
 
+    else:
+        #should never reach here unless both sell_house and sell_hotel are False, if it does then return -1.
+        logger.debug("Dont know how I reached here but I didnot succeed in selling house/hotel. Returning -1.")
+        return -1
 
 def accept_sell_property_offer(player, current_gameboard):
     """
@@ -437,6 +441,11 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
             logger.debug('All same-colored properties must be informly improved first before you can build a hotel on this property. Returning -1')
             return -1
 
+    else:
+        #ideally should never reach here, but if it does, then return -1.
+        logger.debug("Didnot succeed in improving house/hotel. Returning -1.")
+        return -1
+
 
 def use_get_out_of_jail_card(player, current_gameboard):
     """
@@ -616,6 +625,12 @@ def make_trade_offer(from_player, offer, to_player):
     :param offer: a dictionary with the trade requirements  - property_set_offered, property_set_wanted, cash_offered, cash_wanted
     :param to_player: Player instance. The player to whom the offer is being made.
     :return: 1 if the player succeeds in making the offer (doesn't mean the other player has to accept), otherwise -1
+
+    make_trade_offer becomes unsuccessful if:
+    - the players to whom the trade offer is being made already has an existing trade offer or
+    - if negative cash amounts are involved in the offer or
+    - if ownership of the properties are incorrect or
+    - if the properties involved in the trade are improved.
     """
 
     if to_player.is_trade_offer_outstanding:
@@ -634,9 +649,11 @@ def make_trade_offer(from_player, offer, to_player):
             offer_prop_set = set()
             for item in offer['property_set_offered']:
                 if item.owned_by != from_player:
-                    logger.debug(from_player.player_name+' player does not own ' + item.name +' . Hence cannot make an offer on this property.')
+                    logger.debug(from_player.player_name+' player does not own ' + item.name +' . Hence cannot make an offer on this property. Returning -1.')
+                    return -1
                 elif item.loc_class == 'real_estate' and (item.num_houses > 0 or item.num_hotels > 0):
-                    logger.debug(item.name+' has improvements. Clear them before making an offer! Not including this property in offer set')
+                    logger.debug(item.name+' has improvements. Clear them before making an offer! Returning -1.')
+                    return -1
                 else:
                     offer_prop_set.add(item)
             logger.debug(from_player.player_name + ' wants to offer properties to ' + to_player.player_name + ' for cash = ' + str(offer['cash_wanted']))
@@ -648,9 +665,11 @@ def make_trade_offer(from_player, offer, to_player):
             want_prop_set = set()
             for item in offer['property_set_wanted']:
                 if item.owned_by != to_player:
-                    logger.debug(to_player.player_name+' player does not own ' + item.name +'. Invalid property requested.')
+                    logger.debug(to_player.player_name+' player does not own ' + item.name +'. Invalid property requested. Returning -1.')
+                    return -1
                 elif item.loc_class == 'real_estate' and (item.num_houses > 0 or item.num_hotels > 0):
-                    logger.debug(item.name+' has improvements. Can request for unimproved properties only. Not including this property in offer set')
+                    logger.debug(item.name+' has improvements. Can request for unimproved properties only. Returning -1.')
+                    return -1
                 else:
                     want_prop_set.add(item)
             logger.debug(from_player.player_name + ' wants properties from ' + to_player.player_name + ' by offering cash = ' + str(offer['cash_offered']))
@@ -671,6 +690,12 @@ def accept_trade_offer(player, current_gameboard):
     we will begin property and cash transfers.
     :param current_gameboard: A dict. The global data structure representing the current game board.
     :return: 1 if the property offer is accepted and property is successfully transferred, otherwise -1.
+
+    accept_trade_offer becomes unsuccessful if:
+    - player has no outstanding_trade_offer
+    - if player does not have enough cash required for the transaction
+    - if ownership of properties are incorrect
+
     """
     if not player.is_trade_offer_outstanding:
         logger.debug(player.player_name+' does not have outstanding trade offers to accept. Returning -1')
@@ -762,3 +787,13 @@ def accept_trade_offer(player, current_gameboard):
             player.outstanding_trade_offer['cash_wanted'] = 0
             player.outstanding_trade_offer['cash_offered'] = 0
             return 1
+
+        else:
+            logger.debug('Transaction unsuccessful. Trade offer could not be accepted. Nulling outstanding trade offers data structures and returning -1')
+            player.is_trade_offer_outstanding = False
+            player.outstanding_trade_offer['from_player'] = None
+            player.outstanding_trade_offer['property_set_offered'] = set()
+            player.outstanding_trade_offer['property_set_wanted'] = set()
+            player.outstanding_trade_offer['cash_wanted'] = 0
+            player.outstanding_trade_offer['cash_offered'] = 0
+            return -1
