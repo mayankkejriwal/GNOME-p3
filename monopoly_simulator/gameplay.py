@@ -51,7 +51,7 @@ def disable_history(game_elements):
     game_elements['history']['return'] = list()
 
 
-def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
+def simulate_game_instance(game_elements, history_log_file=None, np_seed=5):
     """
     Simulate a game instance.
     :param game_elements: The dict output by set_up_board
@@ -59,17 +59,6 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=6):
     :return: None
     """
     logger.debug("size of board " + str(len(game_elements['location_sequence'])))
-    for i in range(len(game_elements['location_sequence'])):
-        logger.debug(game_elements['location_sequence'][i].name)
-    logger.debug(
-        "start pos: " + str(game_elements['location_objects']['States Avenue'].start_position) + " end pos: " + str(
-            game_elements['location_objects']['States Avenue'].end_position))
-    logger.debug(
-        "start pos: " + str(game_elements['location_objects']['Virginia Avenue'].start_position) + " end pos: " + str(
-            game_elements['location_objects']['Virginia Avenue'].end_position))
-    logger.debug("start pos: " + str(
-        game_elements['location_objects']['Pennsylvania Railroad'].start_position) + " end pos: " + str(
-        game_elements['location_objects']['Pennsylvania Railroad'].end_position))
     np.random.seed(np_seed)
     np.random.shuffle(game_elements['players'])
     game_elements['seed'] = np_seed
@@ -261,12 +250,12 @@ def inject_novelty(current_gameboard, novelty_schema=None):
     ###Below are examples of Level 1, Level 2 and Level 3 Novelties
     ###Uncomment only the Level of novelty that needs to run (i.e, either Level1 or Level 2 or Level 3). Do not mix up novelties from different levels.
 
-    '''
+    ''' 
     #Level 1 Novelty
 
     numberDieNovelty = novelty_generator.NumberClassNovelty()
     numberDieNovelty.die_novelty(current_gameboard, 4, die_state_vector=[[1,2,3,4,5],[1,2,3,4],[5,6,7],[2,3,4]])
-
+    
     classDieNovelty = novelty_generator.TypeClassNovelty()
     die_state_distribution_vector = ['uniform','uniform','biased','biased']
     die_type_vector = ['odd_only','even_only','consecutive','consecutive']
@@ -335,6 +324,7 @@ def play_game():
     player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
     player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
     player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
+
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                                  player_decision_agents)
     inject_novelty(game_elements)
