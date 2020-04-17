@@ -44,7 +44,7 @@ def initialize_board(game_schema, player_decision_agents):
     _initialize_game_history_structs(game_elements)
     logger.debug('Successfully instantiated game history data structures')
 
-    game_elements['type'] = game_elements
+    game_elements['type'] = "game_elements"
     return game_elements
 
 
