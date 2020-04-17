@@ -7,6 +7,7 @@ from monopoly_simulator import background_agent_v1_deprecated
 from monopoly_simulator import background_agent_v2
 from monopoly_simulator import background_agent_v3
 from monopoly_simulator import background_agent_v4
+from monopoly_simulator import read_write_current_state
 from monopoly_simulator import simple_decision_agent_1
 import json
 from monopoly_simulator import diagnostics
@@ -56,7 +57,7 @@ def disable_history(game_elements):
     game_elements['history']['return'] = list()
 
 
-def simulate_game_instance(game_elements, history_log_file=None, np_seed=41782):
+def simulate_game_instance(game_elements, history_log_file=None, np_seed=125):
     """
     Simulate a game instance.
     :param game_elements: The dict output by set_up_board
@@ -69,7 +70,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=41782):
     game_elements['seed'] = np_seed
     game_elements['card_seed'] = np_seed
     game_elements['choice_function'] = np.random.choice
-
+    count_json = 0   # a counter to keep track of how many rounds the game has to be played before storing the current_state of gameboard to file.
     num_die_rolls = 0
     # game_elements['go_increment'] = 100 # we should not be modifying this here. It is only for testing purposes.
     # One reason to modify go_increment is if your decision agent is not aggressively trying to monopolize. Since go_increment
@@ -219,7 +220,22 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=41782):
             diagnostics.print_player_cash_balances(game_elements)
             return
 
-        #feature_engg(game_elements, current_player.player_name, phase=2)
+        #This is an example of how you may want to write out gameboard state to file.
+        #Uncomment the following piece of code to write out the gameboard current_state to file at the "count_json" iteration.
+        #All the data from game_elements will be written to a .json file which can be read back to intialize a new game with
+        #those gameboard values to start the game from that point onwards.
+        '''
+        if count_json == 50:
+            outfile = '../current_gameboard_state.json'
+            oot_code = read_write_current_state.write_out_current_state_to_file(game_elements, outfile)
+            if oot_code == 1:
+                print("Successfully written gameboard current state to file.")
+                logger.debug("Successfully written gameboard current state to file.")
+            print("Cash in hand with players when writing gameboard state to file: ")
+            for player in game_elements['players']:
+                print(player.player_name, " current cash=", player.current_cash)
+        '''
+        count_json += 1
 
     if workbook:
         write_history_to_file(game_elements, workbook)
@@ -335,6 +351,16 @@ def play_game():
 
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                                  player_decision_agents)
+
+    #Comment out the above line and uncomment the piece of code to read the gameboard state from an existing json file so that
+    #the game starts from a particular game state instead of initializing the gameboard with default start values.
+    #Note that the novelties introduced in that particular game which was saved to file will be loaded into this game board as well.
+    '''
+    logger.debug("Loading gameboard from an existing game state that was saved to file.")
+    infile = '../current_gameboard_state.json'
+    game_elements = read_write_current_state.read_in_current_state_from_file(infile, player_decision_agents)
+    '''
+
     inject_novelty(game_elements)
 
     if player_decision_agents['player_1'].startup() == -1 or player_decision_agents['player_2'].startup() == -1 or \
@@ -373,8 +399,19 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
     player_decision_agents['player_2'] = Agent(**background_agent_v3.decision_agent_methods)
     player_decision_agents['player_3'] = Agent(**background_agent_v3.decision_agent_methods)
     player_decision_agents['player_4'] = Agent(**background_agent_v3.decision_agent_methods)
+
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                                  player_decision_agents)
+    
+    #Comment out the above line and uncomment the piece of code to read the gameboard state from an existing json file so that
+    #the game starts from a particular game state instead of initializing the gameboard with default start values.
+    #Note that the novelties introduced in that particular game which was saved to file will be loaded into this game board as well.
+    '''
+    logger.debug("Loading gameboard from an existing game state that was saved to file.")
+    infile = '../current_gameboard_state.json'
+    game_elements = read_write_current_state.read_in_current_state_from_file(infile, player_decision_agents)
+    '''
+
     if inject_novelty_function:
         inject_novelty_function(game_elements)
 
