@@ -231,9 +231,12 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=125):
             if oot_code == 1:
                 print("Successfully written gameboard current state to file.")
                 logger.debug("Successfully written gameboard current state to file.")
-            print("Cash in hand with players when writing gameboard state to file: ")
-            for player in game_elements['players']:
-                print(player.player_name, " current cash=", player.current_cash)
+                print("Cash in hand with players when writing gameboard state to file: ")
+                for player in game_elements['players']:
+                    print(player.player_name, " current cash=", player.current_cash)
+            else:
+                print("Something went wrong when trying to write gameboard state to file. "
+                      "Rest of the game will be played as normal but will not log state to file.")
         '''
         count_json += 1
 
