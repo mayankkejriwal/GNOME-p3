@@ -276,17 +276,17 @@ def inject_novelty(current_gameboard, novelty_schema=None):
     ###Below are examples of Level 1, Level 2 and Level 3 Novelties
     ###Uncomment only the Level of novelty that needs to run (i.e, either Level1 or Level 2 or Level 3). Do not mix up novelties from different levels.
 
-    ''' 
+    '''
     #Level 1 Novelty
 
     numberDieNovelty = novelty_generator.NumberClassNovelty()
     numberDieNovelty.die_novelty(current_gameboard, 4, die_state_vector=[[1,2,3,4,5],[1,2,3,4],[5,6,7],[2,3,4]])
-    
+
     classDieNovelty = novelty_generator.TypeClassNovelty()
     die_state_distribution_vector = ['uniform','uniform','biased','biased']
     die_type_vector = ['odd_only','even_only','consecutive','consecutive']
     classDieNovelty.die_novelty(current_gameboard, die_state_distribution_vector, die_type_vector)
-
+    
     classCardNovelty = novelty_generator.TypeClassNovelty()
     novel_cc = dict()
     novel_cc["street_repairs"] = "alternate_contingency_function_1"
@@ -349,7 +349,7 @@ def play_game():
 
     player_decision_agents['player_1'] = Agent(**background_agent_v3.decision_agent_methods)
     player_decision_agents['player_2'] = Agent(**background_agent_v3.decision_agent_methods)
-    player_decision_agents['player_3'] = Agent(**background_agent_v4.decision_agent_methods)
+    player_decision_agents['player_3'] = Agent(**background_agent_v3.decision_agent_methods)
     player_decision_agents['player_4'] = Agent(**background_agent_v3.decision_agent_methods)
 
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
@@ -366,8 +366,8 @@ def play_game():
 
     inject_novelty(game_elements)
 
-    if player_decision_agents['player_1'].startup() == -1 or player_decision_agents['player_2'].startup() == -1 or \
-            player_decision_agents['player_3'].startup() == -1 or player_decision_agents['player_4'].startup() == -1:
+    if player_decision_agents['player_1'].startup(game_elements) == -1 or player_decision_agents['player_2'].startup(game_elements) == -1 or \
+            player_decision_agents['player_3'].startup(game_elements) == -1 or player_decision_agents['player_4'].startup(game_elements) == -1:
         logger.error("Error in initializing agents. Cannot play the game.")
         return None
     else:
@@ -398,7 +398,7 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
     player_decision_agents = dict()
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
-    player_decision_agents['player_1'] = Agent(**background_agent_v4.decision_agent_methods)
+    player_decision_agents['player_1'] = Agent(**background_agent_v3.decision_agent_methods)
     player_decision_agents['player_2'] = Agent(**background_agent_v3.decision_agent_methods)
     player_decision_agents['player_3'] = Agent(**background_agent_v3.decision_agent_methods)
     player_decision_agents['player_4'] = Agent(**background_agent_v3.decision_agent_methods)

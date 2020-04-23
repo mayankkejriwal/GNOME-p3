@@ -32,7 +32,15 @@ class Agent(object):
         self._agent_memory = dict()  # a scratchpad for the agent
 
 
-    def startup(self):
+    def startup(self, current_gameboard, indicator=None):
+        """
+        This function is called before simulating the game instance to startup the player agents by setting their is_running
+        flag to true. This is done only after making sure that all the agent functions have been initialized.
+        :param current_gameboard: the initial state of current_gameboard right after setting up the board.
+        :param indicator: a string that can be used to indicate the type of game startup (like normal startup, restart, etc)
+        :return: returns 1 if all function handlers are intialized and after agent is started up. Any error in doing so results
+        in a return value of -1.
+        """
         if self.handle_negative_cash_balance == None:
             logger.error("Agent not initialized properly. Returning -1.")
             return -1
@@ -57,6 +65,11 @@ class Agent(object):
 
 
     def shutdown(self):
+        """
+        This function is called to shutdown a running agent after the game terminates.
+        :return: function returns 1 is the agent is successfully shut down else return -1. (if trying to shutdown an
+        already shutdown agent.)
+        """
         if self.is_running == False:
             logger.error("Trying to shutdown an already shutdown agent. Returning -1.")
             return -1
