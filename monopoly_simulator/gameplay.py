@@ -418,8 +418,8 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
     if inject_novelty_function:
         inject_novelty_function(game_elements)
 
-    if player_decision_agents['player_1'].startup() == -1 or player_decision_agents['player_2'].startup() == -1 or \
-            player_decision_agents['player_3'].startup() == -1 or player_decision_agents['player_4'].startup() == -1:
+    if player_decision_agents['player_1'].startup(game_elements) == -1 or player_decision_agents['player_2'].startup(game_elements) == -1 or \
+            player_decision_agents['player_3'].startup(game_elements) == -1 or player_decision_agents['player_4'].startup(game_elements) == -1:
         logger.error("Error in initializing agents. Cannot play the game.")
         return None
     else:
