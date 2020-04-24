@@ -456,7 +456,8 @@ def handle_negative_cash_balance(player, current_gameboard):
         for p in sorted_potentials:
             if player.current_cash >= 0:
                 return 1 # we're done
-            for prop in player.assets:
+            sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
+            for prop in sorted_player_assets_list:
                 if prop!=p[0] and prop.color==p[0].color and p[0].color in player.full_color_sets_possessed:
                     if prop.num_hotels>0:
                         action_choices.sell_house_hotel(player, prop, current_gameboard, False, True)
