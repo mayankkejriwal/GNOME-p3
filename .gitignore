@@ -1,0 +1,6 @@
+#Files to be ignored
+
+.idea
+.DS_Store
+./monopoly_simulator/__pycache__
+
