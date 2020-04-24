@@ -2,5 +2,5 @@
 
 .idea
 .DS_Store
-./monopoly_simulator/__pycache__
+/monopoly_simulator/__pycache__
 
