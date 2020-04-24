@@ -139,7 +139,7 @@ def identify_improvement_opportunity(player, current_gameboard):
             if can_asset_be_improved(asset,c_assets) and asset.price_per_house<=player.current_cash: # player must be able to afford the improvement
                 potentials.append((asset,asset_incremental_improvement_rent(asset)-asset.price_per_house))
     if potentials:
-        sorted_potentials = sorted(potentials, key=lambda x: x[1], reverse=True) # sort in descending order
+        sorted_potentials = sorted(potentials, key=lambda x: (x[1], x[0].name), reverse=True) # sort in descending order
         param = dict()
         param['player'] = player
         param ['asset'] = sorted_potentials[0][0]
@@ -261,6 +261,16 @@ def asset_incremental_improvement_rent(asset):
         return asset.rent_1_house - (asset.rent*2) # remember, if the house can be improved, then it is monopolized, so twice the rent is being charged even without houses.
 
 
+def _set_to_sorted_list_assets(player_assets):
+    player_assets_list = list()
+    player_assets_dict = dict()
+    for item in player_assets:
+        player_assets_dict[item.name] = item
+    for sorted_key in sorted(player_assets_dict):
+        player_assets_list.append(player_assets_dict[sorted_key])
+    return player_assets_list
+
+
 def identify_property_trade_offer_to_player(player, current_gameboard):
     """
     Identify an opportunity to sell a property currently owned by player to another player by making a
@@ -277,7 +287,8 @@ def identify_property_trade_offer_to_player(player, current_gameboard):
     action_choices.make_sell_property_offer by the calling function.
     """
     potentials = list()
-    for a in player.assets:
+    sorted_player_assets = _set_to_sorted_list_assets(player.assets)
+    for a in sorted_player_assets:
         if a.loc_class != 'real_estate' or a.is_mortgaged:
             continue
         if a.color in player.full_color_sets_possessed:
@@ -328,7 +339,8 @@ def identify_property_trade_wanted_from_player(player, current_gameboard):
         if p == player or p.status == 'lost':
             continue
         else:
-            for a in p.assets:
+            sorted_player_assets = _set_to_sorted_list_assets(p.assets)
+            for a in sorted_player_assets:
                 if a.loc_class != 'real_estate' or a.is_mortgaged:
                     continue
                 if a.color in p.full_color_sets_possessed:
@@ -868,6 +880,3 @@ def curate_trade_offer_multiple_players_aggressive(player, potential_offer_list,
                 param['offer']['cash_wanted'] = param['to_player'].current_cash*0.5 + param['offer']['cash_offered']
 
     return offer_list_multiple_players
-
-
-

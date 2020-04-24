@@ -610,8 +610,6 @@ def buy_property(player, asset, current_gameboard):
 def _biased_die_roll_1(die_state, choice):
     p = list()
     die_total = sum(die_state)
-    logger.debug ("die_tot"+str(die_total))
-    logger.debug (die_state)
     for i in die_state:
         p.append(i*1.0/die_total)
     return choice(a=die_state, p=p)

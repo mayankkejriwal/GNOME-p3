@@ -32,7 +32,6 @@ respective functions must adhere in their signatures to the examples here. The a
 """
 
 
-
 def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
     """
     Many actions are possible in pre_roll but we prefer to save the logic for out_of_turn. The only decision
@@ -145,7 +144,10 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
                     player.agent._agent_memory['previous_action'] = action_choices.improve_property
                     return (action_choices.improve_property, param)
 
-        for m in player.mortgaged_assets:
+        player_mortgaged_assets_list = list()
+        if player.mortgaged_assets:
+            player_mortgaged_assets_list = _set_to_sorted_list_mortgaged_assets(player.mortgaged_assets)
+        for m in player_mortgaged_assets_list:
             if player.current_cash-(m.mortgage*1.1) >= current_gameboard['go_increment'] and action_choices.free_mortgage in allowable_moves:
                 # free mortgages till we can afford it. the second condition should not be necessary but just in case.
                 param = dict()
@@ -324,8 +326,6 @@ def make_bid(player, current_gameboard, asset, current_bid):
         return 0 # no reason to bid
 
 
-
-
 def handle_negative_cash_balance(player, current_gameboard):
     """
     You have a negative cash balance at the end of your move (i.e. your post-roll phase is over) and you must handle
@@ -347,7 +347,8 @@ def handle_negative_cash_balance(player, current_gameboard):
     """
     mortgage_potentials = list()
     max_sum = 0
-    for a in player.assets:
+    sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
+    for a in sorted_player_assets_list:
         if a.is_mortgaged:
             continue
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
@@ -366,7 +367,8 @@ def handle_negative_cash_balance(player, current_gameboard):
     # if we got here, it means we're still in trouble. Next move is to sell unimproved properties. We don't check if
     # the total will cover our debts, since we're desperate at this point.
     sale_potentials = list()
-    for a in player.assets:
+    sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
+    for a in sorted_player_assets_list:
         if a.is_mortgaged:
             sale_potentials.append((a, (a.price/2)-(1.1*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
@@ -387,7 +389,8 @@ def handle_negative_cash_balance(player, current_gameboard):
         # or cash balance turns non-negative.
         count += 1 # there is a slim chance that it is impossible to sell an improvement unless the player does something first (e.g., replace 4 houses with a hotel).
         # The count ensures we terminate at some point, regardless.
-        for a in player.assets:
+        sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
+        for a in sorted_player_assets_list:
             if a.num_houses > 0:
                 action_choices.sell_house_hotel(player, a, current_gameboard,True, False)
                 if player.current_cash >= 0:
@@ -399,12 +402,33 @@ def handle_negative_cash_balance(player, current_gameboard):
 
     # final straw
     final_sale_assets = player.assets.copy()
-    for a in final_sale_assets:
+    sorted_player_assets_list = _set_to_sorted_list_assets(final_sale_assets)
+    for a in sorted_player_assets_list:
         action_choices.sell_property(player, a, current_gameboard) # this could be refined further; we may be able to get away with a mortgage at this point.
         if player.current_cash >= 0:
             return 1  # we're done
 
     return 1 # if we didn't succeed in establishing solvency, it will get caught by the simulator. Since we tried, we return 1.
+
+
+def _set_to_sorted_list_mortgaged_assets(player_mortgaged_assets):
+    player_m_assets_list = list()
+    player_m_assets_dict = dict()
+    for item in player_mortgaged_assets:
+        player_m_assets_dict[item.name] = item
+    for sorted_key in sorted(player_m_assets_dict):
+        player_m_assets_list.append(player_m_assets_dict[sorted_key])
+    return player_m_assets_list
+
+
+def _set_to_sorted_list_assets(player_assets):
+    player_assets_list = list()
+    player_assets_dict = dict()
+    for item in player_assets:
+        player_assets_dict[item.name] = item
+    for sorted_key in sorted(player_assets_dict):
+        player_assets_list.append(player_assets_dict[sorted_key])
+    return player_assets_list
 
 
 def _build_decision_agent_methods_dict():

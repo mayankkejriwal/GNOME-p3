@@ -265,7 +265,10 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
                     player.agent._agent_memory['previous_action'] = action_choices.improve_property
                     return (action_choices.improve_property, param)
 
-        for m in player.mortgaged_assets:
+        player_mortgaged_assets_list = list()
+        if player.mortgaged_assets:
+            player_mortgaged_assets_list = _set_to_sorted_list_mortgaged_assets(player.mortgaged_assets)
+        for m in player_mortgaged_assets_list:
             if player.current_cash-(m.mortgage*1.1) >= current_gameboard['go_increment'] and action_choices.free_mortgage in allowable_moves:
                 # free mortgages till we can afford it. the second condition should not be necessary but just in case.
                 param = dict()
@@ -470,7 +473,8 @@ def handle_negative_cash_balance(player, current_gameboard):
     """
     mortgage_potentials = list()
     max_sum = 0
-    for a in player.assets:
+    sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
+    for a in sorted_player_assets_list:
         if a.is_mortgaged:
             continue
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
@@ -491,7 +495,8 @@ def handle_negative_cash_balance(player, current_gameboard):
 
     # following sale potentials doesnot include properties from monopolized color groups
     sale_potentials = list()
-    for a in player.assets:
+    sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
+    for a in sorted_player_assets_list:
         if a.color in player.full_color_sets_possessed:
             continue
         elif a.is_mortgaged:
@@ -513,7 +518,9 @@ def handle_negative_cash_balance(player, current_gameboard):
     # sell the houses and hotels first because we cannot sell this property when the color group has improved properties
     # We first check if selling houses and hotels one by one on the other improved properties of the same color group relieves the player of his debt. If it does
     # then we return without selling the current property else we sell the property and the player loses monopoly of that color group.
-    for a in player.assets:
+    sale_potentials = list()
+    sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
+    for a in sorted_player_assets_list:
         if a.is_mortgaged:
             sale_potentials.append((a, (a.price/2)-(1.1*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
@@ -548,7 +555,8 @@ def handle_negative_cash_balance(player, current_gameboard):
 
     mortgage_potentials = list()
     max_sum = 0
-    for a in player.assets:
+    sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
+    for a in sorted_player_assets_list:
         if a.is_mortgaged:
             continue
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
@@ -567,7 +575,8 @@ def handle_negative_cash_balance(player, current_gameboard):
     # following sale potentials loops through the properties that have become unmonopolized due to the above loops and
     # doesnot include properties from monopolized color groups
     sale_potentials = list()
-    for a in player.assets:
+    sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
+    for a in sorted_player_assets_list:
         if a.color in player.full_color_sets_possessed:
             continue
         elif a.is_mortgaged:
@@ -591,7 +600,8 @@ def handle_negative_cash_balance(player, current_gameboard):
         # or cash balance turns non-negative.
         count += 1 # there is a slim chance that it is impossible to sell an improvement unless the player does something first (e.g., replace 4 houses with a hotel).
         # The count ensures we terminate at some point, regardless.
-        for a in player.assets:
+        sorted_assets_list = _set_to_sorted_list_assets(player.assets)
+        for a in sorted_assets_list:
             if a.num_houses > 0:
                 action_choices.sell_house_hotel(player, a, current_gameboard,True, False)
                 if player.current_cash >= 0:
@@ -603,12 +613,33 @@ def handle_negative_cash_balance(player, current_gameboard):
 
     # final straw
     final_sale_assets = player.assets.copy()
-    for a in final_sale_assets:
+    sorted_player_assets_list = _set_to_sorted_list_assets(final_sale_assets)
+    for a in sorted_player_assets_list:
         action_choices.sell_property(player, a, current_gameboard) # this could be refined further; we may be able to get away with a mortgage at this point.
         if player.current_cash >= 0:
             return 1  # we're done
 
     return 1 # if we didn't succeed in establishing solvency, it will get caught by the simulator. Since we tried, we return 1.
+
+
+def _set_to_sorted_list_mortgaged_assets(player_mortgaged_assets):
+    player_m_assets_list = list()
+    player_m_assets_dict = dict()
+    for item in player_mortgaged_assets:
+        player_m_assets_dict[item.name] = item
+    for sorted_key in sorted(player_m_assets_dict):
+        player_m_assets_list.append(player_m_assets_dict[sorted_key])
+    return player_m_assets_list
+
+
+def _set_to_sorted_list_assets(player_assets):
+    player_assets_list = list()
+    player_assets_dict = dict()
+    for item in player_assets:
+        player_assets_dict[item.name] = item
+    for sorted_key in sorted(player_assets_dict):
+        player_assets_list.append(player_assets_dict[sorted_key])
+    return player_assets_list
 
 
 def _build_decision_agent_methods_dict():
