@@ -7,6 +7,7 @@ from monopoly_simulator import background_agent_v1_deprecated
 from monopoly_simulator import background_agent_v2
 from monopoly_simulator import background_agent_v3
 from monopoly_simulator import background_agent_v4
+from monopoly_simulator import baseline_agent
 from monopoly_simulator import read_write_current_state
 from monopoly_simulator import simple_decision_agent_1
 import json
@@ -15,7 +16,6 @@ from monopoly_simulator import novelty_generator
 from monopoly_simulator.agent import Agent
 import xlsxwriter
 from monopoly_simulator.logging_info import log_file_create
-from monopoly_simulator.feature_engineering import feature_engg
 import os
 import logging
 
@@ -57,7 +57,7 @@ def disable_history(game_elements):
     game_elements['history']['return'] = list()
 
 
-def simulate_game_instance(game_elements, history_log_file=None, np_seed=125):
+def simulate_game_instance(game_elements, history_log_file=None, np_seed=12352):
     """
     Simulate a game instance.
     :param game_elements: The dict output by set_up_board
@@ -208,6 +208,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=125):
                         if p.status != 'lost':
                             winner = p
                             p.status = 'won'
+            else:
+                current_player.status = 'waiting_for_move'
         else:
             current_player.status = 'waiting_for_move'
 
@@ -281,7 +283,7 @@ def inject_novelty(current_gameboard, novelty_schema=None):
 
     numberDieNovelty = novelty_generator.NumberClassNovelty()
     numberDieNovelty.die_novelty(current_gameboard, 4, die_state_vector=[[1,2,3,4,5],[1,2,3,4],[5,6,7],[2,3,4]])
-
+    
     classDieNovelty = novelty_generator.TypeClassNovelty()
     die_state_distribution_vector = ['uniform','uniform','biased','biased']
     die_type_vector = ['odd_only','even_only','consecutive','consecutive']
@@ -302,6 +304,7 @@ def inject_novelty(current_gameboard, novelty_schema=None):
     #On playing the game it is verified that the newly added property to the color group is taken into account for monopolizing a color group,
     # i,e the orchid color group now has Baltic Avenue besides St. Charles Place, States Avenue and Virginia Avenue. The player acquires a monopoly
     # only on the ownership of all the 4 properties in this case.
+    
     inanimateNovelty = novelty_generator.InanimateAttributeNovelty()
     inanimateNovelty.map_property_set_to_color(current_gameboard, [current_gameboard['location_objects']['Park Place'], current_gameboard['location_objects']['Boardwalk']], 'Brown')
     inanimateNovelty.map_property_to_color(current_gameboard, current_gameboard['location_objects']['Baltic Avenue'], 'Orchid')
