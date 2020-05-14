@@ -356,21 +356,21 @@ def _build_individual_location_details():
                                    'num_houses':[0,1,2,3,4], 'num_hotels': [0,1]}
     # class Orchid
     ans['St. Charles Place'] = {'color': 'Orchid', 'price': 140, 'name': 'St. Charles Place', 'rent': 10,
-                              'price_per_house': 10, 'rent_1_house': 50, 'rent_2_houses': 150,
+                              'price_per_house': 100, 'rent_1_house': 50, 'rent_2_houses': 150,
                               'rent_3_houses': 450, 'rent_4_houses': 625, 'rent_hotel': 750,
                               'mortgage': 70, 'loc_class':'real_estate',
                                    'owned_by':['bank', 'player_1', 'player_2', 'player_3', 'player_4'],
                                    'num_houses':[0,1,2,3,4], 'num_hotels': [0,1]}
 
     ans['States Avenue'] = {'color': 'Orchid', 'price': 140, 'name': 'States Avenue', 'rent': 10,
-                              'price_per_house': 10, 'rent_1_house': 50, 'rent_2_houses': 150,
+                              'price_per_house': 100, 'rent_1_house': 50, 'rent_2_houses': 150,
                               'rent_3_houses': 450, 'rent_4_houses': 625, 'rent_hotel': 750,
                               'mortgage': 70, 'loc_class':'real_estate',
                                    'owned_by':['bank', 'player_1', 'player_2', 'player_3', 'player_4'],
                                    'num_houses':[0,1,2,3,4], 'num_hotels': [0,1]}
 
     ans['Virginia Avenue'] = {'color': 'Orchid', 'price': 160, 'name': 'Virginia Avenue', 'rent': 12,
-                              'price_per_house': 12, 'rent_1_house': 60, 'rent_2_houses': 180,
+                              'price_per_house': 100, 'rent_1_house': 60, 'rent_2_houses': 180,
                               'rent_3_houses': 500, 'rent_4_houses': 700, 'rent_hotel': 900,
                               'mortgage': 80, 'loc_class':'real_estate',
                                    'owned_by':['bank', 'player_1', 'player_2', 'player_3', 'player_4'],
@@ -571,6 +571,5 @@ specify_board_state()
 import json
 
 json.dump(board_state, open('/Users/mayankkejriwal/git-projects/GNOME/monopoly_novelty_schema_v2.json', 'w'))
-
 
 
