@@ -3,6 +3,7 @@ from monopoly_simulator.location import  RealEstateLocation, UtilityLocation, Ra
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.player')
 
+
 class Player(object):
     def __init__(self, current_position, status, has_get_out_of_jail_community_chest_card, has_get_out_of_jail_chance_card,
                  current_cash, num_railroads_possessed, player_name, assets,full_color_sets_possessed, currently_in_jail,
@@ -72,7 +73,6 @@ class Player(object):
 
         self._option_to_buy = False # this option will turn true when  the player lands on a property that could be bought.
         # We always set it to false again at the end of the post_roll phase. It is an internal variable.
-
 
     def change_decision_agent(self, agent):
         self.agent = agent
@@ -634,7 +634,7 @@ class Player(object):
     def make_pre_roll_moves(self, current_gameboard):
         """
         The player's pre-roll phase. The function will only return either if the player skips the turn on the first move,
-        or till the player returns concluded_actions (if the first move was not skip_turn). Otherwiscurrent_gameboard['bank'].total_houses += asset.num_houses e, it keeps prompting
+        or till the player returns concluded_actions (if the first move was not skip_turn). Otherwise, it keeps prompting
         the player's decision agent.
         :param current_gameboard: A dict. The global data structure representing the current game board.
         :return: An integer. 2 if the turn is skipped or 1 for concluded actions. No other code should safely
@@ -672,9 +672,7 @@ class Player(object):
                 self.outstanding_trade_offer['cash_offered'] = 0
                 self.outstanding_trade_offer['cash_wanted'] = 0
                 self.outstanding_trade_offer['from_player'] = None
-
             return self._execute_action(action_to_execute, parameters, current_gameboard)
-
 
         allowable_actions.add(concluded_actions)
         allowable_actions.remove(skip_turn) # from this time on, skip turn is not allowed.current_gameboard['bank'].total_houses += asset.num_houses
@@ -755,11 +753,6 @@ class Player(object):
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
-        if isinstance(action_to_execute, list):
-            for i in range(len(action_to_execute)):
-                code = self._execute_action(action_to_execute[i], parameters[i], current_gameboard)
-                logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
-            return 1
 
         if action_to_execute == skip_turn:
             if self.is_property_offer_outstanding:
@@ -800,13 +793,20 @@ class Player(object):
                     self.outstanding_trade_offer['from_player'] = None
                 return self._execute_action(action_to_execute, parameters, current_gameboard)
             else:
+                #Note that during out of turn move, player can make make_trade_offers to multiple players at the same time
+                #Thus action_to_execute and parameters will be lists and will have to be iteratively executed.
+                #The return code for each executed action from the list will also be stored in a list. Hence, code is
+                #a list in this case.
                 if isinstance(action_to_execute, list):
+                    code = []
                     for i in range(len(action_to_execute)):
-                        code = self._execute_action(action_to_execute[i], parameters[i], current_gameboard)
-                        logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
+                        code_ret = self._execute_action(action_to_execute[i], parameters[i], current_gameboard)
+                        logger.debug('Received code '+ str(code_ret)+ '. Continuing iteration...')
+                        code.append(code_ret)
                 else:
                     code = self._execute_action(action_to_execute, parameters, current_gameboard)
-                logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
+                    logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
+
                 allowable_actions = self.compute_allowable_out_of_turn_actions(current_gameboard)
                 action_to_execute, parameters = self.agent.make_out_of_turn_move(self, current_gameboard, allowable_actions, code)
                 t = (action_to_execute, parameters)
@@ -870,13 +870,13 @@ class Player(object):
         if action_to_execute == concluded_actions:
             self._force_buy_outcome(current_gameboard) # if option to buy is not set, this will make no difference.
             return self._execute_action(action_to_execute, parameters, current_gameboard) # now we can conclude actions
+
         count = 0
         while count < 50:  # the player is allowed up to 50 actions before we force conclude actions.
             count += 1
             if action_to_execute == concluded_actions:
                 self._force_buy_outcome(current_gameboard)
                 return self._execute_action(action_to_execute, parameters, current_gameboard)  # now we can conclude actions
-
             else:
                 code = self._execute_action(action_to_execute, parameters, current_gameboard)
                 logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
@@ -896,7 +896,6 @@ class Player(object):
 
         self._force_buy_outcome(current_gameboard) # if we got here, we need to conclude actions
         return self._execute_action(concluded_actions, dict(), current_gameboard)  # now we can conclude actions
-
 
     def _force_buy_outcome(self, current_gameboard):
         """
@@ -1004,9 +1003,3 @@ class Player(object):
             current_gameboard['history']['return'].append(p)
 
             return p
-
-
-
-
-
-
