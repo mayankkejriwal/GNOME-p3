@@ -6,7 +6,7 @@ from monopoly_simulator import background_agent_v1
 from monopoly_simulator import background_agent_v1_deprecated
 from monopoly_simulator import background_agent_v2
 from monopoly_simulator import background_agent_v3
-from monopoly_simulator import background_agent_v4
+from monopoly_simulator import background_agent_v3_1
 from monopoly_simulator import baseline_agent
 from monopoly_simulator import read_write_current_state
 from monopoly_simulator import simple_decision_agent_1
@@ -57,7 +57,7 @@ def disable_history(game_elements):
     game_elements['history']['return'] = list()
 
 
-def simulate_game_instance(game_elements, history_log_file=None, np_seed=12352):
+def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
     """
     Simulate a game instance.
     :param game_elements: The dict output by set_up_board
@@ -104,13 +104,14 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=12352):
             skip_turn += 1
         out_of_turn_player_index = current_player_index + 1
         out_of_turn_count = 0
-        while skip_turn != num_active_players and out_of_turn_count <= 200:
+        while skip_turn != num_active_players and out_of_turn_count <= 20:  ##oot count reduced 20 from 200 to keep the game short
             out_of_turn_count += 1
             # print('checkpoint 1')
             out_of_turn_player = game_elements['players'][out_of_turn_player_index % len(game_elements['players'])]
             if out_of_turn_player.status == 'lost':
                 out_of_turn_player_index += 1
                 continue
+
             oot_code = out_of_turn_player.make_out_of_turn_moves(game_elements)
             # add to game history
             game_elements['history']['function'].append(out_of_turn_player.make_out_of_turn_moves)
@@ -350,10 +351,10 @@ def play_game():
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
 
-    player_decision_agents['player_1'] = Agent(**background_agent_v3.decision_agent_methods)
-    player_decision_agents['player_2'] = Agent(**background_agent_v3.decision_agent_methods)
-    player_decision_agents['player_3'] = Agent(**background_agent_v3.decision_agent_methods)
-    player_decision_agents['player_4'] = Agent(**background_agent_v3.decision_agent_methods)
+    player_decision_agents['player_1'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_2'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_3'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_4'] = Agent(**background_agent_v3_1.decision_agent_methods)
 
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                                  player_decision_agents)
