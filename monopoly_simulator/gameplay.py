@@ -140,7 +140,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
                     if prop.loc_class == 'real_estate':
                         networth_p1ayer += prop.price
                         networth_p1ayer += prop.num_houses*prop.price_per_house
-                        networth_p1ayer += prop.num_houses*prop.price_per_house*4
+                        networth_p1ayer += prop.num_houses*prop.price_per_house*5
                     elif prop.loc_class == 'railroad':
                         networth_p1ayer += prop.price
                     elif prop.loc_class == 'utility':
