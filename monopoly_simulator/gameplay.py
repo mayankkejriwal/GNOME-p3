@@ -104,7 +104,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
             skip_turn += 1
         out_of_turn_player_index = current_player_index + 1
         out_of_turn_count = 0
-        while skip_turn != num_active_players and out_of_turn_count <= 20:  ##oot count reduced 20 from 200 to keep the game short
+        while skip_turn != num_active_players and out_of_turn_count <= 20:  ##oot count reduced to 20 from 200 to keep the game short
             out_of_turn_count += 1
             # print('checkpoint 1')
             out_of_turn_player = game_elements['players'][out_of_turn_player_index % len(game_elements['players'])]
@@ -130,6 +130,22 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
         # now we roll the dice and get into the post_roll phase,
         # but only if we're not in jail.
         # but only if we're not in jail.
+
+        logger.debug("Printing cash balance and net worth of each player: ")
+        for pl in game_elements['players']:
+            networth_p1ayer = 0
+            networth_p1ayer += pl.current_cash
+            if pl.assets:
+                for prop in pl.assets:
+                    if prop.loc_class == 'real_estate':
+                        networth_p1ayer += prop.price
+                        networth_p1ayer += prop.num_houses*prop.price_per_house
+                        networth_p1ayer += prop.num_houses*prop.price_per_house*4
+                    elif prop.loc_class == 'railroad':
+                        networth_p1ayer += prop.price
+                    elif prop.loc_class == 'utility':
+                        networth_p1ayer += prop.price
+            logger.debug(pl.player_name + ' has a cash balance of $' + str(pl.current_cash) + ' and a net worth of $' + str(networth_p1ayer))
 
         r = roll_die(game_elements['dies'], np.random.choice)
         for i in range(len(r)):
