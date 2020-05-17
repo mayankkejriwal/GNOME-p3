@@ -233,7 +233,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
         current_player_index = (current_player_index + 1) % len(game_elements['players'])
 
         if diagnostics.max_cash_balance(
-                game_elements) > 300000:  # this is our limit for runaway cash for testing purposes only.
+                game_elements) > 100000:  # this is our limit for runaway cash for testing purposes only.
             # We print some diagnostics and return if any player exceeds this.
             diagnostics.print_asset_owners(game_elements)
             diagnostics.print_player_cash_balances(game_elements)
