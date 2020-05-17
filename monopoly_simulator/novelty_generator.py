@@ -115,6 +115,12 @@ class InanimateAttributeNovelty(AttributeNovelty):
         for k, v in rent_dict.items():
             setattr(location, k, v)
 
+        if location.loc_class == 'real_estate':
+            location._house_rent_dict[1] = location.rent_1_house
+            location._house_rent_dict[2] = location.rent_2_houses
+            location._house_rent_dict[3] = location.rent_3_houses
+            location._house_rent_dict[4] = location.rent_4_houses
+
 
     def mortgage_novelty(self, location, new_mortgage):
         """
