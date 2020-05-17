@@ -247,17 +247,18 @@ class NumberClassNovelty(ClassNovelty):
         :param chance_cards_num: a dict where the key is the card's name, and the value is the num
         :return: None
         """
-        current_gameboard['community_chest_cards'] = list()
+
+        current_gameboard['community_chest_cards'] = set()
         for card_name, num in community_chest_cards_num.items():
             card = current_gameboard['community_chest_card_objects'][card_name]
             for i in range(0, num):
-                current_gameboard['community_chest_cards'].append(copy.deepcopy(card))
+                current_gameboard['community_chest_cards'].add(copy.deepcopy(card))
 
-        current_gameboard['chance_cards'] = list()
+        current_gameboard['chance_cards'] = set()
         for card_name, num in chance_cards_num.items():
             card = current_gameboard['chance_card_objects'][card_name]
             for i in range(0, num):
-                current_gameboard['chance_cards'].append(copy.deepcopy(card))
+                current_gameboard['chance_cards'].add(copy.deepcopy(card))
 
 
 class TypeClassNovelty(ClassNovelty):
