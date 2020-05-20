@@ -17,6 +17,7 @@ from monopoly_simulator.agent import Agent
 import xlsxwriter
 from monopoly_simulator.logging_info import log_file_create
 import os
+import time
 import logging
 
 logger = logging.getLogger('monopoly_simulator.logging_info')
@@ -72,6 +73,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
     game_elements['choice_function'] = np.random.choice
     count_json = 0   # a counter to keep track of how many rounds the game has to be played before storing the current_state of gameboard to file.
     num_die_rolls = 0
+    tot_time = 0
     # game_elements['go_increment'] = 100 # we should not be modifying this here. It is only for testing purposes.
     # One reason to modify go_increment is if your decision agent is not aggressively trying to monopolize. Since go_increment
     # by default is 200 it can lead to runaway cash increases for simple agents like ours.
@@ -85,7 +87,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
     workbook = None
     if history_log_file:
         workbook = xlsxwriter.Workbook(history_log_file)
-
+    start_time = time.time()
     while num_active_players > 1:
         disable_history(
             game_elements)  # comment this out when you want history to stay. Currently, it has high memory consumption, we are working to solve the problem (most likely due to deep copy run-off).
@@ -104,7 +106,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
             skip_turn += 1
         out_of_turn_player_index = current_player_index + 1
         out_of_turn_count = 0
-        while skip_turn != num_active_players and out_of_turn_count <= 20:  ##oot count reduced to 20 from 200 to keep the game short
+        while skip_turn != num_active_players and out_of_turn_count <= 5:  ##oot count reduced to 20 from 200 to keep the game short
             out_of_turn_count += 1
             # print('checkpoint 1')
             out_of_turn_player = game_elements['players'][out_of_turn_player_index % len(game_elements['players'])]
@@ -140,7 +142,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
                     if prop.loc_class == 'real_estate':
                         networth_p1ayer += prop.price
                         networth_p1ayer += prop.num_houses*prop.price_per_house
-                        networth_p1ayer += prop.num_houses*prop.price_per_house*5
+                        networth_p1ayer += prop.num_hotels*prop.price_per_house*5
                     elif prop.loc_class == 'railroad':
                         networth_p1ayer += prop.price
                     elif prop.loc_class == 'utility':
@@ -231,12 +233,17 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
             current_player.status = 'waiting_for_move'
 
         current_player_index = (current_player_index + 1) % len(game_elements['players'])
+        tot_time = time.time() - start_time
 
         if diagnostics.max_cash_balance(
                 game_elements) > 100000:  # this is our limit for runaway cash for testing purposes only.
+            # game terminates if cash reaches 100k limit.
             # We print some diagnostics and return if any player exceeds this.
             diagnostics.print_asset_owners(game_elements)
             diagnostics.print_player_cash_balances(game_elements)
+            logger.debug("Game ran for " + str(tot_time) + " seconds.")
+            logger.debug("Game terminated since max cash balance exceeded limit.")
+
             return
 
         #This is an example of how you may want to write out gameboard state to file.
@@ -267,6 +274,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
     logger.debug('number of dice rolls: ' + str(num_die_rolls))
     logger.debug('printing final cash balances: ')
     diagnostics.print_player_cash_balances(game_elements)
+    logger.debug("Game ran for " + str(tot_time) + " seconds.")
 
     if winner:
         logger.debug('We have a winner: ' + winner.player_name)
@@ -455,4 +463,4 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
             return winner
 
 
-play_game()
+#play_game()
