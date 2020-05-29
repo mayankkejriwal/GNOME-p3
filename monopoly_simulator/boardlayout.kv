@@ -1,0 +1,47 @@
+<CreateBoardWindow>:
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    name: "GameBoard"
+    board_id: board_id
+    FloatLayout:
+        id: board_id
+        Button:
+            id: exit_button_id
+            text: 'EXIT'
+            size_hint: 0.05, 0.05
+            pos_hint: {"x":0.95, "top":1}
+            on_release:
+                print('GAME EXITTING..................')
+                exit(0)
+
+<PropertyButton>:
+    id: prop_id
+    text: 'dummy'
+    pos_hint: {"x":0.9, "y":0.05}
+    size_hint: 0.07, 0.07
+    background_color: [1,1,0,0.5]
+    on_release: self.parent.parent.popup_window(self.text)
+
+<MonopolyButton>:
+    text: 'Prop1'
+    size_hint: 0.05, 0.05
+    pos_hint: {"x":0, "top":1}
+    background_color: [1,1,0,0.5]
+
+<P>:
+    Label:
+        id: popup_id
+        size_hint: 0.4, 0.8
+        pos_hint: {"x":0.2, "top":1}
+        text: 'dummy'
+
+<PlayerWidget>:
+    id: player_id
+    pos_hint: None, None
+    size_hint: None, None
+    background_color: [1,1,0,0.5]
+

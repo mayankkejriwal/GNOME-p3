@@ -228,11 +228,6 @@ class CreateBoardWindow(Screen):
         :return: None
         """
         logger.debug("size of board "+ str(len(self.game_elem['location_sequence'])))
-        #for i in range(len(self.game_elem['location_sequence'])):
-        #    logger.debug(self.game_elem['location_sequence'][i].name)
-        #logger.debug("start pos: " + str(self.game_elem['location_objects']['States Avenue'].start_position) + " end pos: " + str(self.game_elem['location_objects']['States Avenue'].end_position))
-        #logger.debug("start pos: " + str(self.game_elem['location_objects']['Virginia Avenue'].start_position) + " end pos: " + str(self.game_elem['location_objects']['Virginia Avenue'].end_position))
-        #logger.debug("start pos: " + str(self.game_elem['location_objects']['Pennsylvania Railroad'].start_position) + " end pos: " + str(self.game_elem['location_objects']['Pennsylvania Railroad'].end_position))
         np.random.seed(np_seed)
         np.random.shuffle(self.game_elem['players'])
         self.game_elem['seed'] = np_seed
@@ -382,7 +377,7 @@ class CreateBoardWindow(Screen):
                 0.1 is the default setting for this package.
                 You can reduce it if you want the game to run faster or increase it to slow down the execution.
                 '''
-                time.sleep(0.1)
+                time.sleep(0.05)
                 self.update_board()
 
                 if diagnostics.max_cash_balance(self.game_elem) > 300000: # this is our limit for runaway cash for testing purposes only.
@@ -622,7 +617,7 @@ class MyMainApp(App):
         return sm
 
     def run_func(self):
-        Builder.load_file("my.kv")
+        Builder.load_file("boardlayout.kv")
         sm = WindowManager()
         screens = [CreateBoardWindow(self.game_elem)]
         for screen in screens:
@@ -635,6 +630,7 @@ class MyMainApp(App):
 def set_up_board(game_schema_file_path, player_decision_agents):
     game_schema = json.load(open(game_schema_file_path, 'r'))
     return initialize_game_elements.initialize_board(game_schema, player_decision_agents)
+
 
 def inject_class_novelty_1(current_gameboard, novelty_schema=None):
     """
@@ -650,7 +646,6 @@ def inject_class_novelty_1(current_gameboard, novelty_schema=None):
 
     ###Below are examples of Level 1, Level 2 and Level 3 Novelties
     ###Uncomment only the Level of novelty that needs to run (i.e, either Level1 or Level 2 or Level 3). Do not mix up novelties from different levels.
-
     '''
     #Level 1 Novelty
 
@@ -711,8 +706,8 @@ except:
 logger = log_file_create('../single_tournament/seed_6.log')
 player_decision_agents = dict()
 player_decision_agents['player_1'] = Agent(**background_agent_v1.decision_agent_methods)
-player_decision_agents['player_2'] = Agent(**background_agent_v2.decision_agent_methods)
-player_decision_agents['player_3'] = Agent(**background_agent_v3.decision_agent_methods)
+player_decision_agents['player_2'] = Agent(**background_agent_v1.decision_agent_methods)
+player_decision_agents['player_3'] = Agent(**background_agent_v1.decision_agent_methods)
 player_decision_agents['player_4'] = Agent(**background_agent_v1.decision_agent_methods)
 game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                              player_decision_agents)
