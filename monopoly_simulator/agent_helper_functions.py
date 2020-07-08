@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.agent_helper_func')
+logger = logging.getLogger('logging_info.agent_helper_func')
 
 def will_property_complete_set(player, asset, current_gameboard):
     """

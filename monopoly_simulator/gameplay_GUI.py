@@ -12,22 +12,22 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 import threading
 import time
 import os
-from monopoly_simulator import initialize_game_elements
-from monopoly_simulator.action_choices import roll_die
+import initialize_game_elements
+from action_choices import roll_die
 import numpy as np
-from monopoly_simulator.card_utility_actions import move_player_after_die_roll
-from monopoly_simulator import background_agent_v1
-from monopoly_simulator import background_agent_v2
-from monopoly_simulator import background_agent_v3
-from monopoly_simulator import simple_decision_agent_1
-from monopoly_simulator import diagnostics
-from monopoly_simulator import novelty_generator
-from monopoly_simulator.agent import Agent
-from monopoly_simulator.logging_info import log_file_create
+from card_utility_actions import move_player_after_die_roll
+import background_agent_v1
+import background_agent_v2
+import background_agent_v3
+import simple_decision_agent_1
+import diagnostics
+import novelty_generator
+from agent import Agent
+from logging_info import log_file_create
 import json
 import logging
 
-logger = logging.getLogger('monopoly_simulator.logging_info')
+logger = logging.getLogger('logging_info')
 
 
 class CreateBoardWindow(Screen):

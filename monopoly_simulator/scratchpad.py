@@ -4,11 +4,11 @@ we provide facilities for these in diagnostics.py and testing.py
 """
 
 
-from monopoly_simulator.location import *
+from location import *
 import json
 import sys
-from monopoly_simulator.action_choices import skip_turn
-from monopoly_simulator import bank
+from action_choices import skip_turn
+import bank
 
 # print(10%10)
 # game_schema_path = '/Users/mayankkejriwal/git-projects/GNOME/'

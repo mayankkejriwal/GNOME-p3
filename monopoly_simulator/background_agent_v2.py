@@ -1,9 +1,9 @@
-from monopoly_simulator import action_choices
-from monopoly_simulator import agent_helper_functions # helper functions are internal to the agent and will not be recorded in the function log.
-from monopoly_simulator import diagnostics
-from monopoly_simulator import hypothetical_simulator
+import action_choices
+import agent_helper_functions # helper functions are internal to the agent and will not be recorded in the function log.
+import diagnostics
+import hypothetical_simulator
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.background_agent')
+logger = logging.getLogger('logging_info.background_agent')
 
 
 """

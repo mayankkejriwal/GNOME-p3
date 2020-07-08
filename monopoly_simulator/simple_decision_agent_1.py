@@ -1,8 +1,8 @@
-from . import action_choices
-from monopoly_simulator.action_choices import *
-from monopoly_simulator.location import  RealEstateLocation, UtilityLocation, RailroadLocation
+import action_choices
+from action_choices import *
+from location import  RealEstateLocation, UtilityLocation, RailroadLocation
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.simple_decision_agent')
+logger = logging.getLogger('logging_info.simple_decision_agent')
 """
 All external decision_agent functions must have the exact signatures we have indicated in this document. Beyond
 that, we impose no restrictions (you can make the decision agent as complex as you like (including maintaining state), and we use good faith to ensure

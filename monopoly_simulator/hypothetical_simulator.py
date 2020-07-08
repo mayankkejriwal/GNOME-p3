@@ -1,8 +1,8 @@
 import pprint
 import copy, json
 import numpy
-from monopoly_simulator import diagnostics
-from monopoly_simulator.card_utility_actions import move_player_after_die_roll
+import diagnostics
+from card_utility_actions import move_player_after_die_roll
 
 
 def initialize_hypothetical_universe(current_gameboard, player_decision_agents, seed=3):

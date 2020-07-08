@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.card_utility_actions')
+logger = logging.getLogger('logging_info.card_utility_actions')
 
 """
 This is an important file that contains many functions (not including internal functions that start with _) that

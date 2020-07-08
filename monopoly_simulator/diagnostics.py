@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.diagnostics')
+logger = logging.getLogger('logging_info.diagnostics')
 """
 This file is imported into gameplay and primarily used for printing diagnostics. Expand as necessary for your own
 use cases.

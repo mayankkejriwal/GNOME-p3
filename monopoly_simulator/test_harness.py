@@ -1,7 +1,7 @@
 import numpy as np
-from monopoly_simulator import gameplay
-from monopoly_simulator import novelty_generator
-from monopoly_simulator.logging_info import log_file_create
+import gameplay
+import novelty_generator
+from logging_info import log_file_create
 import os
 import shutil
 import json

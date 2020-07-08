@@ -1,15 +1,15 @@
 import json
-from monopoly_simulator.bank import Bank
+from bank import Bank
 import copy
-from monopoly_simulator import location
-from monopoly_simulator.dice import Dice
-from monopoly_simulator.bank import Bank
-from monopoly_simulator.card_utility_actions import * # functions from this module will be used in reflections in initialize_board,
+import location
+from dice import Dice
+from bank import Bank
+from card_utility_actions import * # functions from this module will be used in reflections in initialize_board,
                                     # and excluding this import will lead to run-time errors
 import sys
-from monopoly_simulator.player import Player
-from monopoly_simulator import card
-from monopoly_simulator import action_choices
+from player import Player
+import card
+import action_choices
 
 
 def read_in_current_state_from_file(infile, player_decision_agents):

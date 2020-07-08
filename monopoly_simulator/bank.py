@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.bank')
+logger = logging.getLogger('logging_info.bank')
 
 class Bank(object):
     def __init__(self):

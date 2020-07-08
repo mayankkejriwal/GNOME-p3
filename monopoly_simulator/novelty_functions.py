@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.novelty_func')
+logger = logging.getLogger('logging_info.novelty_func')
 
 def alternate_contingency_function_1(player, card, current_gameboard):
     """

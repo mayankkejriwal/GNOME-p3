@@ -1,5 +1,5 @@
 import os
-from monopoly_simulator.metrics_helper import generate_rank_matrix, generate_win_matrix
+from metrics_helper import generate_rank_matrix, generate_win_matrix
 
 
 def compute_win_loss_ratio(mypath, player_name=None):

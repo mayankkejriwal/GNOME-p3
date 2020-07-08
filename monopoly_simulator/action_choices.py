@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.action_choices')
+logger = logging.getLogger('logging_info.action_choices')
 
 
 def free_mortgage(player, asset, current_gameboard):

@@ -3,17 +3,17 @@ The only public facing function is initialize_board. All _initialize_* functions
 want to play around, you could always implement your _initialize functions and replace accordingly in initialize_board!
 """
 
-from monopoly_simulator import location
-from monopoly_simulator.dice import Dice
-from monopoly_simulator.bank import Bank
-from monopoly_simulator.card_utility_actions import * # functions from this module will be used in reflections in initialize_board,
+import location
+from dice import Dice
+from bank import Bank
+from card_utility_actions import * # functions from this module will be used in reflections in initialize_board,
                                     # and excluding this import will lead to run-time errors
 import sys
-from monopoly_simulator.player import Player
-from monopoly_simulator import card
+from player import Player
+import card
 import copy
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.init_game_elements')
+logger = logging.getLogger('logging_info.init_game_elements')
 
 def initialize_board(game_schema, player_decision_agents):
 

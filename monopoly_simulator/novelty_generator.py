@@ -1,9 +1,9 @@
-from monopoly_simulator.dice import Dice
-from monopoly_simulator.novelty_functions import *
+from dice import Dice
+from novelty_functions import *
 import copy
 import sys
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.novelty_gen')
+logger = logging.getLogger('logging_info.novelty_gen')
 
 """
 The novelty methods in here should be called after an initial game board has been set up, but before simulate has

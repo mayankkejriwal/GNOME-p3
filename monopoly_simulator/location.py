@@ -1,7 +1,7 @@
-from monopoly_simulator.bank import Bank
-from monopoly_simulator.card_utility_actions import calculate_mortgage_owed
+from bank import Bank
+from card_utility_actions import calculate_mortgage_owed
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.location')
+logger = logging.getLogger('logging_info.location')
 
 class Location(object):
 
