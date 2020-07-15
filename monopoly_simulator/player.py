@@ -34,7 +34,7 @@ class Player(object):
         self.status = status
         self.has_get_out_of_jail_chance_card = has_get_out_of_jail_chance_card
         self.has_get_out_of_jail_community_chest_card = has_get_out_of_jail_community_chest_card
-        self.current_cash = current_cash
+        self.current_cash = float(current_cash)
         self.num_railroads_possessed = num_railroads_possessed
         self.player_name = player_name
         self.assets = assets

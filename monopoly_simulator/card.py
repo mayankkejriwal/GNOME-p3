@@ -92,7 +92,7 @@ class CashFromBankCard(Card):
         will have to pay the (positive) amount to the bank.
         """
         super().__init__(action, card_type, name)
-        self.amount = amount
+        self.amount = float(amount)
 
 
 class ContingentCashFromBankCard(Card):
@@ -126,4 +126,4 @@ class CashFromPlayersCard(Card):
         If the amount is negative, the picking player has to pay this (positive) amount TO each active player.
         """
         super().__init__(action, card_type, name)
-        self.amount_per_player = amount_per_player
+        self.amount_per_player = float(amount_per_player)

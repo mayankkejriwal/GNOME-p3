@@ -201,15 +201,15 @@ class RealEstateLocation(Location):
         :param num_hotels: An integer. Number of hotels currently set up on the property.
         """
         super().__init__(loc_class, name, start_position, end_position, color)
-        self.rent_1_house = rent_1_house
-        self.rent_2_houses = rent_2_houses
-        self.rent_3_houses = rent_3_houses
-        self.rent_4_houses = rent_4_houses
-        self.rent_hotel = rent_hotel
-        self.rent = rent
-        self.price = price
-        self.price_per_house = price_per_house
-        self.mortgage = mortgage
+        self.rent_1_house = float(rent_1_house)
+        self.rent_2_houses = float(rent_2_houses)
+        self.rent_3_houses = float(rent_3_houses)
+        self.rent_4_houses = float(rent_4_houses)
+        self.rent_hotel = float(rent_hotel)
+        self.rent = float(rent)
+        self.price = float(price)
+        self.price_per_house = float(price_per_house)
+        self.mortgage = float(mortgage)
         self.owned_by = owned_by
         self.num_houses = num_houses
         self.num_hotels = num_hotels
@@ -260,7 +260,7 @@ class TaxLocation(Location):
         :param amount_due: An integer. The amount of tax that is due when the player is at this location.
         """
         super().__init__(loc_class, name, start_position, end_position, color)
-        self.amount_due = amount_due
+        self.amount_due = float(amount_due)
 
 
 class RailroadLocation(Location):
@@ -280,8 +280,8 @@ class RailroadLocation(Location):
         :param owned_by: An instance of Player or Bank. Specifies who owns the property
         """
         super().__init__(loc_class, name, start_position, end_position, color)
-        self.price = price
-        self.mortgage = mortgage
+        self.price = float(price)
+        self.mortgage = float(mortgage)
         self.owned_by = owned_by
         self.is_mortgaged = False
 
@@ -326,8 +326,8 @@ class UtilityLocation(Location):
         :param owned_by: An instance of Player or Bank. Specifies who owns the property
         """
         super().__init__(loc_class, name, start_position, end_position, color)
-        self.price = price
-        self.mortgage = mortgage
+        self.price = float(price)
+        self.mortgage = float(mortgage)
         self.owned_by = owned_by
         self.is_mortgaged = False
 
