@@ -269,7 +269,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
         if player.mortgaged_assets:
             player_mortgaged_assets_list = _set_to_sorted_list_mortgaged_assets(player.mortgaged_assets)
         for m in player_mortgaged_assets_list:
-            if player.current_cash-(m.mortgage*1.1) >= current_gameboard['go_increment'] and action_choices.free_mortgage in allowable_moves:
+            if player.current_cash-(m.mortgage*(1+current_gameboard['bank'].mortgage_percentage)) >= current_gameboard['go_increment'] and action_choices.free_mortgage in allowable_moves:
                 # free mortgages till we can afford it. the second condition should not be necessary but just in case.
                 param = dict()
                 param['player'] = player
@@ -500,7 +500,7 @@ def handle_negative_cash_balance(player, current_gameboard):
         if a.color in player.full_color_sets_possessed:
             continue
         elif a.is_mortgaged:
-            sale_potentials.append((a, (a.price/2)-(1.1*a.mortgage)))
+            sale_potentials.append((a, (a.price/2)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
         else:
@@ -522,7 +522,7 @@ def handle_negative_cash_balance(player, current_gameboard):
     sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
     for a in sorted_player_assets_list:
         if a.is_mortgaged:
-            sale_potentials.append((a, (a.price/2)-(1.1*a.mortgage)))
+            sale_potentials.append((a, (a.price/2)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
         else:
@@ -581,7 +581,7 @@ def handle_negative_cash_balance(player, current_gameboard):
         if a.color in player.full_color_sets_possessed:
             continue
         elif a.is_mortgaged:
-            sale_potentials.append((a, (a.price/2)-(1.1*a.mortgage)))
+            sale_potentials.append((a, (a.price/2)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
         else:
