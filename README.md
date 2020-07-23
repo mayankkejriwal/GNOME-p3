@@ -18,7 +18,7 @@ The following steps have to be followed before running the simulator:
 
 To run an instance of the game, following changes have to be made to file GNOME-p3/monopoly_simulator/gameplay.py:
 * In the play_game() function, log folder path and log file path have to be specified for logging of game details in lines 368 and 373 respectively. 
-* In lines 383 and 484, modify the default path to the game schema json file with the path where it is saved on your system (give complete path).
+* In lines 383 and 434, modify the default path to the game schema json file with the path where it is saved on your system (give complete path).
 * Uncomment the last line "play_game()".
 * The game can then be run by running GNOME-p3/monopoly_simulator/gameplay.py on the Pycharm IDE. 
 * When Pycharm is installed, the game can also be run on the terminal using the master branch. Open the terminal at the GNOME-p3 folder level and run the following command - "$ python3 monopoly_simulator/gameplay.py" command.
