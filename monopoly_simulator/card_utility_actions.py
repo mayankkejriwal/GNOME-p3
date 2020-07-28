@@ -628,3 +628,5 @@ def _move_player__check_for_go(player, new_position, current_gameboard):
     params = dict()
     params['self'] = player
     params['current_gameboard'] = current_gameboard
+    current_gameboard['history']['param'].append(params)
+    current_gameboard['history']['return'].append(None)
