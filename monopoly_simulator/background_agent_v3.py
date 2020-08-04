@@ -505,11 +505,14 @@ def handle_negative_cash_balance(player, current_gameboard):
     is to return 1 as long as you 'try', or -1 if you don't try (in which case you will be declared bankrupt and lose the game)
     """
     # add to game history
+    current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
     code = 0
     params = dict()
     params['player'] = player
     params['current_gameboard'] = current_gameboard
     params['code'] = code
+    current_gameboard['history']['param'].append(params)
+    current_gameboard['history']['return'].append(code)
 
     mortgage_potentials = list()
     max_sum = 0
@@ -528,16 +531,13 @@ def handle_negative_cash_balance(player, current_gameboard):
             if player.current_cash >= 0:
                 return 1 # we're done
             ret_code = action_choices.mortgage_property(player, p[0], current_gameboard)
-            current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-            action_executed = action_choices.mortgage_property
+            current_gameboard['history']['function'].append(action_choices.mortgage_property)
             new_params = dict()
             new_params['player'] = player
             new_params['asset'] = p[0]
             new_params['current_gameboard'] = current_gameboard
-            new_params['code'] = ret_code
-            t = (action_executed, new_params)
-            current_gameboard['history']['param'].append(params)
-            current_gameboard['history']['return'].append(t)
+            current_gameboard['history']['param'].append(new_params)
+            current_gameboard['history']['return'].append(ret_code)
 
 
     # if we got here, it means we're still in trouble. Next move is to sell unimproved properties. We don't check if
@@ -562,16 +562,13 @@ def handle_negative_cash_balance(player, current_gameboard):
             if player.current_cash >= 0:
                 return 1 # we're done
             ret_code = action_choices.sell_property(player, p[0], current_gameboard)
-            current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-            action_executed = action_choices.sell_property
+            current_gameboard['history']['function'].append(action_choices.sell_property)
             new_params = dict()
             new_params['player'] = player
             new_params['asset'] = p[0]
             new_params['current_gameboard'] = current_gameboard
-            new_params['code'] = ret_code
-            t = (action_executed, new_params)
-            current_gameboard['history']['param'].append(params)
-            current_gameboard['history']['return'].append(t)
+            current_gameboard['history']['param'].append(new_params)
+            current_gameboard['history']['return'].append(ret_code)
 
     # if selling properties from non monopolized color groups doesnot relieve the player from debt, then only we start thinking about giving up monopolized groups.
     # If we come across a unimproved property which belongs to a monopoly, we still have to loop through the other properties from the same color group and
@@ -598,46 +595,37 @@ def handle_negative_cash_balance(player, current_gameboard):
                 if prop!=p[0] and prop.color==p[0].color and p[0].color in player.full_color_sets_possessed:
                     if prop.num_hotels>0:
                         ret_code = action_choices.sell_house_hotel(player, prop, current_gameboard, False, True)
-                        current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-                        action_executed = action_choices.sell_house_hotel
+                        current_gameboard['history']['function'].append(action_choices.sell_house_hotel)
                         new_params = dict()
                         new_params['player'] = player
                         new_params['asset'] = prop
                         new_params['current_gameboard'] = current_gameboard
-                        new_params['code'] = ret_code
-                        t = (action_executed, new_params)
-                        current_gameboard['history']['param'].append(params)
-                        current_gameboard['history']['return'].append(t)
+                        current_gameboard['history']['param'].append(new_params)
+                        current_gameboard['history']['return'].append(ret_code)
                         if player.current_cash >= 0:
                             return 1
                     elif prop.num_houses>0:
                         while prop.num_houses>0:
                             ret_code = action_choices.sell_house_hotel(player, prop, current_gameboard, True, False)
-                            current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-                            action_executed = action_choices.sell_house_hotel
+                            current_gameboard['history']['function'].append(action_choices.sell_house_hotel)
                             new_params = dict()
                             new_params['player'] = player
                             new_params['asset'] = prop
                             new_params['current_gameboard'] = current_gameboard
-                            new_params['code'] = ret_code
-                            t = (action_executed, new_params)
-                            current_gameboard['history']['param'].append(params)
-                            current_gameboard['history']['return'].append(t)
+                            current_gameboard['history']['param'].append(new_params)
+                            current_gameboard['history']['return'].append(ret_code)
                             if player.current_cash >= 0:
                                 return 1
                     else:
                         continue
             ret_code = action_choices.sell_property(player, p[0], current_gameboard)
-            current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-            action_executed = action_choices.sell_property
+            current_gameboard['history']['function'].append(action_choices.sell_property)
             new_params = dict()
             new_params['player'] = player
             new_params['asset'] = p[0]
             new_params['current_gameboard'] = current_gameboard
-            new_params['code'] = ret_code
-            t = (action_executed, new_params)
-            current_gameboard['history']['param'].append(params)
-            current_gameboard['history']['return'].append(t)
+            current_gameboard['history']['param'].append(new_params)
+            current_gameboard['history']['return'].append(ret_code)
             if p[0].color in player.full_color_sets_possessed:
                 player.full_color_sets_possessed.remove(p[0].color)
 
@@ -661,16 +649,13 @@ def handle_negative_cash_balance(player, current_gameboard):
             if player.current_cash >= 0:
                 return 1 # we're done
             ret_code = action_choices.mortgage_property(player, p[0], current_gameboard)
-            current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-            action_executed = action_choices.mortgage_property
+            current_gameboard['history']['function'].append(action_choices.mortgage_property)
             new_params = dict()
             new_params['player'] = player
             new_params['asset'] = p[0]
             new_params['current_gameboard'] = current_gameboard
-            new_params['code'] = ret_code
-            t = (action_executed, new_params)
-            current_gameboard['history']['param'].append(params)
-            current_gameboard['history']['return'].append(t)
+            current_gameboard['history']['param'].append(new_params)
+            current_gameboard['history']['return'].append(ret_code)
 
 
     # following sale potentials loops through the properties that have become unmonopolized due to the above loops and
@@ -693,16 +678,13 @@ def handle_negative_cash_balance(player, current_gameboard):
             if player.current_cash >= 0:
                 return 1 # we're done
             ret_code = action_choices.sell_property(player, p[0], current_gameboard)
-            current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-            action_executed = action_choices.sell_property
+            current_gameboard['history']['function'].append(action_choices.sell_property)
             new_params = dict()
             new_params['player'] = player
             new_params['asset'] = p[0]
             new_params['current_gameboard'] = current_gameboard
-            new_params['code'] = ret_code
-            t = (action_executed, new_params)
-            current_gameboard['history']['param'].append(params)
-            current_gameboard['history']['return'].append(t)
+            current_gameboard['history']['param'].append(new_params)
+            current_gameboard['history']['return'].append(ret_code)
 
 
     count = 0
@@ -715,30 +697,24 @@ def handle_negative_cash_balance(player, current_gameboard):
         for a in sorted_assets_list:
             if a.num_houses > 0:
                 ret_code = action_choices.sell_house_hotel(player, a, current_gameboard,True, False)
-                current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-                action_executed = action_choices.sell_house_hotel
+                current_gameboard['history']['function'].append(action_choices.sell_house_hotel)
                 new_params = dict()
                 new_params['player'] = player
                 new_params['asset'] = a
                 new_params['current_gameboard'] = current_gameboard
-                new_params['code'] = ret_code
-                t = (action_executed, new_params)
-                current_gameboard['history']['param'].append(params)
-                current_gameboard['history']['return'].append(t)
+                current_gameboard['history']['param'].append(new_params)
+                current_gameboard['history']['return'].append(ret_code)
                 if player.current_cash >= 0:
                     return 1 # we're done
             elif a.num_hotels > 0:
                 ret_code = action_choices.sell_house_hotel(player, a, current_gameboard, False, True)
-                current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-                action_executed = action_choices.sell_house_hotel
+                current_gameboard['history']['function'].append(action_choices.sell_house_hotel)
                 new_params = dict()
                 new_params['player'] = player
                 new_params['asset'] = a
                 new_params['current_gameboard'] = current_gameboard
-                new_params['code'] = ret_code
-                t = (action_executed, new_params)
-                current_gameboard['history']['param'].append(params)
-                current_gameboard['history']['return'].append(t)
+                current_gameboard['history']['param'].append(new_params)
+                current_gameboard['history']['return'].append(ret_code)
                 if player.current_cash >= 0:
                     return 1  # we're done
 
@@ -747,16 +723,13 @@ def handle_negative_cash_balance(player, current_gameboard):
     sorted_player_assets_list = _set_to_sorted_list_assets(final_sale_assets)
     for a in sorted_player_assets_list:
         ret_code = action_choices.sell_property(player, a, current_gameboard) # this could be refined further; we may be able to get away with a mortgage at this point.
-        current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-        action_executed = action_choices.sell_property
+        current_gameboard['history']['function'].append(action_choices.sell_property)
         new_params = dict()
         new_params['player'] = player
         new_params['asset'] = a
         new_params['current_gameboard'] = current_gameboard
-        new_params['code'] = ret_code
-        t = (action_executed, new_params)
-        current_gameboard['history']['param'].append(params)
-        current_gameboard['history']['return'].append(t)
+        current_gameboard['history']['param'].append(new_params)
+        current_gameboard['history']['return'].append(ret_code)
         if player.current_cash >= 0:
             return 1  # we're done
 
