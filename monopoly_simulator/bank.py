@@ -105,3 +105,11 @@ class Bank(object):
         else:
             logger.debug('Auction did not succeed in a sale.')
         return
+
+    def serialize(self):
+        bank_dict = dict()
+        bank_dict['mortgage_percentage'] = self.mortgage_percentage
+        bank_dict['total_mortgage_rule'] = self.total_mortgage_rule
+        bank_dict['total_houses'] = self.total_houses
+        bank_dict['total_hotels'] = self.total_hotels
+        return bank_dict

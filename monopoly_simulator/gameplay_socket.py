@@ -18,8 +18,9 @@ import xlsxwriter
 from monopoly_simulator.logging_info import log_file_create
 import os
 import time
-import logging
+from monopoly_simulator.server_agent_serial import ServerAgent
 
+import logging
 logger = logging.getLogger('monopoly_simulator.logging_info')
 
 
@@ -58,7 +59,7 @@ def disable_history(game_elements):
     game_elements['history']['return'] = list()
 
 
-def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
+def simulate_game_instance(game_elements, history_log_file=None, np_seed=27):
     """
     Simulate a game instance.
     :param game_elements: The dict output by set_up_board
@@ -375,7 +376,16 @@ def play_game():
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
 
-    player_decision_agents['player_1'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    agent = ServerAgent()
+    f_name = 'play game without novelty'
+    if not agent.start_tournament(f_name):
+        print("Unable to start tournament")
+        exit(0)
+    else:
+        pass
+
+    # player_decision_agents['player_1'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_1'] = agent
     player_decision_agents['player_2'] = Agent(**background_agent_v3_1.decision_agent_methods)
     player_decision_agents['player_3'] = Agent(**background_agent_v3_1.decision_agent_methods)
     player_decision_agents['player_4'] = Agent(**background_agent_v3_1.decision_agent_methods)
@@ -418,6 +428,7 @@ def play_game():
                 logger.removeHandler(handler)
                 handler.close()
                 handler.flush()
+            agent.end_tournament()
             return winner
 
 

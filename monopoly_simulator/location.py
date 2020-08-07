@@ -150,6 +150,15 @@ class DoNothingLocation(Location):
         """
         super().__init__(loc_class, name, start_position, end_position, color)
 
+    def serialize(self):
+        loc_dict = dict()
+        loc_dict['loc_class'] = self.loc_class
+        loc_dict['name'] = self.name
+        loc_dict['start_position'] = self.start_position
+        loc_dict['end_position'] = self.end_position
+        loc_dict['color'] = self.color
+        return loc_dict
+
 
 class ActionLocation(Location):
     def __init__(self, loc_class, name, start_position, end_position, color, perform_action):
@@ -169,6 +178,16 @@ class ActionLocation(Location):
         """
         super().__init__(loc_class, name, start_position, end_position, color)
         self.perform_action = perform_action
+
+    def serialize(self):
+        loc_dict = dict()
+        loc_dict['loc_class'] = self.loc_class
+        loc_dict['name'] = self.name
+        loc_dict['start_position'] = self.start_position
+        loc_dict['end_position'] = self.end_position
+        loc_dict['color'] = self.color
+        loc_dict['perform_actiom'] = self.perform_action.__name__
+        return loc_dict
 
 
 class RealEstateLocation(Location):
@@ -244,6 +263,32 @@ class RealEstateLocation(Location):
         logger.debug('rent is calculated to be '+str(ans))
         return ans
 
+    def serialize(self):
+        loc_dict = dict()
+        loc_dict['loc_class'] = self.loc_class
+        loc_dict['name'] = self.name
+        loc_dict['start_position'] = self.start_position
+        loc_dict['end_position'] = self.end_position
+        loc_dict['color'] = self.color
+        loc_dict['rent_1_house'] = self.rent_1_house
+        loc_dict['rent_2_houses'] = self.rent_2_houses
+        loc_dict['rent_3_houses'] = self.rent_3_houses
+        loc_dict['rent_4_houses'] = self.rent_4_houses
+        loc_dict['rent_hotel'] = self.rent_hotel
+        loc_dict['rent'] = self.rent
+        loc_dict['price'] = self.price
+        loc_dict['price_per_house'] = self.price_per_house
+        loc_dict['mortgage'] = self.mortgage
+        if isinstance(self.owned_by, Bank):
+            loc_dict['owned_by'] = 'bank'
+        else:
+            loc_dict['owned_by'] = self.owned_by.player_name
+        loc_dict['num_houses'] = self.num_houses
+        loc_dict['num_hotels'] = self.num_hotels
+        loc_dict['is_mortgaged'] = self.is_mortgaged
+        loc_dict['house_rent_dict'] = self._house_rent_dict
+        return loc_dict
+
 
 class TaxLocation(Location):
     def __init__(self, loc_class, name, start_position, end_position, color, amount_due):
@@ -261,6 +306,16 @@ class TaxLocation(Location):
         """
         super().__init__(loc_class, name, start_position, end_position, color)
         self.amount_due = float(amount_due)
+
+    def serialize(self):
+        loc_dict = dict()
+        loc_dict['loc_class'] = self.loc_class
+        loc_dict['name'] = self.name
+        loc_dict['start_position'] = self.start_position
+        loc_dict['end_position'] = self.end_position
+        loc_dict['color'] = self.color
+        loc_dict['amount_due'] = self.amount_due
+        return loc_dict
 
 
 class RailroadLocation(Location):
@@ -309,6 +364,24 @@ class RailroadLocation(Location):
         return dues
 
 
+    def serialize(self):
+        loc_dict = dict()
+        loc_dict['loc_class'] = self.loc_class
+        loc_dict['name'] = self.name
+        loc_dict['start_position'] = self.start_position
+        loc_dict['end_position'] = self.end_position
+        loc_dict['color'] = self.color
+        loc_dict['price'] = self.price
+        loc_dict['mortgage'] = self.mortgage
+        if isinstance(self.owned_by, Bank):
+            loc_dict['owned_by'] = 'bank'
+        else:
+            loc_dict['owned_by'] = self.owned_by.player_name
+        loc_dict['is_mortgaged'] = self.is_mortgaged
+        loc_dict['railroad_dues'] = self._railroad_dues
+        return loc_dict
+
+
 class UtilityLocation(Location):
     def __init__(self, loc_class, name, start_position, end_position, color, price, mortgage, owned_by):
         """
@@ -354,5 +427,21 @@ class UtilityLocation(Location):
         return dues
 
 
+    def serialize(self):
+        loc_dict = dict()
+        loc_dict['loc_class'] = self.loc_class
+        loc_dict['name'] = self.name
+        loc_dict['start_position'] = self.start_position
+        loc_dict['end_position'] = self.end_position
+        loc_dict['color'] = self.color
+        loc_dict['price'] = self.price
+        loc_dict['mortgage'] = self.mortgage
+        if isinstance(self.owned_by, Bank):
+            loc_dict['owned_by'] = 'bank'
+        else:
+            loc_dict['owned_by'] = self.owned_by.player_name
+        loc_dict['is_mortgaged'] = self.is_mortgaged
+        loc_dict['die_multiples'] = self._die_multiples
+        return loc_dict
 
 

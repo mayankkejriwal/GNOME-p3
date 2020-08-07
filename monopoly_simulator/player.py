@@ -74,6 +74,79 @@ class Player(object):
         self._option_to_buy = False # this option will turn true when  the player lands on a property that could be bought.
         # We always set it to false again at the end of the post_roll phase. It is an internal variable.
 
+
+    def serialize(self):
+        player_dict = dict()
+        if self.current_position is not None:
+            player_dict['current_position'] = int(self.current_position)
+        player_dict['status'] = self.status
+        player_dict['has_get_out_of_jail_chance_card'] = self.has_get_out_of_jail_chance_card
+        player_dict['has_get_out_of_jail_community_chest_card'] = self.has_get_out_of_jail_community_chest_card
+        player_dict['current_cash'] = self.current_cash
+        player_dict['num_railroads_possessed'] = self.num_railroads_possessed
+        player_dict['player_name'] = self.player_name
+
+        asset_list = list()
+        if self.assets is not None:
+            for item in self.assets:
+                asset_list.append(item.name)
+        player_dict['assets'] = asset_list
+
+        if self.full_color_sets_possessed is not None:
+            player_dict['full_color_sets_possessed'] = list(self.full_color_sets_possessed)
+        player_dict['currently_in_jail'] = self.currently_in_jail
+        player_dict['num_utilities_possessed'] = self.num_utilities_possessed
+        player_dict['num_total_houses'] = self.num_total_houses
+        player_dict['num_total_hotels'] = self.num_total_hotels
+
+        player_dict['outstanding_property_offer'] = dict()
+        if self.is_property_offer_outstanding:
+            player_dict['is_property_offer_outstanding'] = self.is_property_offer_outstanding
+            player_dict['outstanding_property_offer']['from_player'] = self.outstanding_property_offer['from_player'].player_name
+            player_dict['outstanding_property_offer']['asset'] = self.outstanding_property_offer['asset'].name
+            player_dict['outstanding_property_offer']['price'] = self.outstanding_property_offer['price']
+        else:
+            player_dict['is_property_offer_outstanding'] = self.is_property_offer_outstanding
+            player_dict['outstanding_property_offer']['from_player'] = None
+            player_dict['outstanding_property_offer']['asset'] = None
+            player_dict['outstanding_property_offer']['price'] = -1
+
+
+        player_dict['outstanding_trade_offer'] = dict()
+        if self.is_trade_offer_outstanding:
+            player_dict['is_trade_offer_outstanding'] = self.is_trade_offer_outstanding
+            player_dict['outstanding_trade_offer']['from_player'] = self.outstanding_trade_offer['from_player'].player_name
+
+            property_offered_list = list()
+            for item in self.outstanding_trade_offer['property_set_offered']:
+                property_offered_list.append(item.name)
+            player_dict['outstanding_trade_offer']['property_set_offered'] = property_offered_list
+
+            property_wanted_list = list()
+            for item in self.outstanding_trade_offer['property_set_wanted']:
+                property_wanted_list.append(item.name)
+            player_dict['outstanding_trade_offer']['property_set_wanted'] = property_wanted_list
+
+            player_dict['outstanding_trade_offer']['cash_offered'] = self.outstanding_trade_offer['cash_offered']
+            player_dict['outstanding_trade_offer']['cash_wanted'] = self.outstanding_trade_offer['cash_wanted']
+        else:
+            player_dict['is_trade_offer_outstanding'] = self.is_trade_offer_outstanding
+            player_dict['outstanding_trade_offer']['from_player'] = None
+            player_dict['outstanding_trade_offer']['property_set_offered'] = None
+            player_dict['outstanding_trade_offer']['property_set_wanted'] = None
+            player_dict['outstanding_trade_offer']['cash_offered'] = 0
+            player_dict['outstanding_trade_offer']['cash_wanted'] = 0
+
+        property_mortgage_list = list()
+        if self.mortgaged_assets is not None:
+            for item in self.mortgaged_assets:
+                property_mortgage_list.append(item.name)
+        player_dict['mortgaged_assets'] = property_mortgage_list
+
+        player_dict['option_to_buy'] = self._option_to_buy
+        return player_dict
+
+
     def change_decision_agent(self, agent):
         self.agent = agent
 
