@@ -99,7 +99,13 @@ def make_bid(player, current_gameboard, asset, current_bid):
 
 
 def handle_negative_cash_balance(player, current_gameboard):
-    return -1
+    serial_gameboard = serialize_gameboard(current_gameboard)
+    serial_dict_to_client = dict()
+    serial_dict_to_client['player'] = player.player_name
+    serial_dict_to_client['current_gameboard'] = serial_gameboard
+    player.agent.conn.send(("handle_negative_cash_balance", serial_dict_to_client))
+    back = player.agent.conn.recv()
+    return back
 
 
 def _build_decision_agent_methods_dict():
