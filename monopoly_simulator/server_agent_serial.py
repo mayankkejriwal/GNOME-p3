@@ -83,7 +83,6 @@ def make_buy_property_decision(player, current_gameboard, asset):
     serial_dict_to_client['asset'] = asset.name
     player.agent.conn.send(("make_buy_property_decision", serial_dict_to_client))
     buy_prop_decision_flag = player.agent.conn.recv()
-    buy_prop_decision_flag[1]['current_gameboard'] = current_gameboard
     return buy_prop_decision_flag
 
 

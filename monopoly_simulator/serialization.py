@@ -1,4 +1,5 @@
 import json
+import numpy
 from monopoly_simulator.player import Player
 from monopoly_simulator.location import RealEstateLocation
 
@@ -87,10 +88,12 @@ def _serialize_history(current_gameboard):
                 hist_dict['param'][k] = float(v)
             elif k == 'pack':
                 hist_dict['param'][k] = v
+            elif k == "starting_player_index":
+                hist_dict['param'][k] = v
             elif k == 'die_objects' or k == 'choice':
                 pass
             else:
-                print('not incl key: ', k, v, func_name)
+                print('This param object not included, key: ', k, " value: ", v, " function name: ", func_name)
 
         return_obj = current_gameboard['history']['return'][i]
 
@@ -102,6 +105,12 @@ def _serialize_history(current_gameboard):
             hist_dict['return'] = list()
             for i in return_obj:
                 hist_dict['return'].append(int(i))
+        elif isinstance(return_obj, float):
+            hist_dict['return'] = float(return_obj)
+        elif isinstance(return_obj, numpy.int64):
+            hist_dict['return'] = int(return_obj)
+        elif isinstance(return_obj, bool):
+            hist_dict['return'] = return_obj
         elif isinstance(return_obj, tuple):
             hist_dict['return'] = dict()
             for item in return_obj:
@@ -132,7 +141,7 @@ def _serialize_history(current_gameboard):
                     hist_dict['return']['param'] = param_list
                 elif not isinstance(item, dict):
                     hist_dict['return']['function'] = item.__name__
-                else:
+                elif isinstance(item, dict):
                     hist_dict['return']['param'] = dict()
                     for k, v in item.items():
                         if k == 'player':
@@ -141,6 +150,11 @@ def _serialize_history(current_gameboard):
                             hist_dict['return']['param'][k] = v.name
                         elif k == 'code':
                             hist_dict['return']['param'][k] = v
+
+                else:
+                    print("This return val not included in return history")
+        else:
+            print("This return val not included in return history: ", return_obj, type(return_obj))
 
         history.append(hist_dict)
     return history

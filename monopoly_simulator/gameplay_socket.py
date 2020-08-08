@@ -59,7 +59,7 @@ def disable_history(game_elements):
     game_elements['history']['return'] = list()
 
 
-def simulate_game_instance(game_elements, history_log_file=None, np_seed=27):
+def simulate_game_instance(game_elements, history_log_file=None, np_seed=1237):
     """
     Simulate a game instance.
     :param game_elements: The dict output by set_up_board
@@ -90,8 +90,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=27):
         workbook = xlsxwriter.Workbook(history_log_file)
     start_time = time.time()
     while num_active_players > 1:
-        disable_history(
-            game_elements)  # comment this out when you want history to stay. Currently, it has high memory consumption, we are working to solve the problem (most likely due to deep copy run-off).
+        # disable_history(
+        #     game_elements)  # comment this out when you want history to stay. Currently, it has high memory consumption, we are working to solve the problem (most likely due to deep copy run-off).
         current_player = game_elements['players'][current_player_index]
         while current_player.status == 'lost':
             current_player_index += 1
@@ -116,6 +116,11 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=27):
                 continue
 
             oot_code = out_of_turn_player.make_out_of_turn_moves(game_elements)
+
+            #disable history after every round if out of turn player == player_1, else TA2 wont be able to capture entire history of every game round
+            if out_of_turn_player.player_name == 'player_1':
+                disable_history(game_elements)
+
             # add to game history
             game_elements['history']['function'].append(out_of_turn_player.make_out_of_turn_moves)
             params = dict()
