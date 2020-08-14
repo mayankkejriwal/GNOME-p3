@@ -1,5 +1,6 @@
 from monopoly_simulator.agent import Agent
 from multiprocessing.connection import Listener
+import socket
 from monopoly_simulator.action_choices import *
 from monopoly_simulator.serialization import serialize_gameboard
 import json
@@ -21,8 +22,15 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
         allowable_moves_list.append(move.__name__)
     serial_dict_to_client['allowable_moves'] = allowable_moves_list
     serial_dict_to_client['code'] = code
-    player.agent.conn.send(("make_pre_roll_move", serial_dict_to_client))
-    func_name, param_dict = player.agent.conn.recv()
+
+    serial_dict_to_client['function'] = "make_pre_roll_move"
+    string_serial_dict_to_client = json.dumps(serial_dict_to_client)
+    player.agent.conn.sendall(bytes(string_serial_dict_to_client, encoding="utf-8"))
+
+    return_from_client = player.agent.conn.recv(10024)
+    result = json.loads(return_from_client.decode("utf-8"))
+    func_name = result['function']
+    param_dict = result['param_dict']
 
     func_ptr = getattr(sys.modules[__name__], func_name)
     if func_name == "skip_turn":
@@ -41,8 +49,15 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
         allowable_moves_list.append(move.__name__)
     serial_dict_to_client['allowable_moves'] = allowable_moves_list
     serial_dict_to_client['code'] = code
-    player.agent.conn.send(("make_out_of_turn_move", serial_dict_to_client))
-    func_name, param_dict = player.agent.conn.recv()
+
+    serial_dict_to_client['function'] = "make_out_of_turn_move"
+    string_serial_dict_to_client = json.dumps(serial_dict_to_client)
+    player.agent.conn.sendall(bytes(string_serial_dict_to_client, encoding="utf-8"))
+
+    return_from_client = player.agent.conn.recv(10024)
+    result = json.loads(return_from_client.decode("utf-8"))
+    func_name = result['function']
+    param_dict = result['param_dict']
 
     func_ptr = getattr(sys.modules[__name__], func_name)
     if func_name == "skip_turn":
@@ -61,8 +76,15 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
         allowable_moves_list.append(move.__name__)
     serial_dict_to_client['allowable_moves'] = allowable_moves_list
     serial_dict_to_client['code'] = code
-    player.agent.conn.send(("make_post_roll_move", serial_dict_to_client))
-    func_name, param_dict = player.agent.conn.recv()
+
+    serial_dict_to_client['function'] = "make_post_roll_move"
+    string_serial_dict_to_client = json.dumps(serial_dict_to_client)
+    player.agent.conn.sendall(bytes(string_serial_dict_to_client, encoding="utf-8"))
+
+    return_from_client = player.agent.conn.recv(10024)
+    result = json.loads(return_from_client.decode("utf-8"))
+    func_name = result['function']
+    param_dict = result['param_dict']
 
     func_ptr = getattr(sys.modules[__name__], func_name)
     if func_name == "buy_property":
@@ -81,8 +103,13 @@ def make_buy_property_decision(player, current_gameboard, asset):
     serial_dict_to_client['player'] = player.player_name
     serial_dict_to_client['current_gameboard'] = serial_gameboard
     serial_dict_to_client['asset'] = asset.name
-    player.agent.conn.send(("make_buy_property_decision", serial_dict_to_client))
-    buy_prop_decision_flag = player.agent.conn.recv()
+
+    serial_dict_to_client['function'] = "make_buy_property_decision"
+    string_serial_dict_to_client = json.dumps(serial_dict_to_client)
+    player.agent.conn.sendall(bytes(string_serial_dict_to_client, encoding="utf-8"))
+
+    return_from_client = player.agent.conn.recv(10024)
+    buy_prop_decision_flag = bool(return_from_client.decode("utf-8"))
     return buy_prop_decision_flag
 
 
@@ -93,8 +120,13 @@ def make_bid(player, current_gameboard, asset, current_bid):
     serial_dict_to_client['current_gameboard'] = serial_gameboard
     serial_dict_to_client['asset'] = asset.name
     serial_dict_to_client['current_bid'] = current_bid
-    player.agent.conn.send(("make_bid", serial_dict_to_client))
-    bid_amt = player.agent.conn.recv()
+
+    serial_dict_to_client['function'] = "make_bid"
+    string_serial_dict_to_client = json.dumps(serial_dict_to_client)
+    player.agent.conn.sendall(bytes(string_serial_dict_to_client, encoding="utf-8"))
+
+    return_from_client = player.agent.conn.recv(10024)
+    bid_amt = float(return_from_client.decode("utf-8"))
     return bid_amt
 
 
@@ -103,8 +135,13 @@ def handle_negative_cash_balance(player, current_gameboard):
     serial_dict_to_client = dict()
     serial_dict_to_client['player'] = player.player_name
     serial_dict_to_client['current_gameboard'] = serial_gameboard
-    player.agent.conn.send(("handle_negative_cash_balance", serial_dict_to_client))
-    back = player.agent.conn.recv()
+
+    serial_dict_to_client['function'] = "handle_negative_cash_balance"
+    string_serial_dict_to_client = json.dumps(serial_dict_to_client)
+    player.agent.conn.sendall(bytes(string_serial_dict_to_client, encoding="utf-8"))
+
+    return_from_client = player.agent.conn.recv(10024)
+    back = int(return_from_client.decode("utf-8"))
     return back
 
 
@@ -136,10 +173,16 @@ class ServerAgent(Agent):
         """
         super().__init__(**_build_decision_agent_methods_dict())
         print("Waiting for connection...")
-        self.listener = Listener(address, authkey=authkey)
-        self.conn = self.listener.accept()
-        print(self.conn)
-        print('Connection accepted from', self.listener.last_accepted)
+        # self.listener = Listener(address, authkey=authkey)
+        # self.conn = self.listener.accept()
+        # print(self.conn)
+        # print('Connection accepted from', self.listener.last_accepted)
+        self.listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.listener.bind((address[0], address[1]))
+        self.listener.listen()
+        conn, addr = self.listener.accept()
+        self.conn = conn
+        print('Connection accepted by client')
 
     def __getstate__(self):
         """Make sure that the socket connection doesn't get pickled."""
@@ -152,26 +195,46 @@ class ServerAgent(Agent):
         """Performs normal Agent startup and signals for the client agent to do the same"""
         print("startup")
         super().startup(current_gameboard, indicator)
-        self.conn.send(("startup", (current_gameboard, indicator)))
-        return self.conn.recv()
+        serial_gameboard = serialize_gameboard(current_gameboard)
+        serial_dict_to_client = dict()
+        serial_dict_to_client['current_gameboard'] = serial_gameboard
+        serial_dict_to_client['indicator'] = indicator
+        serial_dict_to_client['function'] = "startup"
+        json_serial_dict_to_client = json.dumps(serial_dict_to_client)
+        self.conn.sendall(bytes(json_serial_dict_to_client, encoding="utf-8"))
+        return_from_client = self.conn.recv(1024)
+        result = return_from_client.decode("utf-8")
+        return result
 
     def shutdown(self):
         """Performs normal Agent shutdown and signals for the client agent to do the same, then closes the connection"""
         print("shutdown")
-        self.conn.send(("shutdown", ()))
-        result = self.conn.recv()
+        serial_dict_to_client = dict()
+        serial_dict_to_client['function'] = "shutdown"
+        json_serial_dict_to_client = json.dumps(serial_dict_to_client)
+        self.conn.sendall(bytes(json_serial_dict_to_client, encoding="utf-8"))
+        return_from_client = self.conn.recv(1024)
+        result = int(return_from_client.decode("utf-8"))
         return result
 
     def end_tournament(self):
         print('end_tournament')
-        self.conn.send(("end_tournament", ()))
+        serial_dict_to_client = dict()
+        serial_dict_to_client['function'] = "end_tournament"
+        json_serial_dict_to_client = json.dumps(serial_dict_to_client)
+        self.conn.sendall(bytes(json_serial_dict_to_client, encoding="utf-8"))
         self.conn.close()
         self.listener.close()
         return super().shutdown()
 
     def start_tournament(self, f_name):
         print('start_tournament')
-        self.conn.send(("start_tournament", (f_name)))
-        return self.conn.recv()
+        serial_dict_to_client = dict()
+        serial_dict_to_client['function'] = "start_tournament"
+        json_serial_dict_to_client = json.dumps(serial_dict_to_client)
+        self.conn.sendall(bytes(json_serial_dict_to_client, encoding="utf-8"))
+        return_from_client = self.conn.recv(1024)
+        result = int(return_from_client.decode("utf-8"))
+        return result
 
 

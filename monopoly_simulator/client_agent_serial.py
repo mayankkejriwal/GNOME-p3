@@ -3,6 +3,8 @@ from monopoly_simulator import action_choices
 from monopoly_simulator.action_choices import *
 from monopoly_simulator.location import  RealEstateLocation, UtilityLocation, RailroadLocation
 from monopoly_simulator.agent import Agent
+import socket
+import json
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.simple_decision_agent')
 
@@ -23,14 +25,17 @@ def make_pre_roll_move(serial_dict_to_client):
     The dictionary must exactly contain the keys and expected value types expected by that action in
     action_choices
     """
-    print('simple agent pre roll client')
+    # print('simple agent pre roll client')
     player_name = serial_dict_to_client['player']
     current_gameboard = serial_dict_to_client['current_gameboard']
     allowable_move_names = serial_dict_to_client['allowable_moves']
     code = serial_dict_to_client['code']
 
+    return_to_server_dict = dict()
     if "skip_turn" in allowable_move_names:
-        return ("skip_turn", dict())
+        return_to_server_dict['function'] = "skip_turn"
+        return_to_server_dict['param_dict'] = dict()
+        return return_to_server_dict
     else:
         logger.error("Exception")
 
@@ -51,14 +56,17 @@ def make_out_of_turn_move(serial_dict_to_client):
     The dictionary must exactly contain the keys and expected value types expected by that action in
     action_choices
     """
-    print('simple agent oot client')
+    # print('simple agent oot client')
     player_name = serial_dict_to_client['player']
     current_gameboard = serial_dict_to_client['current_gameboard']
     allowable_move_names = serial_dict_to_client['allowable_moves']
     code = serial_dict_to_client['code']
 
+    return_to_server_dict = dict()
     if "skip_turn" in allowable_move_names:
-        return ("skip_turn", dict())
+        return_to_server_dict['function'] = "skip_turn"
+        return_to_server_dict['param_dict'] = dict()
+        return return_to_server_dict
     else:
         logger.error("Exception")
 
@@ -83,7 +91,7 @@ def make_post_roll_move(serial_dict_to_client):
     The dictionary must exactly contain the keys and expected value types expected by that action in
     action_choices
         """
-    print('simple agent post roll client')
+    # print('simple agent post roll client')
     player_name = serial_dict_to_client['player']
     current_gameboard = serial_dict_to_client['current_gameboard']
     allowable_move_names = serial_dict_to_client['allowable_moves']
@@ -94,18 +102,27 @@ def make_post_roll_move(serial_dict_to_client):
     player_current_position_name = current_gameboard['location_sequence'][player_current_position]
     current_location = current_gameboard['locations'][player_current_position_name]
 
+    return_to_server_dict = dict()
     if "buy_property" in allowable_move_names and current_location['price'] < player['current_cash']:
         logger.debug(player['player_name']+': We will attempt to buy '+player_current_position_name+' from the bank.')
         if code == -1:
             logger.debug('Did not succeed the last time. Concluding actions...')
-            return ("concluded_actions", dict())
+            return_to_server_dict['function'] = "concluded_actions"
+            return_to_server_dict['param_dict'] = dict()
+            return return_to_server_dict
         params = dict()
         params['player'] = player_name
         params['asset'] = player_current_position_name
-        # params['current_gameboard'] = current_gameboard
-        return ("buy_property", params)
+        params['current_gameboard'] = "current_gameboard"
+        return_to_server_dict['function'] = "buy_property"
+        return_to_server_dict['param_dict'] = params
+        return return_to_server_dict
+
     elif "concluded_actions" in allowable_move_names:
-        return ("concluded_actions", dict())
+        return_to_server_dict['function'] = "concluded_actions"
+        return_to_server_dict['param_dict'] = dict()
+        return return_to_server_dict
+
     else:
         logger.error("Exception")
 
@@ -124,7 +141,7 @@ def make_buy_property_decision(serial_dict_to_client):
     cash balance and will have to handle that if you don't want to lose the game at the end of your move (see notes
     in handle_negative_cash_balance)
     """
-    print('simple agent buy client')
+    # print('simple agent buy client')
     player_name = serial_dict_to_client['player']
     current_gameboard = serial_dict_to_client['current_gameboard']
     asset_name = serial_dict_to_client['asset']
@@ -153,7 +170,7 @@ def make_bid(serial_dict_to_client):
     will remove you from the auction proceedings. You could also always return 0 to voluntarily exit the auction.
     :return: An integer that indicates what you wish to bid for asset
     """
-    print('simple agent bid client')
+    # print('simple agent bid client')
     player_name = serial_dict_to_client['player']
     current_gameboard = serial_dict_to_client['current_gameboard']
     asset_name = serial_dict_to_client['asset']
@@ -191,7 +208,7 @@ def handle_negative_cash_balance(serial_dict_to_client):
     Note that even if you do return 1, we will check to see whether you have non-negative cash balance. The rule of thumb
     is to return 1 as long as you 'try', or -1 if you don't try (in which case you will be declared bankrupt and lose the game)
     """
-    print('simple agent handle neg cash client')
+    # print('simple agent handle neg cash client')
     player_name = serial_dict_to_client['player']
     current_gameboard = serial_dict_to_client['current_gameboard']
     return -1
@@ -239,10 +256,17 @@ class ClientAgent(Agent):
             Defaults to "password"
         """
 
-        self.conn = Client(address, authkey=authkey)
+        # self.conn = Client(address, authkey=authkey)
+        self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.conn.connect((address[0], address[1]))
+
         result = None
         while True:
-            func_name, serial_dict_to_client = self.conn.recv()  # Receive the signal
+            # func_name, serial_dict_to_client = self.conn.recv(1024)  # Receive the signal
+            data_from_server = self.conn.recv(50000)
+            data_from_server = data_from_server.decode("utf-8")
+            data_dict_from_server = json.loads(data_from_server)
+            func_name = data_dict_from_server['function']
 
             # When the tournament begins, we need to
             if func_name == "start_tournament":
@@ -262,21 +286,27 @@ class ClientAgent(Agent):
 
             # When calling agent to make decision
             elif func_name == 'make_post_roll_move':
+                serial_dict_to_client = data_dict_from_server
                 result = make_post_roll_move(serial_dict_to_client)
 
             elif func_name == 'make_out_of_turn_move':
+                serial_dict_to_client = data_dict_from_server
                 result = make_out_of_turn_move(serial_dict_to_client)
 
             elif func_name == 'make_pre_roll_move':
+                serial_dict_to_client = data_dict_from_server
                 result = make_pre_roll_move(serial_dict_to_client)
 
             elif func_name == 'make_bid':
+                serial_dict_to_client = data_dict_from_server
                 result = make_bid(serial_dict_to_client)
 
             elif func_name == 'make_buy_property_decision':
+                serial_dict_to_client = data_dict_from_server
                 result = make_buy_property_decision(serial_dict_to_client)
 
-            elif func_name == 'handle_negative_cash_balance':  # args = (player, current_gameboard, allowable_moves, code)
+            elif func_name == 'handle_negative_cash_balance':
+                serial_dict_to_client = data_dict_from_server
                 result = handle_negative_cash_balance(serial_dict_to_client)
 
             # Send we will close the connection now back to server
@@ -285,10 +315,20 @@ class ClientAgent(Agent):
                 self.logger.info('Tournament Finished!')
 
             else:
+                serial_dict_to_client = data_dict_from_server
                 result = getattr(self, func_name)(serial_dict_to_client)
 
             # Send the results back to server agent
-            self.conn.send(result)
+            if isinstance(result, int):
+                self.conn.sendall(bytes(str(result), encoding="utf-8"))
+            elif isinstance(result, float):
+                self.conn.sendall(bytes(str(result), encoding="utf-8"))
+            elif isinstance(result, bool):
+                self.conn.sendall(bytes(str(result), encoding="utf-8"))
+            else:  #dictionary
+                json_serial_return_to_server = json.dumps(result)
+                self.conn.sendall(bytes(json_serial_return_to_server, encoding="utf-8"))
+
 
             # Close connection after each tournament
             if func_name == "end_tournament":
