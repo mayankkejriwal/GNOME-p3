@@ -1,6 +1,7 @@
 from . import action_choices
 from monopoly_simulator.action_choices import *
 from monopoly_simulator.location import  RealEstateLocation, UtilityLocation, RailroadLocation
+from monopoly_simulator.flag_config import flag_config_dict
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.simple_decision_agent')
 """
@@ -48,6 +49,7 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
         return (action_choices.skip_turn, dict())
     else:
         logger.error("Exception")
+        raise Exception
 
 
 def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
@@ -70,6 +72,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
         return (action_choices.skip_turn, dict())
     else:
         logger.error("Exception")
+        raise Exception
 
 
 def make_post_roll_move(player, current_gameboard, allowable_moves, code):
@@ -107,6 +110,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
         return (action_choices.concluded_actions, dict())
     else:
         logger.error("Exception")
+        raise Exception
 
 
 def make_buy_property_decision(player, current_gameboard, asset):
@@ -176,7 +180,7 @@ def handle_negative_cash_balance(player, current_gameboard):
     Note that even if you do return 1, we will check to see whether you have non-negative cash balance. The rule of thumb
     is to return 1 as long as you 'try', or -1 if you don't try (in which case you will be declared bankrupt and lose the game)
     """
-    return -1
+    return flag_config_dict['failure_code']
 
 
 def _build_decision_agent_methods_dict():

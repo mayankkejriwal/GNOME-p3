@@ -7,8 +7,15 @@ class Bank(object):
         self.total_mortgage_rule = False  # if true, then mortgage will be calculated as a percentage of total debt the player has outstanding
         self.total_houses = 32
         self.total_hotels = 12
+        self.total_cash_with_bank = float(10000)
+        self.property_sell_percentage = 0.5
+        self.house_sell_percentage = 0.5
+        self.hotel_sell_percentage = 0.5
+        self.jail_fine = float(50)
+        self.monopolized_color_property_rent = float(2)
 
-    def auction(self, starting_player_index, current_gameboard, asset):
+    @staticmethod
+    def auction(starting_player_index, current_gameboard, asset):
         """
         This function will be called when a player lands on a purchaseable property (real estate, railroad or utility)
         but decides not to make the purchase. 
@@ -47,7 +54,7 @@ class Bank(object):
         else:
             logger.debug(current_gameboard['players'][bidding_player_index].player_name+' will place the first bid')
 
-        while len(players_out_of_auction) < len(current_gameboard['players'])-1: # we iterate and bid till just one player remains
+        while len(players_out_of_auction) < len(current_gameboard['players']): # we iterate and bid till just one player remains
             bidding_player = current_gameboard['players'][bidding_player_index]
             if bidding_player in players_out_of_auction:
                 bidding_player_index = (bidding_player_index+1)%len(current_gameboard['players']) # next player
@@ -82,14 +89,14 @@ class Bank(object):
             winning_player = bidding_player
             bidding_player_index = (bidding_player_index + 1) % len(current_gameboard['players'])
 
-
         if winning_player:
-            winning_player.charge_player(current_bid) # if it got here then current_bid is non-zero.
+            winning_player.charge_player(current_bid, current_gameboard, bank_flag=True) # if it got here then current_bid is non-zero.
             # add to game history
             current_gameboard['history']['function'].append(winning_player.charge_player)
             params = dict()
             params['self'] = winning_player
             params['amount'] = current_bid
+            params['description'] = 'auction'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
 
@@ -105,3 +112,41 @@ class Bank(object):
         else:
             logger.debug('Auction did not succeed in a sale.')
         return
+
+
+    @staticmethod
+    def calculate_mortgage_owed(mortgaged_property, current_gameboard=None):
+        """
+        calculate the mortgage owed on mortgaged_property
+        :param player: Player instance. not used in this function, but the signature is important because of the novelty generator
+        which could use other information from the player (like total debt) besides just the info in mortgaged_property.
+        :param mortgaged_property: a property instance that is mortgaged
+        :return:
+        """
+
+        if not mortgaged_property.is_mortgaged:
+            logger.error("Exception")
+            raise Exception
+        else:
+            if current_gameboard['bank'].total_mortgage_rule is False:
+                return (1.0+current_gameboard['bank'].mortgage_percentage) * mortgaged_property.mortgage
+            else:
+                # to avoid passing in a player object, I am going to use the owner of the mortgaged_property as the player whose
+                # total debt outstanding we have to compute the mortgage against.
+                player = mortgaged_property.owned_by
+                total = 0
+                for a in player.mortgaged_assets:
+                    total += ((1.0+current_gameboard['bank'].mortgage_percentage)*a.mortgage)
+                return total
+
+
+    def improvement_possible(self, player, asset, current_gameboard, add_house=True, add_hotel=False):
+        if add_hotel and add_house:
+            logger.debug("Cant build both a house and a hotel on a property at once!! Raising Exception.")
+            raise Exception
+        if add_hotel:
+            if self.total_hotels > 0:
+                return True
+        elif add_house:
+            if self.total_houses > 0:
+                return True

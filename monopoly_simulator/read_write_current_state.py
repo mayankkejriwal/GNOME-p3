@@ -10,6 +10,7 @@ import sys
 from monopoly_simulator.player import Player
 from monopoly_simulator import card
 from monopoly_simulator import action_choices
+from monopoly_simulator.flag_config import flag_config_dict
 
 
 def read_in_current_state_from_file(infile, player_decision_agents):
@@ -58,7 +59,7 @@ def write_out_current_state_to_file(current_gameboard, outfile):
     _populate_dict_with_dice(current_gameboard, ans)
     json.dump(ans, file)
     file.close()
-    return 1
+    return flag_config_dict['successful_action']
 
 
 def _populate_dict_with_bank(current_gameboard, ans):
@@ -467,6 +468,7 @@ def _initialize_locations(current_gameboard, game_schema):
         else:
             logger.debug('encountered unexpected location class: '+ l['loc_class'])
             logger.error("Exception")
+            raise Exception
 
     for i in range(len(game_schema['locations']['location_sequence'])):
         loc = location_objects[game_schema['locations']['location_sequence'][i]]
@@ -488,10 +490,12 @@ def _initialize_locations(current_gameboard, game_schema):
         logger.debug('location count: '+ str(game_schema['locations']['location_count'])+ ', length of location sequence: '+
         str(len(location_sequence))+ ' are unequal.')
         logger.error("Exception")
+        raise Exception
 
     if location_sequence[game_schema['go_position']].name != 'Go':
         logger.debug('go positions are not aligned')
         logger.error("Exception")
+        raise Exception
     else:
         current_gameboard['go_position'] = game_schema['go_position']
         current_gameboard['go_increment'] = game_schema['go_increment']
@@ -505,6 +509,7 @@ def _initialize_locations(current_gameboard, game_schema):
         elif o.color not in game_schema['full_color_sets_possessed']:
             logger.debug(o.color)
             logger.error("Exception")
+            raise Exception
         else:
             if o.color not in color_assets:
                 color_assets[o.color] = set()
@@ -552,6 +557,7 @@ def _initialize_dies(current_gameboard, game_schema):
     if len(game_schema['die']['die_state']) != game_schema['die']['die_count']:
         logger.debug('dice count is unequal to number of specified dice state-vectors...')
         logger.error("Exception")
+        raise Exception
     die_count = game_schema['die']['die_count']
     die_objects = list()
     for i in range(0, die_count):
@@ -624,6 +630,7 @@ def _initialize_cards(current_gameboard, game_schema):
         else:
             logger.debug('community chest card type is not recognized: '+ specific_card['card_type'])
             logger.error("Exception")
+            raise Exception
 
         community_chest_card_objects[card_obj.name] = copy.deepcopy(card_obj)
 
@@ -697,6 +704,7 @@ def _initialize_cards(current_gameboard, game_schema):
         else:
             logger.debug('chance card type is not recognized: '+ specific_card['card_type'])
             logger.error("Exception")
+            raise Exception
 
         chance_card_objects[card_obj.name] = copy.deepcopy(card_obj)
 

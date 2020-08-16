@@ -1,3 +1,4 @@
+from monopoly_simulator.flag_config import flag_config_dict
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.agent')
 
@@ -38,41 +39,41 @@ class Agent(object):
         flag to true. This is done only after making sure that all the agent functions have been initialized.
         :param current_gameboard: the initial state of current_gameboard right after setting up the board.
         :param indicator: a string that can be used to indicate the type of game startup (like normal startup, restart, etc)
-        :return: returns 1 if all function handlers are intialized and after agent is started up. Any error in doing so results
-        in a return value of -1.
+        :return: returns successful action code if all function handlers are intialized and after agent is started up. Any error in doing so results
+        in a return value of failure code.
         """
         if self.handle_negative_cash_balance == None:
             logger.error("Agent not initialized properly. Returning -1.")
-            return -1
+            return flag_config_dict['failure_code']
         if self.make_pre_roll_move == None:
             logger.error("Agent not initialized properly. Returning -1.")
-            return -1
+            return flag_config_dict['failure_code']
         if self.make_out_of_turn_move == None:
             logger.error("Agent not initialized properly. Returning -1.")
-            return -1
+            return flag_config_dict['failure_code']
         if self.make_post_roll_move == None:
             logger.error("Agent not initialized properly. Returning -1.")
-            return -1
+            return flag_config_dict['failure_code']
         if self.make_buy_property_decision == None:
             logger.error("Agent not initialized properly. Returning -1.")
-            return -1
+            return flag_config_dict['failure_code']
         if self.make_bid == None:
             logger.error("Agent not initialized properly. Returning -1.")
-            return -1
+            return flag_config_dict['failure_code']
 
         self.is_running = True
-        return 1
+        return flag_config_dict['successful_action']
 
 
     def shutdown(self):
         """
         This function is called to shutdown a running agent after the game terminates.
-        :return: function returns 1 is the agent is successfully shut down else return -1. (if trying to shutdown an
+        :return: function returns successful action code is the agent is successfully shut down else return failure code. (if trying to shutdown an
         already shutdown agent.)
         """
         if self.is_running == False:
             logger.error("Trying to shutdown an already shutdown agent. Returning -1.")
-            return -1
+            return flag_config_dict['failure_code']
         else:
             self.is_running = False
-            return 1
+            return flag_config_dict['successful_action']

@@ -2,6 +2,7 @@ from monopoly_simulator import action_choices
 from monopoly_simulator import agent_helper_functions # helper functions are internal to the agent and will not be recorded in the function log.
 from monopoly_simulator import diagnostics
 from monopoly_simulator import hypothetical_simulator
+from monopoly_simulator.flag_config import flag_config_dict
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.background_agent')
 
@@ -89,6 +90,7 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
         return (action_choices.concluded_actions, dict())
     else:
         logger.error("Exception")
+        raise Exception
 
 
 def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
@@ -353,6 +355,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
         return (action_choices.concluded_actions, dict())
     else:
         logger.error("Exception")
+        raise Exception
 
 
 def make_post_roll_move(player, current_gameboard, allowable_moves, code):
@@ -411,7 +414,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
                     return (action_choices.mortgage_property, params)
 
                 else: # last chance.
-                    to_sell = agent_helper_functions.identify_potential_sale(player, current_location.price,True)
+                    to_sell = agent_helper_functions.identify_potential_sale(player, current_gameboard, current_location.price,True)
                     if to_sell:
                         params['asset'] = to_sell
                         logger.debug(player.player_name+ ': I am attempting to sell property '+ params['asset'].name+' to the bank')
@@ -424,6 +427,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
 
     else:
         logger.error("Exception")
+        raise Exception
 
 
 def make_buy_property_decision(player, current_gameboard, asset):
@@ -530,7 +534,7 @@ def handle_negative_cash_balance(player, current_gameboard):
         sorted_potentials = sorted(mortgage_potentials, key=lambda x: x[1])  # sort by mortgage in ascending order
         for p in sorted_potentials:
             if player.current_cash >= 0:
-                return 1 # we're done
+                return flag_config_dict['successful_action'] # we're done
             ret_code = action_choices.mortgage_property(player, p[0], current_gameboard)
             current_gameboard['history']['function'].append(action_choices.mortgage_property)
             new_params = dict()
@@ -551,17 +555,17 @@ def handle_negative_cash_balance(player, current_gameboard):
         if a.color in player.full_color_sets_possessed:
             continue
         elif a.is_mortgaged:
-            sale_potentials.append((a, (a.price/2)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
+            sale_potentials.append((a, (a.price*current_gameboard['bank'].total_cash_with_bank)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
         else:
-            sale_potentials.append((a,a.price/2))
+            sale_potentials.append((a,a.price*current_gameboard['bank'].total_cash_with_bank))
 
     if sale_potentials: # if the second condition is not met, no point in mortgaging
         sorted_potentials = sorted(sale_potentials, key=lambda x: x[1])  # sort by mortgage in ascending order
         for p in sorted_potentials:
             if player.current_cash >= 0:
-                return 1 # we're done
+                return flag_config_dict['successful_action'] # we're done
             ret_code = action_choices.sell_property(player, p[0], current_gameboard)
             current_gameboard['history']['function'].append(action_choices.sell_property)
             new_params = dict()
@@ -580,19 +584,19 @@ def handle_negative_cash_balance(player, current_gameboard):
     sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
     for a in sorted_player_assets_list:
         if a.is_mortgaged:
-            sale_potentials.append((a, (a.price/2)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
+            sale_potentials.append((a, (a.price*current_gameboard['bank'].total_cash_with_bank)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
         else:
-            sale_potentials.append((a,a.price/2))
+            sale_potentials.append((a,a.price*current_gameboard['bank'].total_cash_with_bank))
 
     if sale_potentials:
-        sorted_potentials = sorted(sale_potentials, key=lambda x: x[1])  # sort by mortgage in ascending order
+        sorted_potentials = sorted(sale_potentials, key=lambda x: x[1])  # sort by sell value in ascending order
         for p in sorted_potentials:
             if player.current_cash >= 0:
-                return 1 # we're done
-            sorted_assets_list = _set_to_sorted_list_assets(player.assets)
-            for prop in sorted_assets_list:
+                return flag_config_dict['successful_action'] # we're done
+            sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
+            for prop in sorted_player_assets_list:
                 if prop!=p[0] and prop.color==p[0].color and p[0].color in player.full_color_sets_possessed:
                     if prop.num_hotels>0:
                         ret_code = action_choices.sell_house_hotel(player, prop, current_gameboard, False, True)
@@ -604,7 +608,7 @@ def handle_negative_cash_balance(player, current_gameboard):
                         current_gameboard['history']['param'].append(new_params)
                         current_gameboard['history']['return'].append(ret_code)
                         if player.current_cash >= 0:
-                            return 1
+                            return flag_config_dict['successful_action']
                     elif prop.num_houses>0:
                         while prop.num_houses>0:
                             ret_code = action_choices.sell_house_hotel(player, prop, current_gameboard, True, False)
@@ -616,7 +620,7 @@ def handle_negative_cash_balance(player, current_gameboard):
                             current_gameboard['history']['param'].append(new_params)
                             current_gameboard['history']['return'].append(ret_code)
                             if player.current_cash >= 0:
-                                return 1
+                                return flag_config_dict['successful_action']
                     else:
                         continue
             ret_code = action_choices.sell_property(player, p[0], current_gameboard)
@@ -648,7 +652,7 @@ def handle_negative_cash_balance(player, current_gameboard):
         sorted_potentials = sorted(mortgage_potentials, key=lambda x: x[1])  # sort by mortgage in ascending order
         for p in sorted_potentials:
             if player.current_cash >= 0:
-                return 1 # we're done
+                return flag_config_dict['successful_action'] # we're done
             ret_code = action_choices.mortgage_property(player, p[0], current_gameboard)
             current_gameboard['history']['function'].append(action_choices.mortgage_property)
             new_params = dict()
@@ -667,17 +671,17 @@ def handle_negative_cash_balance(player, current_gameboard):
         if a.color in player.full_color_sets_possessed:
             continue
         elif a.is_mortgaged:
-            sale_potentials.append((a, (a.price/2)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
+            sale_potentials.append((a, (a.price*current_gameboard['bank'].total_cash_with_bank)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
         else:
-            sale_potentials.append((a,a.price/2))
+            sale_potentials.append((a, a.price*current_gameboard['bank'].total_cash_with_bank))
 
     if sale_potentials: # if the second condition is not met, no point in mortgaging
         sorted_potentials = sorted(sale_potentials, key=lambda x: x[1])  # sort by mortgage in ascending order
         for p in sorted_potentials:
             if player.current_cash >= 0:
-                return 1 # we're done
+                return flag_config_dict['successful_action'] # we're done
             ret_code = action_choices.sell_property(player, p[0], current_gameboard)
             current_gameboard['history']['function'].append(action_choices.sell_property)
             new_params = dict()
@@ -695,8 +699,9 @@ def handle_negative_cash_balance(player, current_gameboard):
         count += 1 # there is a slim chance that it is impossible to sell an improvement unless the player does something first (e.g., replace 4 houses with a hotel).
         # The count ensures we terminate at some point, regardless.
         sorted_assets_list = _set_to_sorted_list_assets(player.assets)
+
         for a in sorted_assets_list:
-            if a.num_houses > 0:
+            if a.loc_class == 'real_estate' and a.num_houses > 0:
                 ret_code = action_choices.sell_house_hotel(player, a, current_gameboard,True, False)
                 current_gameboard['history']['function'].append(action_choices.sell_house_hotel)
                 new_params = dict()
@@ -706,8 +711,8 @@ def handle_negative_cash_balance(player, current_gameboard):
                 current_gameboard['history']['param'].append(new_params)
                 current_gameboard['history']['return'].append(ret_code)
                 if player.current_cash >= 0:
-                    return 1 # we're done
-            elif a.num_hotels > 0:
+                    return flag_config_dict['successful_action'] # we're done
+            elif a.loc_class == 'real_estate' and a.num_hotels > 0:
                 ret_code = action_choices.sell_house_hotel(player, a, current_gameboard, False, True)
                 current_gameboard['history']['function'].append(action_choices.sell_house_hotel)
                 new_params = dict()
@@ -717,7 +722,7 @@ def handle_negative_cash_balance(player, current_gameboard):
                 current_gameboard['history']['param'].append(new_params)
                 current_gameboard['history']['return'].append(ret_code)
                 if player.current_cash >= 0:
-                    return 1  # we're done
+                    return flag_config_dict['successful_action']  # we're done
 
     # final straw
     final_sale_assets = player.assets.copy()
@@ -732,9 +737,9 @@ def handle_negative_cash_balance(player, current_gameboard):
         current_gameboard['history']['param'].append(new_params)
         current_gameboard['history']['return'].append(ret_code)
         if player.current_cash >= 0:
-            return 1  # we're done
+            return flag_config_dict['successful_action']  # we're done
 
-    return 1 # if we didn't succeed in establishing solvency, it will get caught by the simulator. Since we tried, we return 1.
+    return flag_config_dict['successful_action'] # if we didn't succeed in establishing solvency, it will get caught by the simulator. Since we tried, we return 1.
 
 
 def _set_to_sorted_list_mortgaged_assets(player_mortgaged_assets):

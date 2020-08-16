@@ -96,6 +96,7 @@ def _initialize_locations(game_elements, game_schema):
         else:
             logger.debug('encountered unexpected location class: '+ l['loc_class'])
             logger.error("Exception")
+            raise Exception
 
     for i in range(0, len(game_schema['location_sequence'])):
         loc = location_objects[game_schema['location_sequence'][i]]
@@ -117,10 +118,12 @@ def _initialize_locations(game_elements, game_schema):
         logger.debug('location count: '+ str(game_schema['locations']['location_count'])+ ', length of location sequence: '+
         str(len(location_sequence))+ ' are unequal.')
         logger.error("Exception")
+        raise Exception
 
     if location_sequence[game_schema['go_position']].name != 'Go':
         logger.debug('go positions are not aligned')
         logger.error("Exception")
+        raise Exception
     else:
         game_elements['go_position'] = game_schema['go_position']
         game_elements['go_increment'] = game_schema['go_increment']
@@ -134,6 +137,7 @@ def _initialize_locations(game_elements, game_schema):
         elif o.color not in game_schema['players']['player_states']['full_color_sets_possessed'][0]:
             logger.debug(o.color)
             logger.error("Exception")
+            raise Exception
         else:
             if o.color not in color_assets:
                 color_assets[o.color] = set()
@@ -147,6 +151,7 @@ def _initialize_dies(game_elements, game_schema):
     if len(game_schema['die']['die_state']) != game_schema['die']['die_count']:
         logger.debug('dice count is unequal to number of specified dice state-vectors...')
         logger.error("Exception")
+        raise Exception
     die_count = game_schema['die']['die_count']
     die_objects = list()
     for i in range(0, die_count):
@@ -156,6 +161,7 @@ def _initialize_dies(game_elements, game_schema):
     game_elements['dies'] = die_objects
     game_elements['current_die_total'] = 0
     game_elements['die_sequence'] = die_sequence
+    game_elements['move_player_after_die_roll'] = getattr(sys.modules[__name__], "move_player_after_die_roll")
 
 
 def _initialize_cards(game_elements, game_schema):
@@ -223,6 +229,7 @@ def _initialize_cards(game_elements, game_schema):
 
             logger.debug('community chest card type is not recognized: '+ specific_card['card_type'])
             logger.error("Exception")
+            raise Exception
 
         community_chest_card_objects[card_obj.name] = copy.deepcopy(card_obj)
 
@@ -293,6 +300,7 @@ def _initialize_cards(game_elements, game_schema):
         else:
             logger.debug('chance card type is not recognized: '+ specific_card['card_type'])
             logger.error("Exception")
+            raise Exception
 
         chance_card_objects[card_obj.name] = copy.deepcopy(card_obj)
 

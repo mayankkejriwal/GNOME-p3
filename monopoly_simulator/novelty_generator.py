@@ -232,6 +232,7 @@ class NumberClassNovelty(ClassNovelty):
         if len(die_state_vector) != die_count:
             logger.error('die states are unequal to die count. Raising exception...')
             logger.error("Exception")
+            raise Exception
 
         current_gameboard['dies'] = list() # wipe out what was there before.
         die_sequence = []
@@ -282,9 +283,11 @@ class TypeClassNovelty(ClassNovelty):
         if len(die_state_distribution_vector) != len(die_type_vector):
             logger.error('die state distributions are unequal to die types. Raising exception...')
             logger.error("Exception")
+            raise Exception
         if len(die_state_distribution_vector) != len(current_gameboard['dies']):
             logger.error('die state distributions and die types are unequal to number of dies in board. Raising exception...')
             logger.error("Exception")
+            raise Exception
 
         for i in range(0, len(die_state_distribution_vector)):
             current_gameboard['dies'][i].die_state_distribution = die_state_distribution_vector[i]
@@ -349,6 +352,7 @@ class SpatialRepresentationNovelty(RepresentationNovelty):
                 count += 1
         if count != len(relative_location_list):
             logger.error("Exception") # the number of items in the dictionary should correspond to the length of the list, otherwise something is going wrong
+            raise Exception
 
         for index in range(0, len(new_location_sequence)):
             loc = new_location_sequence[index]
@@ -357,6 +361,7 @@ class SpatialRepresentationNovelty(RepresentationNovelty):
 
         if len(set(new_location_sequence)) != len(new_location_sequence):
             logger.error("Exception") # somehow we've ended up introducing duplicate names in the list.
+            raise Exception
 
         self.global_reordering(current_gameboard, new_location_sequence)
 

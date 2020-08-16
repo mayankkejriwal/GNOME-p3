@@ -1,5 +1,5 @@
+from monopoly_simulator.flag_config import flag_config_dict
 from monopoly_simulator.bank import Bank
-from monopoly_simulator.card_utility_actions import calculate_mortgage_owed
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.location')
 
@@ -25,7 +25,7 @@ class Location(object):
         else:
             self.color = color
 
-        self.calculate_mortgage_owed = calculate_mortgage_owed
+        self.calculate_mortgage_owed = Bank.calculate_mortgage_owed
 
     def transfer_property_to_bank(self, player, current_gameboard):
         """
@@ -36,28 +36,47 @@ class Location(object):
         :param current_gameboard: A dict. The global gameboard data structure
         :return: An integer. Specifies the amount due to the player for selling this property to the bank
         """
-        player.remove_asset(self)
-        # add to game history
-        current_gameboard['history']['function'].append(player.remove_asset)
-        params = dict()
-        params['self'] = player
-        params['asset'] = self
-        current_gameboard['history']['param'].append(params)
-        current_gameboard['history']['return'].append(None)
 
-        self.owned_by = current_gameboard['bank']
-        cash_due = self.price / 2
+        cash_due = self.price * current_gameboard['bank'].property_sell_percentage   # changed hardcoded value to a bank parameter
         cash_owed = 0
         if self.loc_class == 'real_estate' and (self.num_houses > 0 or self.num_hotels > 0):
             logger.debug('Bank error!'+ self.name+' being sold has improvements on it. Raising Exception')
             logger.error("Exception")
+            raise Exception
+
         if self.is_mortgaged:
             cash_owed = self.calculate_mortgage_owed(self, current_gameboard)
-            self.is_mortgaged = False
 
         if cash_due >= cash_owed:
+            if current_gameboard['bank'].total_cash_with_bank < cash_due - cash_owed:    # i.e. bank does not have enough money to pay the player what is due
+                logger.debug("Bank has insufficient funds!!!  Rejected Transaction!!")
+                return flag_config_dict['failure_code']
+            else:
+                if self.is_mortgaged:
+                    self.is_mortgaged = False
+                player.remove_asset(self)
+                # add to game history
+                current_gameboard['history']['function'].append(player.remove_asset)
+                params = dict()
+                params['self'] = player
+                params['asset'] = self
+                current_gameboard['history']['param'].append(params)
+                current_gameboard['history']['return'].append(None)
+                self.owned_by = current_gameboard['bank']
             return cash_due - cash_owed
+
         else:
+            if self.is_mortgaged:
+                self.is_mortgaged = False
+            player.remove_asset(self)
+            # add to game history
+            current_gameboard['history']['function'].append(player.remove_asset)
+            params = dict()
+            params['self'] = player
+            params['asset'] = self
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(None)
+            self.owned_by = current_gameboard['bank']
             return 0 # foreclosure.
 
 
@@ -105,6 +124,7 @@ class Location(object):
             if self.owned_by == player:
                 logger.debug(player.player_name+' already owns this asset! Raising exception...')
                 logger.error("Exception")
+                raise Exception
             elif type(self.owned_by) != Bank: # not owned by this player or by the bank.
                 logger.debug('Asset is owned by '+self.owned_by.player_name+'. Attempting to remove...')
                 self.owned_by.remove_asset(self)
@@ -133,6 +153,7 @@ class Location(object):
         else:
             logger.debug('Asset ',self.name+' is non-purchaseable!')
             logger.error("Exception")
+            raise Exception
 
 
 class DoNothingLocation(Location):
@@ -222,25 +243,25 @@ class RealEstateLocation(Location):
         obj[4] = self.rent_4_houses
         self._house_rent_dict = obj
 
-
-    def calculate_rent(self):
+    @staticmethod
+    def calculate_rent(asset, current_gameboard):
         """
         When calculating the rent, note that a real estate can either have a hotel OR houses OR be
         unimproved-monopolized OR be unimproved-non-monopolized. Rent is calculated based on which of these
         situations applies.
         :return: An integer. The rent due.
         """
-        logger.debug('calculating rent for '+self.name)
-        ans = self.rent # unimproved-non-monopolized rent (the default)
-        if self.num_hotels == 1:
+        logger.debug('calculating rent for '+asset.name)
+        ans = asset.rent # unimproved-non-monopolized rent (the default)
+        if asset.num_hotels == 1:
             logger.debug('property has a hotel. Updating rent.')
-            ans = self.rent_hotel
-        elif self.num_houses > 0: # later we can replace these with reflections
-            logger.debug('property has '+str(self.num_houses)+' houses. Updating rent.')
-            ans = self._house_rent_dict[self.num_houses] # if for some reason you have more than 4 houses, you'll get a key error
-        elif self.color in self.owned_by.full_color_sets_possessed:
-            ans = self.rent*2 # charge twice the rent on unimproved monopolized properties.
-            logger.debug('property has color '+ self.color+ ' which is monopolized by '+self.owned_by.player_name+'. Updating rent.')
+            ans = asset.rent_hotel
+        elif asset.num_houses > 0: # later we can replace these with reflections
+            logger.debug('property has '+str(asset.num_houses)+' houses. Updating rent.')
+            ans = asset._house_rent_dict[asset.num_houses] # if for some reason you have more than 4 houses, you'll get a key error
+        elif asset.color in asset.owned_by.full_color_sets_possessed:
+            ans = asset.rent*current_gameboard['bank'].monopolized_color_property_rent # charge twice the rent on unimproved monopolized properties.
+            logger.debug('property has color '+ asset.color+ ' which is monopolized by '+asset.owned_by.player_name+'. Updating rent.')
         logger.debug('rent is calculated to be '+str(ans))
         return ans
 
@@ -303,6 +324,7 @@ class RailroadLocation(Location):
                 str(self.owned_by.num_railroads_possessed)+', which is impossible')
 
             logger.error("Exception")
+            raise Exception
         dues = self._railroad_dues[self.owned_by.num_railroads_possessed]
 
         logger.debug('railroad dues are '+str(dues))
@@ -348,6 +370,7 @@ class UtilityLocation(Location):
                     str(self.owned_by.num_utilities_possessed)+ ', which is impossible')
 
                 logger.error("Exception")
+                raise Exception
 
         dues = die_total*self._die_multiples[self.owned_by.num_utilities_possessed]
         logger.debug('utility dues are '+ str(dues))
