@@ -12,7 +12,7 @@ class Bank(object):
         self.house_sell_percentage = 0.5
         self.hotel_sell_percentage = 0.5
         self.jail_fine = float(50)
-        self.monopolized_color_property_rent = float(2)
+        self.monopolized_property_rent_factor = float(2)   #default = 2, players have to pay "twice" the property rent on "monopolized" unimproved properties
 
     @staticmethod
     def auction(starting_player_index, current_gameboard, asset):

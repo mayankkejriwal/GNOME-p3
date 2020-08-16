@@ -260,7 +260,7 @@ class RealEstateLocation(Location):
             logger.debug('property has '+str(asset.num_houses)+' houses. Updating rent.')
             ans = asset._house_rent_dict[asset.num_houses] # if for some reason you have more than 4 houses, you'll get a key error
         elif asset.color in asset.owned_by.full_color_sets_possessed:
-            ans = asset.rent*current_gameboard['bank'].monopolized_color_property_rent # charge twice the rent on unimproved monopolized properties.
+            ans = asset.rent*current_gameboard['bank'].monopolized_property_rent_factor # charge twice the rent on unimproved monopolized properties.
             logger.debug('property has color '+ asset.color+ ' which is monopolized by '+asset.owned_by.player_name+'. Updating rent.')
         logger.debug('rent is calculated to be '+str(ans))
         return ans
