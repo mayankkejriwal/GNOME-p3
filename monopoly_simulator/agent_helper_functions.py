@@ -3,7 +3,6 @@ logger = logging.getLogger('monopoly_simulator.logging_info.agent_helper_func')
 
 def will_property_complete_set(player, asset, current_gameboard):
     """
-
     :param player: Player instance
     :param asset: Location instance
     :return: Boolean. True if the asset will complete a color set for the player, False otherwise. For railroads
@@ -67,11 +66,12 @@ def identify_potential_mortgage(player, amount_to_raise, lone_constraint=False):
         return sorted_potentials[0][0]
 
 
-def identify_potential_sale(player, amount_to_raise, lone_constraint=False):
+def identify_potential_sale(player, current_gameboard, amount_to_raise, lone_constraint=False):
     """
     All potential sales considered here will be to the bank. The logic is very similar to identify_potential_mortgage.
     We try to identify the cheapest property that will meet our fundraising bar (and if applicable, satisfy lone_constraint)
     :param player: Player instance. The potential sale has to be an unmortgaged property that this player owns.
+    :param current_gameboard: The gameboard data structure
     :param amount_to_raise: Integer. The amount of money looking to be raised from this sale.
     :param lone_constraint: Boolean. If true, we will limit our search to properties that meet the 'lone' constraint i.e.
     the property (if a railroad or utility) must be the only railroad or utility possessed by the player, or if colored,
@@ -86,13 +86,13 @@ def identify_potential_sale(player, amount_to_raise, lone_constraint=False):
             continue
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
-        elif a.price/2 < amount_to_raise:
+        elif a.price*current_gameboard['bank'].total_cash_with_bank < amount_to_raise:
             continue
         elif lone_constraint:
             if is_property_lone(player, a):
                 continue
         # a is a potential sale, and its sale price meets our fundraising bar.
-        potentials.append((a, a.price/2))
+        potentials.append((a, a.price*current_gameboard['bank'].total_cash_with_bank))
 
     if len(potentials) == 0:
         return None  # nothing got identified
@@ -207,7 +207,6 @@ def can_asset_be_improved(asset, same_color_assets):
     asset under the assumption that the asset, and all other assets of that color, belong to one player. We also do
     not check here whether the game board is in an incorrect state (i.e. if somehow the uniform development rule
     has been violated).
-
     We are also not checking affordability of the improvement since the player is not specified.
     :param asset:
     :param same_color_assets:

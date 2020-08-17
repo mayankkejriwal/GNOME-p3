@@ -1,3 +1,4 @@
+from monopoly_simulator.flag_config import flag_config_dict
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.card_utility_actions')
 
@@ -20,6 +21,7 @@ def calculate_mortgage_owed(mortgaged_property, current_gameboard=None):
     """
     if not mortgaged_property.is_mortgaged:
         logger.error("Exception")
+        raise Exception
     else:
         if current_gameboard['bank'].total_mortgage_rule is False:
             return (1.0+current_gameboard['bank'].mortgage_percentage) * mortgaged_property.mortgage
@@ -148,7 +150,6 @@ def pick_card_from_chance(player, current_gameboard):
 
 def move_player(player, card, current_gameboard):
     """
-
     :param player: Player instance.
     :param card: Card instance
     :param current_gameboard: A dict. The global gameboard data structure
@@ -169,12 +170,13 @@ def move_player(player, card, current_gameboard):
         current_gameboard['history']['return'].append(None)
     else:
         _move_player__check_for_go(player, new_position, current_gameboard)
+        if 'auxiliary_check_for_go' in current_gameboard:
+            current_gameboard['auxiliary_go'](player, card, current_gameboard)
 
 
 def set_get_out_of_jail_card_status(player, card, current_gameboard, pack):
     """
     Depending on whether we took the card out of community chest or chance, we update the requisite field for the player.
-
     :param player: Player instance.
     :param card: Card instance
     :param current_gameboard: A dict. The global gameboard data structure
@@ -190,6 +192,7 @@ def set_get_out_of_jail_card_status(player, card, current_gameboard, pack):
     else: # if we arrive here, it means that the card we have is either not get out of jail free, or something else has gone wrong.
         logger.debug('something has gone wrong in set_get_out_of_jail_card_status. That is all I know.')
         logger.error("Exception")
+        raise Exception
 
 
 def bank_cash_transaction(player, card, current_gameboard):
@@ -202,26 +205,32 @@ def bank_cash_transaction(player, card, current_gameboard):
     """
     logger.debug('executing bank_cash_transaction for '+ player.player_name)
     if card.amount < 0:
-        player.charge_player(-1*card.amount)
+        player.charge_player(-1*card.amount, current_gameboard, bank_flag=True)
         # add to game history
         current_gameboard['history']['function'].append(player.charge_player)
         params = dict()
         params['self'] = player
         params['amount'] = -1*card.amount
+        params['description'] = 'bank cash transaction'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
     elif card.amount > 0:
-        player.receive_cash(card.amount)
+        code = player.receive_cash(card.amount, current_gameboard, bank_flag=True)
         # add to game history
-        current_gameboard['history']['function'].append(player.receive_cash)
-        params = dict()
-        params['self'] = player
-        params['amount'] = card.amount
-        current_gameboard['history']['param'].append(params)
-        current_gameboard['history']['return'].append(None)
+        if code == 1:
+            current_gameboard['history']['function'].append(player.receive_cash)
+            params = dict()
+            params['self'] = player
+            params['amount'] = card.amount
+            params['description'] = 'bank cash transaction'
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(code)
+        elif code == flag_config_dict['failure_code']:
+            logger.debug('Transaction broke due to insufficient funds. Player does not receive the stated funds.')
     else:
         logger.debug('Something broke in bank_cash_transaction. That is all I know.')
         logger.error("Exception")
+        raise Exception
 
 
 def player_cash_transaction(player, card, current_gameboard):
@@ -238,21 +247,28 @@ def player_cash_transaction(player, card, current_gameboard):
             if p == player or p.status == 'lost':
                 continue
 
-            p.receive_cash(-1*card.amount_per_player)
+            code = p.receive_cash(-1*card.amount_per_player, current_gameboard, bank_flag=False)
             # add to game history
-            current_gameboard['history']['function'].append(p.receive_cash)
-            params = dict()
-            params['self'] = p
-            params['amount'] = -1*card.amount_per_player
-            current_gameboard['history']['param'].append(params)
-            current_gameboard['history']['return'].append(None)
+            if code == 1:
+                current_gameboard['history']['function'].append(p.receive_cash)
+                params = dict()
+                params['self'] = p
+                params['amount'] = -1*card.amount_per_player
+                params['description'] = 'player cash transaction'
+                current_gameboard['history']['param'].append(params)
+                current_gameboard['history']['return'].append(code)
+            else:
+                logger.debug("Not sure what happened! Something broke!")
+                logger.error("Exception")
+                raise Exception
 
-            player.charge_player(-1*card.amount_per_player)
+            player.charge_player(-1*card.amount_per_player, current_gameboard, bank_flag=False)
             # add to game history
             current_gameboard['history']['function'].append(player.charge_player)
             params = dict()
             params['self'] = player
             params['amount'] = -1*card.amount_per_player
+            params['description'] = 'player cash transaction'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
 
@@ -261,21 +277,28 @@ def player_cash_transaction(player, card, current_gameboard):
             if p == player or p.status == 'lost':
                 continue
 
-            player.receive_cash(card.amount_per_player)
+            code = player.receive_cash(card.amount_per_player, current_gameboard, bank_flag=False)
             # add to game history
-            current_gameboard['history']['function'].append(player.receive_cash)
-            params = dict()
-            params['self'] = player
-            params['amount'] = card.amount_per_player
-            current_gameboard['history']['param'].append(params)
-            current_gameboard['history']['return'].append(None)
+            if code == 1:
+                current_gameboard['history']['function'].append(player.receive_cash)
+                params = dict()
+                params['self'] = player
+                params['amount'] = card.amount_per_player
+                params['description'] = 'player cash transaction'
+                current_gameboard['history']['param'].append(params)
+                current_gameboard['history']['return'].append(code)
+            else:
+                logger.debug("Not sure what happened! Something broke!")
+                logger.error("Exception")
+                raise Exception
 
-            p.charge_player(card.amount_per_player)
+            p.charge_player(card.amount_per_player, current_gameboard, bank_flag=False)
             # add to game history
             current_gameboard['history']['function'].append(p.charge_player)
             params = dict()
             params['self'] = p
             params['amount'] = card.amount_per_player
+            params['description'] = 'player cash transaction'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
 
@@ -313,12 +336,13 @@ def calculate_street_repair_cost(player, card, current_gameboard): # assesses, n
     cost_per_house = 40
     cost_per_hotel = 115
     cost = player.num_total_houses*cost_per_house+player.num_total_hotels*cost_per_hotel
-    player.charge_player(cost)
+    player.charge_player(cost, current_gameboard, bank_flag=True)
     # add to game history
     current_gameboard['history']['function'].append(player.charge_player)
     params = dict()
     params['self'] = player
     params['amount'] = cost
+    params['description'] = 'street repair'
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
 
@@ -335,6 +359,8 @@ def move_player__check_for_go(player, card, current_gameboard):
     logger.debug('destination specified on card is '+ card.destination.name)
     new_position = card.destination.start_position
     _move_player__check_for_go(player, new_position, current_gameboard)
+    if 'auxiliary_check_for_go' in current_gameboard:
+        current_gameboard['auxiliary_go'](player, card, current_gameboard)
 
 
 def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_gameboard):
@@ -360,11 +386,15 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
 
     logger.debug('The utility position that player is being moved to is '+current_gameboard['location_sequence'][min_utility_position].name)
     _move_player__check_for_go(player, min_utility_position, current_gameboard)
+    if 'auxiliary_check_for_go' in current_gameboard:
+        current_gameboard['auxiliary_go'](player, card, current_gameboard)
+
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
     if current_loc.loc_class != 'utility':  # simple check
         logger.debug('location is supposed to be a utility...what happened?')
         logger.error("Exception")
+        raise Exception
 
     if 'bank.Bank' in str(type(current_loc.owned_by)): # we're forced to use this hack to avoid an import.
         logger.debug('utility is owned by bank. Player will have option to purchase.')
@@ -379,24 +409,31 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
         return
     else:
         amount_due = current_gameboard['current_die_total']*10
-        player.charge_player(amount_due)
+        player.charge_player(amount_due, current_gameboard, bank_flag=False)
         # add to game history
         current_gameboard['history']['function'].append(player.charge_player)
         params = dict()
         params['self'] = player
         params['amount'] = amount_due
+        params['description'] = 'utility dues'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
 
         current_owner = current_loc.owned_by
-        current_owner.receive_cash(amount_due)
-        # add to game history
-        current_gameboard['history']['function'].append(current_owner.receive_cash)
-        params = dict()
-        params['self'] = current_owner
-        params['amount'] = amount_due
-        current_gameboard['history']['param'].append(params)
-        current_gameboard['history']['return'].append(None)
+        code = current_owner.receive_cash(amount_due, current_gameboard, bank_flag=False)
+        if code == 1:
+            # add to game history
+            current_gameboard['history']['function'].append(current_owner.receive_cash)
+            params = dict()
+            params['self'] = current_owner
+            params['amount'] = amount_due
+            params['description'] = 'utility dues'
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(code)
+        else:
+            logger.debug("Not sure what happened! Something broke!")
+            logger.error("Exception")
+            raise Exception
 
 
 def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, current_gameboard):
@@ -423,11 +460,15 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
     logger.debug('The railroad position that player is being moved to is '+ current_gameboard['location_sequence'][
         min_railroad_position].name)
     _move_player__check_for_go(player, min_railroad_position, current_gameboard)
+    if 'auxiliary_check_for_go' in current_gameboard:
+        current_gameboard['auxiliary_go'](player, card, current_gameboard)
+
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
     if current_loc.loc_class != 'railroad': # simple check
         logger.debug('location is supposed to be a railroad...what happened?')
         logger.error("Exception")
+        raise Exception
 
     if 'bank.Bank' in str(type(current_loc.owned_by)):  # we're forced to use this hack to avoid an import.
         logger.debug('railroad is owned by bank. Player will have option to purchase.')
@@ -442,24 +483,31 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
         return
     else:
         amount_due = 2 * current_loc.calculate_railroad_dues()
-        player.charge_player(amount_due)
+        player.charge_player(amount_due, current_gameboard, bank_flag=False)
         # add to game history
         current_gameboard['history']['function'].append(player.charge_player)
         params = dict()
         params['self'] = player
         params['amount'] = amount_due
+        params['description'] = 'railroad dues'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
 
         current_owner = current_loc.owned_by
-        current_owner.receive_cash(amount_due)
-        # add to game history
-        current_gameboard['history']['function'].append(current_owner.receive_cash)
-        params = dict()
-        params['self'] = current_owner
-        params['amount'] = amount_due
-        current_gameboard['history']['param'].append(params)
-        current_gameboard['history']['return'].append(None)
+        code = current_owner.receive_cash(amount_due, current_gameboard, bank_flag=False)
+        if code == 1:
+            # add to game history
+            current_gameboard['history']['function'].append(current_owner.receive_cash)
+            params = dict()
+            params['self'] = current_owner
+            params['amount'] = amount_due
+            params['description'] = 'railroad dues'
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(code)
+        else:
+            logger.debug("Not sure what happened! Something broke!")
+            logger.error("Exception")
+            raise Exception
 
 
 def calculate_general_repair_cost(player, card, current_gameboard):
@@ -474,12 +522,13 @@ def calculate_general_repair_cost(player, card, current_gameboard):
     cost_per_house = 25
     cost_per_hotel = 100
     cost = player.num_total_houses * cost_per_house + player.num_total_hotels * cost_per_hotel
-    player.charge_player(cost)
+    player.charge_player(cost, current_gameboard, bank_flag=True)
     # add to game history
     current_gameboard['history']['function'].append(player.charge_player)
     params = dict()
     params['self'] = player
     params['amount'] = cost
+    params['description'] = 'general repair'
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
 
@@ -528,15 +577,23 @@ def move_player_after_die_roll(player, rel_move, current_gameboard, check_for_go
 
     if check_for_go:
         if _has_player_passed_go(player.current_position, new_position, go_position):
+            if 'auxiliary_check_for_go' in current_gameboard:
+                current_gameboard['auxiliary_go'](player, None, current_gameboard)
             logger.debug(player.player_name+' passes Go.')
-            player.receive_cash(go_increment)
+            code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
             # add to game history
-            current_gameboard['history']['function'].append(player.receive_cash)
-            params = dict()
-            params['self'] = player
-            params['amount'] = go_increment
-            current_gameboard['history']['param'].append(params)
-            current_gameboard['history']['return'].append(None)
+            if code == 1:
+                current_gameboard['history']['function'].append(player.receive_cash)
+                params = dict()
+                params['self'] = player
+                params['amount'] = go_increment
+                params['description'] = 'go increment'
+                current_gameboard['history']['param'].append(params)
+                current_gameboard['history']['return'].append(code)
+            else:
+                logger.debug('Current cash balance with the bank = '+ str(current_gameboard['bank'].total_cash_with_bank))
+                logger.debug("Player supposed to receive go increment, but bank has no sufficient funds, hence unable to pay player." +
+                             "Player will have to pass GO position without receiving go increment!")
 
     player.update_player_position(new_position, current_gameboard)  # update this only after checking for go
     # add to game history
@@ -603,14 +660,20 @@ def _move_player__check_for_go(player, new_position, current_gameboard):
     go_position = current_gameboard['go_position']
     go_increment = current_gameboard['go_increment']
     if _has_player_passed_go(player.current_position, new_position, go_position):
-        player.receive_cash(go_increment)
+        code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
         # add to game history
-        current_gameboard['history']['function'].append(player.receive_cash)
-        params = dict()
-        params['self'] = player
-        params['amount'] = go_increment
-        current_gameboard['history']['param'].append(params)
-        current_gameboard['history']['return'].append(None)
+        if code == 1:
+            current_gameboard['history']['function'].append(player.receive_cash)
+            params = dict()
+            params['self'] = player
+            params['amount'] = go_increment
+            params['description'] = 'go increment'
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(code)
+        else:
+            logger.debug('Current cash balance with the bank = '+ str(current_gameboard['bank'].total_cash_with_bank))
+            logger.debug("Player supposed to receive go increment, but bank has no sufficient funds, hence unable to pay player." +
+                         "Player will have to pass GO position without receiving go increment!")
 
     player.update_player_position(new_position, current_gameboard) # update this only after checking for go
     # add to game history

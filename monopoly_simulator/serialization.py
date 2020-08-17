@@ -92,6 +92,8 @@ def _serialize_history(current_gameboard):
                 hist_dict['param'][k] = v
             elif k == 'die_objects' or k == 'choice':
                 pass
+            elif k == 'description':
+                hist_dict['param'][k] = v
             else:
                 print('This param object not included, key: ', k, " value: ", v, " function name: ", func_name)
 

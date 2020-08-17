@@ -211,7 +211,11 @@ def handle_negative_cash_balance(serial_dict_to_client):
     # print('simple agent handle neg cash client')
     player_name = serial_dict_to_client['player']
     current_gameboard = serial_dict_to_client['current_gameboard']
-    return -1
+    return_to_server_dict = dict()
+    return_to_server_dict['function'] = None
+    return_to_server_dict['param_dict'] = dict()
+    return_to_server_dict['param_dict']['code'] = -1
+    return return_to_server_dict
 
 
 def _build_decision_agent_methods_dict():
@@ -255,14 +259,11 @@ class ClientAgent(Agent):
         @param authkey: Byte string, the password used to authenticate the client. Must be same as server's authkey.
             Defaults to "password"
         """
-
-        # self.conn = Client(address, authkey=authkey)
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.conn.connect((address[0], address[1]))
 
         result = None
         while True:
-            # func_name, serial_dict_to_client = self.conn.recv(1024)  # Receive the signal
             data_from_server = self.conn.recv(50000)
             data_from_server = data_from_server.decode("utf-8")
             data_dict_from_server = json.loads(data_from_server)

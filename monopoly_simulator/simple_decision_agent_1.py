@@ -1,6 +1,7 @@
 from . import action_choices
 from monopoly_simulator.action_choices import *
 from monopoly_simulator.location import  RealEstateLocation, UtilityLocation, RailroadLocation
+from monopoly_simulator.flag_config import flag_config_dict
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.simple_decision_agent')
 """
@@ -9,21 +10,17 @@ that, we impose no restrictions (you can make the decision agent as complex as y
 you do not manipulate the gameboard. We will have mechanisms to check for inadvertent changes or inconsistencies that
 get introduced in the gameboard (due to any reason, including possible subtle errors in the simulator itself) a short
 while later.
-
 If you decision agent does maintain state, or some kind of global data structure, please be careful when assigning the
 same decision agent (as we do) to each player. We do provide some basic state to you already via 'code' in the make_*_move
 functions. Specifically, if code is 1 it means the 'previous' move selected by the player was successful,
 and if -1 it means it was unsuccessful. code of -1 is usually returned when an allowable move is invoked with parameters
 that preempt the action from happening e.g., the player may decide to mortgage property that is already mortgaged,
 which will return the failure code of -1 when the game actually tries to mortgage the property in action_choices.
-
 Be careful to note what each function is supposed to return in addition to adhering to the expected signature. The examples
 here are good guides.
-
 Your functions can be called whatever you like, but the keys in decision_agent_methods should not be changed. The
 respective functions must adhere in their signatures to the examples here. The agent in this file is very simple, and is
 for illustrative purposes only. We describe the logic behind each decision in the respective function.
-
 """
 
 
@@ -48,6 +45,7 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
         return (action_choices.skip_turn, dict())
     else:
         logger.error("Exception")
+        raise Exception
 
 
 def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
@@ -70,16 +68,15 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
         return (action_choices.skip_turn, dict())
     else:
         logger.error("Exception")
+        raise Exception
 
 
 def make_post_roll_move(player, current_gameboard, allowable_moves, code):
     """
     The agent is in the post-roll phase and must decide what to do (next). This simple dummy agent buys the property if it
     can afford it, otherwise it skips the turn. If we do buy the property, we end the phase by concluding the turn.
-
     Note that if your agent decides not to buy the property before concluding the turn, the property will move to
     auction before your turn formally concludes.
-
     :param player: A Player instance. You should expect this to be the player that is 'making' the decision (i.e. the player
     instantiated with the functions specified by this decision agent).
     :param current_gameboard: A dict. The global data structure representing the current game board.
@@ -107,6 +104,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
         return (action_choices.concluded_actions, dict())
     else:
         logger.error("Exception")
+        raise Exception
 
 
 def make_buy_property_decision(player, current_gameboard, asset):
@@ -163,12 +161,10 @@ def handle_negative_cash_balance(player, current_gameboard):
     You have a negative cash balance at the end of your move (i.e. your post-roll phase is over) and you must handle
     this issue before we move to the next player's pre-roll. If you do not succeed in restoring your cash balance to
     0 or positive, bankruptcy proceeds will begin and you will lost the game.
-
     The dummy agent in this case just decides to go bankrupt by returning -1. A more sophisticated agent would try to
     do things like selling houses and hotels, properties etc. You must invoke all of these functions yourself since
     we want to give you maximum flexibility when you are in this situation. Once done, return 1 if you believe you
     succeeded (see the :return description for a caveat on this)
-
     :param player: A Player instance. You should expect this to be the player that is 'making' the decision (i.e. the player
     instantiated with the functions specified by this decision agent).
     :param current_gameboard: A dict. The global data structure representing the current game board.
@@ -176,7 +172,7 @@ def handle_negative_cash_balance(player, current_gameboard):
     Note that even if you do return 1, we will check to see whether you have non-negative cash balance. The rule of thumb
     is to return 1 as long as you 'try', or -1 if you don't try (in which case you will be declared bankrupt and lose the game)
     """
-    return -1
+    return flag_config_dict['failure_code']
 
 
 def _build_decision_agent_methods_dict():
@@ -197,5 +193,3 @@ def _build_decision_agent_methods_dict():
 
 
 decision_agent_methods = _build_decision_agent_methods_dict() # this is the main data structure that is needed by gameplay
-
-

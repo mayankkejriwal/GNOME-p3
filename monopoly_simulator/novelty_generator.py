@@ -9,9 +9,7 @@ logger = logging.getLogger('monopoly_simulator.logging_info.novelty_gen')
 The novelty methods in here should be called after an initial game board has been set up, but before simulate has
 been called within gameplay. It is unsafe to introduce novelty in the middle of a 'game'. The novelties should
 only operate at the tournament level and be introduced prior to game instance simulation.
-
 This generator should be used for the Month 6 SAIL-ON evals.
-
 The consistency_check function should be called after all novelties have been generated. If the function finds problems
 it will print them out and then raise an Exception. Otherwise, you're good to start using the updated gameboard
 to start playing the game.
@@ -42,7 +40,6 @@ class InanimateAttributeNovelty(AttributeNovelty):
 
     def map_property_set_to_color(self, current_gameboard, property_set, new_color):
         """
-
         :param current_gameboard: the current gameboard. current_gameboard['color_assets'] may get modified, along
         with the color attribute of individual location instances in property_set
         :param property_set: a set of location instances
@@ -64,7 +61,6 @@ class InanimateAttributeNovelty(AttributeNovelty):
 
     def map_property_to_color(self, current_gameboard, property, new_color):
         """
-
         :param current_gameboard: the current gameboard. current_gameboard['color_assets'] may get modified, along
         with the color attribute of the individual location instance represented by property
         :param property: a location instance
@@ -77,7 +73,6 @@ class InanimateAttributeNovelty(AttributeNovelty):
 
     def exchange_colors_between_properties(self, current_gameboard, property_1, property_2):
         """
-
         :param current_gameboard: the current gameboard. current_gameboard['color_assets'] may get modified, along
         with the color attribute of the individual location instancesrepresented by property_1 and property_2
         :param property_1: location instance
@@ -232,6 +227,7 @@ class NumberClassNovelty(ClassNovelty):
         if len(die_state_vector) != die_count:
             logger.error('die states are unequal to die count. Raising exception...')
             logger.error("Exception")
+            raise Exception
 
         current_gameboard['dies'] = list() # wipe out what was there before.
         die_sequence = []
@@ -242,7 +238,6 @@ class NumberClassNovelty(ClassNovelty):
 
     def card_novelty(self, current_gameboard, community_chest_cards_num, chance_cards_num):
         """
-
         :param current_gameboard: current_gameboard['chance_cards'] and current_gameboard['community_chest_cards'] will
         both be modified. However, current_gameboard['chance_card_objects'] and current_gameboard['community_chest_card_objects']
         will stay as it is.
@@ -282,9 +277,11 @@ class TypeClassNovelty(ClassNovelty):
         if len(die_state_distribution_vector) != len(die_type_vector):
             logger.error('die state distributions are unequal to die types. Raising exception...')
             logger.error("Exception")
+            raise Exception
         if len(die_state_distribution_vector) != len(current_gameboard['dies']):
             logger.error('die state distributions and die types are unequal to number of dies in board. Raising exception...')
             logger.error("Exception")
+            raise Exception
 
         for i in range(0, len(die_state_distribution_vector)):
             current_gameboard['dies'][i].die_state_distribution = die_state_distribution_vector[i]
@@ -306,7 +303,6 @@ class TypeClassNovelty(ClassNovelty):
 
     def card_novelty(self, current_gameboard, community_chest_cards_contingency, chance_cards_contingency):
         """
-
         :param current_gameboard: current_gameboard['chance_cards'] and current_gameboard['community_chest_cards'] will
         both be modified. However, current_gameboard['chance_card_objects'] and current_gameboard['community_chest_card_objects']
         will stay as it is.
@@ -349,6 +345,7 @@ class SpatialRepresentationNovelty(RepresentationNovelty):
                 count += 1
         if count != len(relative_location_list):
             logger.error("Exception") # the number of items in the dictionary should correspond to the length of the list, otherwise something is going wrong
+            raise Exception
 
         for index in range(0, len(new_location_sequence)):
             loc = new_location_sequence[index]
@@ -357,13 +354,13 @@ class SpatialRepresentationNovelty(RepresentationNovelty):
 
         if len(set(new_location_sequence)) != len(new_location_sequence):
             logger.error("Exception") # somehow we've ended up introducing duplicate names in the list.
+            raise Exception
 
         self.global_reordering(current_gameboard, new_location_sequence)
 
 
     def global_reordering(self, current_gameboard, new_location_sequence):
         """
-
         :param current_gameboard: current_gameboard['location_sequence'], current_gameboard['location_objects'], current_gameboard['go_position'],
         current_gameboard['jail_position'], current_gameboard['railroad_positions']
         and current_gameboard['utility_positions'] may all potentially get modified.
@@ -444,4 +441,3 @@ class GranularityRepresentationNovelty(RepresentationNovelty):
             loc.end_position = new_end_position
             forbidden_loc_names.add(loc.name)
         current_gameboard['location_sequence'] = new_location_sequence
-
