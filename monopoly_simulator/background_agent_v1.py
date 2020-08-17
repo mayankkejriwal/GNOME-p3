@@ -183,7 +183,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
         if action_choices.improve_property in allowable_moves: # beef up full color sets to maximize rent potential.
             param = agent_helper_functions.identify_improvement_opportunity(player, current_gameboard)
             if param:
-                if player.agent._agent_memory['previous_action'] == action_choices.improve_property and code == -1:
+                if player.agent._agent_memory['previous_action'] == action_choices.improve_property and code == flag_config_dict['failure_code']:
                     logger.debug(player.player_name+ ': I want to improve property '+param['asset'].name+ ' but I cannot, due to reasons I do not understand. Aborting improvement attempt...')
                 else:
                     logger.debug(player.player_name+ ': I am going to improve property '+param['asset'].name)
@@ -279,7 +279,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
         """
     current_location = current_gameboard['location_sequence'][player.current_position]
     if action_choices.buy_property in allowable_moves:
-        if code == -1:
+        if code == flag_config_dict['failure_code']:
             logger.debug(player.player_name+': I did not succeed the last time in buying this property. Concluding actions...')
             return (action_choices.concluded_actions, dict())
 
