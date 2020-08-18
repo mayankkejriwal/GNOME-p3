@@ -26,7 +26,7 @@ Following changes have to be made to file **_GNOME-p3/monopoly_simulator/gamepla
 
 ### Notes
 * **_GNOME-p3/monopoly_simulator/client_agent_serial.py_** is a dummy client agent that demonstrates a working prototype model of the client-server communication over a socket using the python socket package. The client can be replaced with a more sophisticated and improved agent capable of better decision making strategies. Use the prototype model as an exmaple for reference.
-* The server agent is fully functional and is capable of interfacing with any client as long as it abides by the defined communication protocols.
+* **_GNOME-p3/monopoly_simulator/server_agent_serial.py_** is a fully functional server agent and is capable of interfacing with any client as long as it abides by the defined communication protocols.
 * While implementing your own custom client agent, all functions in the Agent class as specified in **_GNOME-p3/monopoly_simulator/agent.py_** have to be implemented and the return values have to be serialized to send back over to the server via the socket.
 
 ### Other useful tips/features:
