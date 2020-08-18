@@ -117,7 +117,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
 
             oot_code = out_of_turn_player.make_out_of_turn_moves(game_elements)
 
-            #disable history after every round if out of turn player == player_1, else TA2 wont be able to capture entire history of every game round
+            # disable history after every round if out of turn player == player_1 (i.e. TA2 player),
+            # else TA2 wont be able to capture entire history of every game round
             if out_of_turn_player.player_name == 'player_1':
                 disable_history(game_elements)
 

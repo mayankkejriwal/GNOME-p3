@@ -1,19 +1,14 @@
 from monopoly_simulator.agent import Agent
-from multiprocessing.connection import Listener
 import socket
 from monopoly_simulator.action_choices import *
 from monopoly_simulator.serialization import serialize_gameboard
 import json
 import sys
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.server_agent')
-
-# All of the gameplay functions just send a request to the client to call the function with the given arguments and send
-# back a reply which is then returned.
+logger = logging.getLogger('monopoly_simulator.logging_info.server_agent_serial')
 
 
-def _populate_param_dict(param_dict, player, current_gameboard, asset=None):
-    # Support for trade not added yet
+def _populate_param_dict(param_dict, player, current_gameboard):
     if 'player' in param_dict:
         param_dict['player'] = player
     if 'current_gameboard' in param_dict:
@@ -22,6 +17,36 @@ def _populate_param_dict(param_dict, player, current_gameboard, asset=None):
         for loc in current_gameboard['location_sequence']:
             if loc.name == param_dict['asset']:
                 param_dict['asset'] = loc
+
+    # following keys are mostly relevant to trading
+    if 'from_player' in param_dict:
+        for p in current_gameboard['players']:
+            if p.player_name == param_dict['from_player']:
+                param_dict['from_player'] = p
+    if 'to_player' in param_dict:
+        for p in current_gameboard['players']:
+            if p.player_name == param_dict['to_player']:
+                param_dict['to_player'] = p
+    if 'offer' in param_dict:
+        property_set_offered = param_dict['offer']['property_set_offered']   # set of property names (not list and does not involve pointers)
+        property_set_wanted = param_dict['offer']['property_set_wanted']    # set of property names (not list and does not involve pointers)
+        # iterate through these sets of strings and replace with property pointers
+
+        property_set_offered_ptr = set()
+        for prop in property_set_offered:
+            for loc in current_gameboard['location_sequence']:
+                if loc.name == prop.name:
+                    property_set_offered_ptr.add(loc)
+
+        property_set_wanted_ptr = set()
+        for prop in property_set_wanted:
+            for loc in current_gameboard['location_sequence']:
+                if loc.name == prop.name:
+                    property_set_wanted_ptr.add(loc)
+
+        param_dict['offer']['property_set_offered'] = property_set_offered_ptr
+        param_dict['offer']['property_set_wanted'] = property_set_wanted_ptr
+
     return param_dict
 
 
@@ -52,9 +77,9 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
     elif func_name == "concluded_actions":
         logger.debug(player.player_name + ': I am concluding actions')
     elif func_name == "use_get_out_of_jail_card":
-        logger.debug(player.player_name + ': I am using get out of jail card')
+        logger.debug(player.player_name + ': I am attempting to use get out of jail card')
     elif func_name == "pay_jail_fine":
-        logger.debug(player.player_name + ': I am paying jail fine')
+        logger.debug(player.player_name + ': I am attempting to pay jail fine')
     else:
         logger.error("Calling invalid action choice")
         logger.error("raising Exception")
@@ -87,8 +112,8 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
         func_ptr = list()
         for func in func_name:
             func_ptr.append(getattr(sys.modules[__name__], func))
-        for prm in param_dict:
-            prm = _populate_param_dict(prm, player, current_gameboard)
+        for i in range(len(param_dict)):
+            param_dict[i] = _populate_param_dict(param_dict[i], player, current_gameboard)
         logger.debug("I am making multiple trade offers")
 
     else:
@@ -99,14 +124,14 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
             logger.debug(player.player_name + ': I am skipping turn')
         elif func_name == "concluded_actions":
             logger.debug(player.player_name + ': I am concluding actions')
-        elif func_name == "accept_trade_offer":     # Support for trading not added yet
-            logger.debug(player.player_name + ': I am accepting trade offer')
-        elif func_name == "make_trade_offer":       # Support for trading not added yet
-            logger.debug(player.player_name + ': I am making trade offer')
+        elif func_name == "accept_trade_offer":
+            logger.debug(player.player_name + ': I am attempting to accept a trade offer')
+        elif func_name == "make_trade_offer":
+            logger.debug(player.player_name + ': I am attempting to make a trade offer')
         elif func_name == "improve_property":
-            logger.debug(player.player_name + ': I am improving property')
+            logger.debug(player.player_name + ': I am attempting to improve property')
         elif func_name == "free_mortgage":
-            logger.debug(player.player_name + ': I am going to free mortgage')
+            logger.debug(player.player_name + ': I am attempting to free mortgage')
         else:
             logger.error("Calling invalid action choice")
             logger.error("raising Exception")

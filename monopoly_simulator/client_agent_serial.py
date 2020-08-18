@@ -1,12 +1,8 @@
-from multiprocessing.connection import Client
-from monopoly_simulator import action_choices
-from monopoly_simulator.action_choices import *
-from monopoly_simulator.location import  RealEstateLocation, UtilityLocation, RailroadLocation
 from monopoly_simulator.agent import Agent
 import socket
 import json
 import logging
-logger = logging.getLogger('monopoly_simulator.logging_info.simple_decision_agent')
+logger = logging.getLogger('monopoly_simulator.logging_info.client_agent_serial')
 
 
 def make_pre_roll_move(serial_dict_to_client):
