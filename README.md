@@ -1,33 +1,36 @@
 ## MONOPOLY SIMULATOR
 
-Full code for the simulator is in GNOME-p3/monopoly-simulator/ and is written using OOP methodology.
+Full code for the Monopoly simulator is in **_GNOME-p3/monopoly-simulator/_** and is written using OOP methodology.
 
-The entry point for the simulator is GNOME-p3/monopoly-simulator/gameplay.py and can be run on the command line.
+The entry point for the simulator is **_GNOME-p3/monopoly-simulator/gameplay.py_** and can be run on the command line.
 
 The following steps have to be followed before running the simulator:
 * Install python3.
-* Clone the GNOME-p3 repository - "git clone git@github.com:mayankkejriwal/GNOME-p3.git"
-* All the python packages required to run a game instance can be installed using "pip install -r requirements.txt" (--user may be required for some systems).
+* Clone the GNOME-p3 repository - __```$ git clone git@github.com:mayankkejriwal/GNOME-p3.git```__
+* All the python packages required to run a game instance can be installed using __```$ pip install -r requirements.txt```__ (--user may be required for some systems).
 
-**Note: The "master" branch of this repository works ONLY if Pycharm is installed. We highly recommend using Pycharm to run the monopoly simulator and the instructions given below are to be followed only if running the simulator using Pycharm IDE.** 
+### Repository branches:
 
-**If Pycharm is NOT installed and the simulator can be run on the terminal only, then switch branch from "master" to "modified_imports" and follow the instructions given in that branch.** 
+**_"master"_: The "master" branch of this repository works ONLY if Pycharm is installed. Pycharm is highly recommended to run the monopoly simulator and the instructions given below are to be followed only if running the simulator using Pycharm IDE.** 
 
-**To switch branch to "modified_imports" - "git checkout modified_imports"**
+**_"serial_com_over_socket"_: This branch can be used while developing a player agent not implemented in python to be plugged into the simulator. Information transfer happens via a server-client architecture over a socket. More information regarding this branch can be found in the README.md of that branch. To switch branch to "serial_com_over_socket" - ```$ git checkout serial_com_over_socket```**
+
+**_"modified_imports"_: If Pycharm is NOT installed and the simulator can be run only on the terminal, then switch branch from "master" to "modified_imports" and follow the instructions given in that branch. To switch branch to "modified_imports" - ```$ git checkout modified_imports```**
 
 
-To run an instance of the game, following changes have to be made to file GNOME-p3/monopoly_simulator/gameplay.py:
-* In the play_game() function, log folder path and log file path have to be specified for logging of game details in lines 368 and 373 respectively. 
-* In lines 383 and 434, modify the default path to the game schema json file with the path where it is saved on your system (give complete path).
-* Uncomment the last line "play_game()".
-* The game can then be run by running GNOME-p3/monopoly_simulator/gameplay.py on the Pycharm IDE. 
-* When Pycharm is installed, the game can also be run on the terminal using the master branch. Open the terminal at the GNOME-p3 folder level and run the following command - "$ python3 monopoly_simulator/gameplay.py" command.
+### To run an instance of the game:
 
-Other useful tips/features:
-* Logging of the game can be onto console and and log file. This can be enabled/disabled in GNOME-p3/monopoly_simulator/logging_info.py file in line 22.
-* A seed can be set in the simulate_game_instance() function argument for game replication (default seed is already set). 
-* The required agent of choice for each player can be specified in lines 378-381 (default agents are set). The latest updated background agent is background_agent_V3_1 and the baseline agent is baseline_agent. 
-* (Optional) You can implement your own custom agent and replace the baseline_agent with yours. In order to do so, 
-all functions in the Agent class as specified in GNOME-p3/monopoly_simulator/agent.py has to be implemented and imported into GNOME-p3/monopoly_simulator/gameplay.py.
-* (Optional) The gameplay can also be viewed in 2D GUI by running GNOME-p3/monopoly_simulator/gameplay_GUI.py following the same instructions as above. 
-The packages for the GUI can be installed using "pip install -r requirements_GUI.txt".
+Following changes have to be made to file **_GNOME-p3/monopoly_simulator/gameplay.py_** before running a game instance:
+* Within the play_game() function, log folder path and log file path have to be specified for logging of game details in lines 370 and 375 respectively. 
+* In lines 385 and 440, modify the default path to the game schema json file with the path where it is saved on your system (give complete path).
+* Uncomment the last line **_play_game()_**.
+* The game can then be run by running **_GNOME-p3/monopoly_simulator/gameplay.py_** on the Pycharm IDE. 
+* When Pycharm is installed, the game can also be run on the terminal using the master branch. Open the terminal at the GNOME-p3 folder level and run the following command - __```$ python3 GNOME-p3/monopoly_simulator/gameplay.py```__
+
+### Other useful tips/features:
+* Logging of the game can be onto console and and into log file. This can be enabled/disabled in **_GNOME-p3/monopoly_simulator/logging_info.py_** file in line 22.
+* A seed can be set in the **_simulate_game_instance()_** function argument for game replication (default seed is already set). 
+* The simulator package comes with a few pre-implemented agents (agent implementation in files with names **_background_agent_v[x].py_** and **_baseline_agent.py_**). You are free to plug in any of the implemented agents into each player in lines 380-383 in **_GNOME-p3/monopoly-simulator/gameplay.py_** (default agents are set). The latest updated background agent is **_GNOME-p3/monopoly-simulator/background_agent_V3_1.py_** and the baseline agent is **_GNOME-p3/monopoly-simulator/baseline_agent.py_**. 
+* (Optional) You can implement your own custom agent and replace the any of the players with the new agent. In order to do so, 
+all functions in the Agent class as specified in **_GNOME-p3/monopoly_simulator/agent.py_** has to be implemented and imported into **_GNOME-p3/monopoly_simulator/gameplay.py_**. (See existing agent implementations for reference.)
+* (Optional) The gameplay can also be viewed in **_2D GUI_** by running **_GNOME-p3/monopoly_simulator/gameplay_GUI.py_** following the same instructions as above.  The packages for the GUI can be installed using **```pip install -r requirements_GUI.txt```**.
