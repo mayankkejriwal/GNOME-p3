@@ -172,7 +172,7 @@ def move_player(player, card, current_gameboard):
     else:
         _move_player__check_for_go(player, new_position, current_gameboard)
         if 'auxiliary_check_for_go' in current_gameboard:
-            current_gameboard['auxiliary_go'](player, card, current_gameboard)
+            current_gameboard['auxiliary_check_for_go'](player, card, current_gameboard)
 
 
 def set_get_out_of_jail_card_status(player, card, current_gameboard, pack):
@@ -362,7 +362,7 @@ def move_player__check_for_go(player, card, current_gameboard):
     new_position = card.destination.start_position
     _move_player__check_for_go(player, new_position, current_gameboard)
     if 'auxiliary_check_for_go' in current_gameboard:
-        current_gameboard['auxiliary_go'](player, card, current_gameboard)
+        current_gameboard['auxiliary_check_for_go'](player, card, current_gameboard)
 
 
 def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_gameboard):
@@ -389,7 +389,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
     logger.debug('The utility position that player is being moved to is '+current_gameboard['location_sequence'][min_utility_position].name)
     _move_player__check_for_go(player, min_utility_position, current_gameboard)
     if 'auxiliary_check_for_go' in current_gameboard:
-        current_gameboard['auxiliary_go'](player, card, current_gameboard)
+        current_gameboard['auxiliary_check_for_go'](player, card, current_gameboard)
 
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
@@ -463,7 +463,7 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
         min_railroad_position].name)
     _move_player__check_for_go(player, min_railroad_position, current_gameboard)
     if 'auxiliary_check_for_go' in current_gameboard:
-        current_gameboard['auxiliary_go'](player, card, current_gameboard)
+        current_gameboard['auxiliary_check_for_go'](player, card, current_gameboard)
 
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
@@ -580,7 +580,7 @@ def move_player_after_die_roll(player, rel_move, current_gameboard, check_for_go
     if check_for_go:
         if _has_player_passed_go(player.current_position, new_position, go_position):
             if 'auxiliary_check_for_go' in current_gameboard:
-                current_gameboard['auxiliary_go'](player, None, current_gameboard)
+                current_gameboard['auxiliary_check_for_go'](player, None, current_gameboard)
             logger.debug(player.player_name+' passes Go.')
             code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
             # add to game history
