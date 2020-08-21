@@ -2,8 +2,6 @@
 
 Full code for the Monopoly simulator is in **_GNOME-p3/monopoly-simulator/_** and is written using OOP methodology.
 
-The entry point for the simulator is **_GNOME-p3/monopoly-simulator/gameplay.py_** and can be run on the command line.
-
 The following steps have to be followed before running the simulator:
 * Install __python3__.
 * Clone the GNOME-p3 repository - __```$ git clone git@github.com:mayankkejriwal/GNOME-p3.git```__
@@ -20,12 +18,14 @@ The following steps have to be followed before running the simulator:
 
 ### To run an instance of the game:
 
+Firstly, open **_GNOME-p3_** repo as a project in Pycharm.
+
 Following changes have to be made to file **_GNOME-p3/monopoly_simulator/gameplay.py_** before running a game instance:
-* Within the **_play_game()_** function, log folder path and log file path have to be specified for logging of game details in lines 370 and 375 respectively. 
+* Within the **_play_game()_** function, log folder path and log file path have to be specified for logging of game details in lines 370 and 375 respectively.
 * In lines 385 and 440, modify the default path to the game schema json file with the path where it is saved on your system (give complete path).
 * Uncomment the last line **_play_game()_**  (line 476).
-* The game can then be run by running **_GNOME-p3/monopoly_simulator/gameplay.py_** on the Pycharm IDE. 
-* When Pycharm is installed, the game can also be run on the terminal using the **master branch**. Open the terminal at the **GNOME-p3 folder level** and run the following command - __```$ python3 GNOME-p3/monopoly_simulator/gameplay.py```__
+* The game can then be run by running **_GNOME-p3/monopoly_simulator/gameplay.py_** file on the Pycharm IDE.
+* When Pycharm is installed, the game can also be run on the command line using the **master branch**. Open the command line at the **GNOME-p3 project level** and run the following command - __```$ python3 monopoly_simulator/gameplay.py```__
 
 ### Other useful tips/features:
 * Logging of the game can be onto **console** and and into **log file**. This can be enabled/disabled in **_GNOME-p3/monopoly_simulator/logging_info.py_** file in line 22.
