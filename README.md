@@ -4,8 +4,6 @@
 
 Full code for the Monopoly simulator is in **_GNOME-p3/monopoly-simulator/_** and is written using OOP methodology.
 
-The entry point for the simulator is **_GNOME-p3/monopoly-simulator/gameplay_socket.py_** and can be run on the command line.
-
 The following steps have to be followed before running the simulator:
 * Install __python3__.
 * Clone the GNOME-p3 repository - __```$ git clone git@github.com:mayankkejriwal/GNOME-p3.git```__
@@ -16,13 +14,15 @@ The following steps have to be followed before running the simulator:
 
 ### To run an instance of the game:
 
+Firstly, open **_GNOME-p3_** repo as a project in Pycharm.
+
 Following changes have to be made to file **_GNOME-p3/monopoly_simulator/gameplay_socket.py_** before running a game instance:
 * Within the **_play_game()_** function, log folder path and log file path have to be specified for logging of game details in lines 377 and 382 respectively. 
 * In lines 401 and 457, modify the default path to the game schema json file with the path where it is saved on your system (give complete path).
 * Uncomment the last line **_play_game()_**  (line 493).
-* The game can then be run by running **_GNOME-p3/monopoly_simulator/gameplay_socket.py_** on the Pycharm IDE. This acitivates the server side. 
-* Simultaneously run the client side so that the client-server communication is established by running **_GNOME-p3/monopoly_simulator/client_agent_serial.py_**. Once the connection is established, the game starts playing out.
-* The game can also be run on the terminal. Open the terminal at the **GNOME-p3 folder level** and run the following command - __```$ python3 GNOME-p3/monopoly_simulator/gameplay_socket.py```__ on one window and __```$ python3 GNOME-p3/monopoly_simulator/client_agent_serial.py```__ on another window.
+* The game can then be run by running **_GNOME-p3/monopoly_simulator/gameplay_socket.py_** file on the Pycharm IDE. This activates the server side.
+* Simultaneously run the client side so that the client-server communication is established by running **_GNOME-p3/monopoly_simulator/client_agent_serial.py_** file. Once the connection is established, the game starts playing out.
+* The game can also be run on the command line. Open the command line at the **GNOME-p3 project level** and run the following command - __```$ python3 monopoly_simulator/gameplay_socket.py```__ on one window and __```$ python3 monopoly_simulator/client_agent_serial.py```__ on another window.
 
 ### Notes
 * **_GNOME-p3/monopoly_simulator/client_agent_serial.py_** is a dummy client agent that demonstrates a working prototype model of the client-server communication over a socket using the python socket package. The client can be replaced with a more sophisticated and improved agent capable of better decision making strategies. Use the prototype model as an exmaple for reference.
