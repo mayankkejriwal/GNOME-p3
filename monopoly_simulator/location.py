@@ -249,8 +249,11 @@ class RealEstateLocation(Location):
         When calculating the rent, note that a real estate can either have a hotel OR houses OR be
         unimproved-monopolized OR be unimproved-non-monopolized. Rent is calculated based on which of these
         situations applies.
+        :param asset: rent of this asset is to be calculated
+        :param current_gameboard: The global gameboard data structure
         :return: An integer. The rent due.
         """
+
         logger.debug('calculating rent for '+asset.name)
         ans = asset.rent # unimproved-non-monopolized rent (the default)
         if asset.num_hotels == 1:

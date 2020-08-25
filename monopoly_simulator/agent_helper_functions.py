@@ -3,7 +3,8 @@ logger = logging.getLogger('monopoly_simulator.logging_info.agent_helper_func')
 
 def will_property_complete_set(player, asset, current_gameboard):
     """
-
+    A helper function that checks if the asset passed into this function will complete a color group for the player resulting
+    in a monopoly.
     :param player: Player instance
     :param asset: Location instance
     :return: Boolean. True if the asset will complete a color set for the player, False otherwise. For railroads
@@ -210,9 +211,9 @@ def can_asset_be_improved(asset, same_color_assets):
     has been violated).
 
     We are also not checking affordability of the improvement since the player is not specified.
-    :param asset:
-    :param same_color_assets:
-    :return:
+    :param asset: asset that needs to be improved
+    :param same_color_assets: other assets of the same color
+    :return: True if asset can be improved else False
     """
     if asset.loc_class != 'real_estate' or asset.is_mortgaged:
         return False
@@ -282,8 +283,8 @@ def identify_property_trade_offer_to_player(player, current_gameboard):
     property that we own, we offer it to the player at 50% markup. We do not offer mortgaged properties for sale.
     For simplicity, we do not offer railroads or utilities for sale either. Other agents may consider more sophisticated
     strategies to handle railroads and utilities.
-    :param player:
-    :param current_gameboard:
+    :param player: player who wants to offer its properties
+    :param current_gameboard: The gameboard data structure
     :return: a parameter dictionary or None. The parameter dictionary, if returned, can be directly sent into
     action_choices.make_sell_property_offer by the calling function.
     """
@@ -330,8 +331,8 @@ def identify_property_trade_wanted_from_player(player, current_gameboard):
     We do not request to buy mortgaged properties.
     For simplicity, we do not request for railroads or utilities either. Other agents may consider more sophisticated
     strategies to handle railroads and utilities.
-    :param player:
-    :param current_gameboard:
+    :param player: player who wants properties from other players and hence invokes this function
+    :param current_gameboard: The gameboard data structure
     :return: a parameter dictionary or None. The parameter dictionary, if returned, can be directly sent into
     action_choices.make_sell_property_offer by the calling function.
     """
@@ -374,18 +375,18 @@ def curate_trade_offer(player, potential_offer_list, potential_request_list, cur
     """
     Generates a trade offer from the potential offer list, potential request list and the purpose indicated by
     the purpose flag for background_agent_v2
-    :param player: player who wanted to make the trade offer
+    :param player: player who wants to make the trade offer
     :param potential_offer_list: List of potential property offers that can be made to other players because they are lone properties
-    for me and will result in a monopoly to the player to whom it is being offered. These offers are sorted in descending order of the
-    amount of cash I'd get if they accept the offer. The first property yields me the most cash.
-    :param potential_request_list: List of potential properties that I would like to buy because they are lone properties for the players
-    to whom I raise a buy request and will lead me into getting a monopoly. These are sorted in the ascending order of the amount I am willing
-    to pay for the property. The property that cost me the least is on the top of the list.
-    :param current_gameboard:
+    for this player and will result in a monopoly to the player to whom it is being offered. These offers are sorted in descending order of the
+    amount of cash this player would get if the other player accepts the offer. The first property yields the most cash.
+    :param potential_request_list: List of potential properties that this player would like to buy because they are lone properties for the players
+    to whom this player makes a trade offer and will lead this player into getting a monopoly. These are sorted in the ascending order of the amount
+    this player is willing to pay for the property. The property that costs this player the least is on the top of the list.
+    :param current_gameboard: The gameboard data structure
     :purpose_flag: indicates the purpose of making the trade.
     purpose_flag=1 implies that it is purely a make_sell_property_offer because
-    I am urgently in need of cash or I am trying to see if I can get to sell one of my lone properties at a high premium because the other
-    player gets a monopoly.
+    the player is urgently in need of cash or is trying to see if it can get to sell one of its lone properties at a high premium because the other
+    player can get a monopoly from this offer.
     purpose_flag=2 implies that it can be a buy offer or exchange of properties and cash to increase number of monopolies.
     :return: a parameter dictionary or None. The parameter dictionary, if returned, can be directly sent into
     action_choices.make_sell_property_offer by the calling function.
@@ -485,16 +486,16 @@ def curate_trade_offer_multiple_players(player, potential_offer_list, potential_
     Allows a player to make trade offers to MULTIPLE PLAYERS simultaneously.
     :param player: player who wanted to make the trade offer
     :param potential_offer_list: List of potential property offers that can be made to other players because they are lone properties
-    for me and will result in a monopoly to the player to whom it is being offered. These offers are sorted in descending order of the
-    amount of cash I'd get if they accept the offer. The first property yields me the most cash.
-    :param potential_request_list: List of potential properties that I would like to buy because they are lone properties for the players
-    to whom I raise a buy request and will lead me into getting a monopoly. These are sorted in the ascending order of the amount I am willing
-    to pay for the property. The property that cost me the least is on the top of the list.
-    :param current_gameboard:
+    for this player and will result in a monopoly to the player to whom it is being offered. These offers are sorted in descending order of the
+    amount of cash this player would get if the other player accepts the offer. The first property yields the most cash.
+    :param potential_request_list: List of potential properties that this player would like to buy because they are lone properties for the players
+    to whom this player makes a trade offer and will lead this player into getting a monopoly. These are sorted in the ascending order of the amount
+    this player is willing to pay for the property. The property that costs this player the least is on the top of the list.
+    :param current_gameboard: The gameboard data structure
     :purpose_flag: indicates the purpose of making the trade.
     purpose_flag=1 implies that it is purely a make_sell_property_offer because
-    I am urgently in need of cash or I am trying to see if I can get to sell one of my lone properties at a high premium because the other
-    player gets a monopoly.
+    the player is urgently in need of cash or is trying to see if it can get to sell one of its lone properties at a high premium because the other
+    player can get a monopoly from this offer.
     purpose_flag=2 implies that it can be a buy offer or exchange of properties and cash to increase number of monopolies.
     :return: a list of parameter dictionaries or None. The parameter dictionary, if returned, can be directly sent into
     action_choices.make_sell_property_offer by the calling function. Each parameter dictionary in the list corresponds to the
@@ -672,16 +673,16 @@ def curate_trade_offer_multiple_players_aggressive(player, potential_offer_list,
     Allows a player to make trade offers to MULTIPLE PLAYERS simultaneously.
     :param player: player who wanted to make the trade offer
     :param potential_offer_list: List of potential property offers that can be made to other players because they are lone properties
-    for me and will result in a monopoly to the player to whom it is being offered. These offers are sorted in descending order of the
-    amount of cash I'd get if they accept the offer. The first property yields me the most cash.
-    :param potential_request_list: List of potential properties that I would like to buy because they are lone properties for the players
-    to whom I raise a buy request and will lead me into getting a monopoly. These are sorted in the ascending order of the amount I am willing
-    to pay for the property. The property that cost me the least is on the top of the list.
-    :param current_gameboard:
+    for this player and will result in a monopoly to the player to whom it is being offered. These offers are sorted in descending order of the
+    amount of cash this player would get if the other player accepts the offer. The first property yields the most cash.
+    :param potential_request_list: List of potential properties that this player would like to buy because they are lone properties for the players
+    to whom this player makes a trade offer and will lead this player into getting a monopoly. These are sorted in the ascending order of the amount
+    this player is willing to pay for the property. The property that costs this player the least is on the top of the list.
+    :param current_gameboard: The gameboard data structure
     :purpose_flag: indicates the purpose of making the trade.
     purpose_flag=1 implies that it is purely a make_sell_property_offer because
-    I am urgently in need of cash or I am trying to see if I can get to sell one of my lone properties at a high premium because the other
-    player gets a monopoly.
+    the player is urgently in need of cash or is trying to see if it can get to sell one of its lone properties at a high premium because the other
+    player can get a monopoly from this offer.
     purpose_flag=2 implies that it can be a buy offer or exchange of properties and cash to increase number of monopolies.
     :return: a list of parameter dictionaries or None. The parameter dictionary, if returned, can be directly sent into
     action_choices.make_sell_property_offer by the calling function. Each parameter dictionary in the list corresponds to the

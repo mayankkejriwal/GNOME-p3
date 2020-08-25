@@ -561,7 +561,7 @@ def roll_die(die_objects, choice):
     The function takes a vector of Dice objects and for each object, samples a value. It returns a list of sampled die values.
     :param die_objects: A vector of Dice objects.
     :param choice: The numpy choice function.
-    :return:
+    :return: the numbers that get rolled on the dice as a list.
     """
     logger.debug('rolling die...')
     output_vector = list()
@@ -658,7 +658,15 @@ def buy_property(player, asset, current_gameboard):
 
         return flag_config_dict['successful_action']
 
+
 def _biased_die_roll_1(die_state, choice):
+    """
+    When the die type is biased, this function is an example of how the bias on a die can be defined. This function can be defined
+    in anyway that you want to define it.
+    :param die_state: A list. Represents a vector of integers, and indicates the possibilities for the dice (e.g., [1-6])
+    :param choice: The numpy choice function.
+    :return: choice function with an associated bias to make the die roll biased.
+    """
     p = list()
     die_total = sum(die_state)
     for i in die_state:
@@ -676,7 +684,7 @@ def make_trade_offer(from_player, offer, to_player):
     :return: successful action code if the player succeeds in making the offer (doesn't mean the other player has to accept), otherwise failure code
 
     make_trade_offer becomes unsuccessful if:
-    - the players to whom the trade offer is being made already has an existing trade offer or
+    - the player to whom the trade offer is being made already has an existing trade offer or
     - if negative cash amounts are involved in the offer or
     - if ownership of the properties are incorrect or
     - if the properties involved in the trade are improved.
@@ -766,7 +774,7 @@ def accept_trade_offer(player, current_gameboard):
                 flag_properties_offered = 0
                 logger.debug(player.outstanding_trade_offer['from_player'].player_name+ ' doesnot own ' + item.name + '. Cannot accept sell trade offer.')
                 break
-        if (flag_cash_offered and flag_cash_wanted and flag_properties_offered and flag_properties_wanted):
+        if flag_cash_offered and flag_cash_wanted and flag_properties_offered and flag_properties_wanted:
             logger.debug('Initiating trade offer transfer...')
             for item in player.outstanding_trade_offer['property_set_offered']:
                 func_asset = item

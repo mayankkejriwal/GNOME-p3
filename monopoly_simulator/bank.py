@@ -118,10 +118,9 @@ class Bank(object):
     def calculate_mortgage_owed(mortgaged_property, current_gameboard=None):
         """
         calculate the mortgage owed on mortgaged_property
-        :param player: Player instance. not used in this function, but the signature is important because of the novelty generator
-        which could use other information from the player (like total debt) besides just the info in mortgaged_property.
         :param mortgaged_property: a property instance that is mortgaged
-        :return:
+        :param current_gameboard: the gloabal gameboard data structure
+        :return: the mortgage owed
         """
 
         if not mortgaged_property.is_mortgaged:
@@ -141,9 +140,25 @@ class Bank(object):
 
 
     def improvement_possible(self, player, asset, current_gameboard, add_house=True, add_hotel=False):
+        """
+        checks if the asset passed into this function can be improved or not eiither by setting up a house or hotel defined by
+        the add_house and add_hotel params
+        :param player: player that owns this asset
+        :param asset: asset that needs to be checked for improvement capability
+        :param current_gameboard: The gameboard data structure
+        :param add_house: flag if True indicates that the type of improvement is setting up a house.
+        :param add_hotel: flag if True indicates that the type of improvement is setting up a hotel.
+        Note: both add_house and add_hotel params cannot be true simulatneously
+        :return:
+        """
         if add_hotel and add_house:
             logger.debug("Cant build both a house and a hotel on a property at once!! Raising Exception.")
             raise Exception
+
+        if not add_hotel and not add_house:
+            logger.debug("Call to this function was unnecessary since both add_hotel and add_house flags are false!!! Raising Exception.")
+            raise Exception
+
         if add_hotel:
             if self.total_hotels > 0:
                 return True
