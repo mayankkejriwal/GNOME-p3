@@ -149,7 +149,7 @@ class Bank(object):
         :param add_house: flag if True indicates that the type of improvement is setting up a house.
         :param add_hotel: flag if True indicates that the type of improvement is setting up a hotel.
         Note: both add_house and add_hotel params cannot be true simulatneously
-        :return:
+        :return: a bool, true if improvement possible else false
         """
         if add_hotel and add_house:
             logger.debug("Cant build both a house and a hotel on a property at once!! Raising Exception.")
