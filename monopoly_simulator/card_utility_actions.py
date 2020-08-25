@@ -1,3 +1,4 @@
+import numpy as np
 from monopoly_simulator.flag_config import flag_config_dict
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.card_utility_actions')
@@ -8,31 +9,7 @@ either correspond to an action or contingency contained in a card (e.g., go to j
 when we land on an 'action' location (such as community chest, wherein we must pick a card from the community chest
 card pack)
 """
-import numpy as np
 
-
-def calculate_mortgage_owed(mortgaged_property, current_gameboard=None):
-    """
-    calculate the mortgage owed on mortgaged_property
-    :param player: Player instance. not used in this function, but the signature is important because of the novelty generator
-    which could use other information from the player (like total debt) besides just the info in mortgaged_property.
-    :param mortgaged_property: a property instance that is mortgaged
-    :return:
-    """
-    if not mortgaged_property.is_mortgaged:
-        logger.error("Exception")
-        raise Exception
-    else:
-        if current_gameboard['bank'].total_mortgage_rule is False:
-            return (1.0+current_gameboard['bank'].mortgage_percentage) * mortgaged_property.mortgage
-        else:
-            # to avoid passing in a player object, I am going to use the owner of the mortgaged_property as the player whose
-            # total debt outstanding we have to compute the mortgage against.
-            player = mortgaged_property.owned_by
-            total = 0
-            for a in player.mortgaged_assets:
-                total += ((1.0+current_gameboard['bank'].mortgage_percentage)*a.mortgage)
-            return total
 
 def go_to_jail(player, current_gameboard):
     """
@@ -150,6 +127,7 @@ def pick_card_from_chance(player, current_gameboard):
 
 def move_player(player, card, current_gameboard):
     """
+    moves the player to the destination specified on the community chest or chance card
     :param player: Player instance.
     :param card: Card instance
     :param current_gameboard: A dict. The global gameboard data structure
@@ -170,8 +148,6 @@ def move_player(player, card, current_gameboard):
         current_gameboard['history']['return'].append(None)
     else:
         _move_player__check_for_go(player, new_position, current_gameboard)
-        if 'auxiliary_check_for_go' in current_gameboard:
-            current_gameboard['auxiliary_check_for_go'](player, card, current_gameboard)
 
 
 def set_get_out_of_jail_card_status(player, card, current_gameboard, pack):
@@ -359,8 +335,6 @@ def move_player__check_for_go(player, card, current_gameboard):
     logger.debug('destination specified on card is '+ card.destination.name)
     new_position = card.destination.start_position
     _move_player__check_for_go(player, new_position, current_gameboard)
-    if 'auxiliary_check_for_go' in current_gameboard:
-        current_gameboard['auxiliary_check_for_go'](player, card, current_gameboard)
 
 
 def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_gameboard):
@@ -386,8 +360,6 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
 
     logger.debug('The utility position that player is being moved to is '+current_gameboard['location_sequence'][min_utility_position].name)
     _move_player__check_for_go(player, min_utility_position, current_gameboard)
-    if 'auxiliary_check_for_go' in current_gameboard:
-        current_gameboard['auxiliary_check_for_go'](player, card, current_gameboard)
 
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
@@ -460,8 +432,6 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
     logger.debug('The railroad position that player is being moved to is '+ current_gameboard['location_sequence'][
         min_railroad_position].name)
     _move_player__check_for_go(player, min_railroad_position, current_gameboard)
-    if 'auxiliary_check_for_go' in current_gameboard:
-        current_gameboard['auxiliary_check_for_go'](player, card, current_gameboard)
 
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
@@ -566,7 +536,7 @@ def move_player_after_die_roll(player, rel_move, current_gameboard, check_for_go
     :param current_gameboard: A dict. The global gameboard data structure.
     :param check_for_go: A boolean. If True, as set by default, then we will check for go and increment player cash by
     go_increment if we land on go or pass it.
-    :return:
+    :return:  None
     """
     logger.debug('executing move_player_after_die_roll for '+player.player_name+' by '+str(rel_move)+' relative steps forward.')
     num_locations = len(current_gameboard['location_sequence'])
@@ -575,10 +545,13 @@ def move_player_after_die_roll(player, rel_move, current_gameboard, check_for_go
 
     new_position = (player.current_position+rel_move) % num_locations
 
+    if 'auxiliary_check' in current_gameboard:
+        current_gameboard['auxiliary_check'](player, new_position, current_gameboard)
+
     if check_for_go:
         if _has_player_passed_go(player.current_position, new_position, go_position):
             if 'auxiliary_check_for_go' in current_gameboard:
-                current_gameboard['auxiliary_check_for_go'](player, None, current_gameboard)
+                current_gameboard['auxiliary_check_for_go'](player, new_position, current_gameboard)
             logger.debug(player.player_name+' passes Go.')
             code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
             # add to game history
@@ -659,7 +632,13 @@ def _move_player__check_for_go(player, new_position, current_gameboard):
     # the private version
     go_position = current_gameboard['go_position']
     go_increment = current_gameboard['go_increment']
+
+    if 'auxiliary_check' in current_gameboard:
+        current_gameboard['auxiliary_check'](player, new_position, current_gameboard)
+
     if _has_player_passed_go(player.current_position, new_position, go_position):
+        if 'auxiliary_check_for_go' in current_gameboard:
+            current_gameboard['auxiliary_check_for_go'](player, new_position, current_gameboard)
         code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
         # add to game history
         if code == 1:

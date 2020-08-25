@@ -42,22 +42,22 @@ class Agent(object):
         in a return value of failure code.
         """
         if self.handle_negative_cash_balance == None:
-            logger.error("Agent not initialized properly. Returning -1.")
+            logger.error("Agent not initialized properly. Returning failure code.")
             return flag_config_dict['failure_code']
         if self.make_pre_roll_move == None:
-            logger.error("Agent not initialized properly. Returning -1.")
+            logger.error("Agent not initialized properly. Returning failure code.")
             return flag_config_dict['failure_code']
         if self.make_out_of_turn_move == None:
-            logger.error("Agent not initialized properly. Returning -1.")
+            logger.error("Agent not initialized properly. Returning failure code.")
             return flag_config_dict['failure_code']
         if self.make_post_roll_move == None:
-            logger.error("Agent not initialized properly. Returning -1.")
+            logger.error("Agent not initialized properly. Returning failure code.")
             return flag_config_dict['failure_code']
         if self.make_buy_property_decision == None:
-            logger.error("Agent not initialized properly. Returning -1.")
+            logger.error("Agent not initialized properly. Returning failure code.")
             return flag_config_dict['failure_code']
         if self.make_bid == None:
-            logger.error("Agent not initialized properly. Returning -1.")
+            logger.error("Agent not initialized properly. Returning failure code.")
             return flag_config_dict['failure_code']
 
         self.is_running = True
@@ -71,7 +71,7 @@ class Agent(object):
         already shutdown agent.)
         """
         if self.is_running == False:
-            logger.error("Trying to shutdown an already shutdown agent. Returning -1.")
+            logger.error("Trying to shutdown an already shutdown agent. Returning failure code.")
             return flag_config_dict['failure_code']
         else:
             self.is_running = False

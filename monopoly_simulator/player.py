@@ -760,7 +760,13 @@ class Player(object):
         allowable_actions.remove(concluded_actions)
         allowable_actions.add(skip_turn)
         code = 0
+
+        if 'auxiliary_before_pre_roll_check' in current_gameboard:
+            current_gameboard['auxiliary_before_pre_roll_check'](self, current_gameboard, allowable_actions, code)
         action_to_execute, parameters = self.agent.make_pre_roll_move(self, current_gameboard, allowable_actions, code)
+        if 'auxiliary_after_pre_roll_check' in current_gameboard:
+            current_gameboard['auxiliary_after_pre_roll_check'](self, current_gameboard, allowable_actions, code)
+
         t = (action_to_execute, parameters)
         # add to game history
         current_gameboard['history']['function'].append(self.agent.make_pre_roll_move)
@@ -814,7 +820,13 @@ class Player(object):
                 code = self._execute_action(action_to_execute, parameters, current_gameboard)
                 logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
                 allowable_actions = self.compute_allowable_pre_roll_actions(current_gameboard)
+
+                if 'auxiliary_before_pre_roll_check' in current_gameboard:
+                    current_gameboard['auxiliary_before_pre_roll_check'](self, current_gameboard, allowable_actions, code)
                 action_to_execute, parameters = self.agent.make_pre_roll_move(self, current_gameboard, allowable_actions, code)
+                if 'auxiliary_after_pre_roll_check' in current_gameboard:
+                    current_gameboard['auxiliary_after_pre_roll_check'](self, current_gameboard, allowable_actions, code)
+
                 t = (action_to_execute, parameters)
                 # add to game history
                 current_gameboard['history']['function'].append(self.agent.make_pre_roll_move)
@@ -857,7 +869,13 @@ class Player(object):
         allowable_actions.remove(concluded_actions)
         allowable_actions.add(skip_turn)
         code = 0
+
+        if 'auxiliary_before_out_of_turn_check' in current_gameboard:
+            current_gameboard['auxiliary_before_out_of_turn_check'](self, current_gameboard, allowable_actions, code)
         action_to_execute, parameters = self.agent.make_out_of_turn_move(self, current_gameboard, allowable_actions, code)
+        if 'auxiliary_after_out_of_turn_check' in current_gameboard:
+            current_gameboard['auxiliary_after_out_of_turn_check'](self, current_gameboard, allowable_actions, code)
+
         t = (action_to_execute, parameters)
         # add to game history
         current_gameboard['history']['function'].append(self.agent.make_out_of_turn_move)
@@ -923,7 +941,12 @@ class Player(object):
                     logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
 
                 allowable_actions = self.compute_allowable_out_of_turn_actions(current_gameboard)
+                if 'auxiliary_before_out_of_turn_check' in current_gameboard:
+                    current_gameboard['auxiliary_before_out_of_turn_check'](self, current_gameboard, allowable_actions, code)
                 action_to_execute, parameters = self.agent.make_out_of_turn_move(self, current_gameboard, allowable_actions, code)
+                if 'auxiliary_after_out_of_turn_check' in current_gameboard:
+                    current_gameboard['auxiliary_after_out_of_turn_check'](self, current_gameboard, allowable_actions, code)
+
                 t = (action_to_execute, parameters)
                 # add to game history
                 current_gameboard['history']['function'].append(self.agent.make_out_of_turn_move)
@@ -968,7 +991,13 @@ class Player(object):
         logger.debug('We are in the post-roll phase for '+ self.player_name)
         allowable_actions = self.compute_allowable_post_roll_actions(current_gameboard)
         code = 0
+
+        if 'auxiliary_before_post_roll_check' in current_gameboard:
+            current_gameboard['auxiliary_before_post_roll_check'](self, current_gameboard, allowable_actions, code)
         action_to_execute, parameters = self.agent.make_post_roll_move(self, current_gameboard, allowable_actions, code)
+        if 'auxiliary_after_post_roll_check' in current_gameboard:
+            current_gameboard['auxiliary_after_post_roll_check'](self, current_gameboard, allowable_actions, code)
+
         t = (action_to_execute, parameters)
         # add to game history
         current_gameboard['history']['function'].append(self.agent.make_post_roll_move)
@@ -994,7 +1023,12 @@ class Player(object):
                 code = self._execute_action(action_to_execute, parameters, current_gameboard)
                 logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
                 allowable_actions = self.compute_allowable_post_roll_actions(current_gameboard)
+                if 'auxiliary_before_post_roll_check' in current_gameboard:
+                    current_gameboard['auxiliary_before_post_roll_check'](self, current_gameboard, allowable_actions, code)
                 action_to_execute, parameters = self.agent.make_post_roll_move(self, current_gameboard, allowable_actions, code)
+                if 'auxiliary_after_post_roll_check' in current_gameboard:
+                    current_gameboard['auxiliary_after_post_roll_check'](self, current_gameboard, allowable_actions, code)
+
                 t = (action_to_execute, parameters)
                 # add to game history
                 current_gameboard['history']['function'].append(self.agent.make_post_roll_move)
