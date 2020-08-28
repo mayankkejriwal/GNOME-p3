@@ -682,11 +682,13 @@ def make_trade_offer(from_player, offer, to_player):
     :param offer: a dictionary with the trade requirements  - property_set_offered, property_set_wanted, cash_offered, cash_wanted
     :param to_player: Player instance. The player to whom the offer is being made.
     :return: successful action code if the player succeeds in making the offer (doesn't mean the other player has to accept), otherwise failure code
+
     make_trade_offer becomes unsuccessful if:
     - the player to whom the trade offer is being made already has an existing trade offer or
     - if negative cash amounts are involved in the offer or
     - if ownership of the properties are incorrect or
     - if the properties involved in the trade are improved.
+    - if the properties involved in the trade are mortgaged.
     """
 
     if to_player.is_trade_offer_outstanding:
@@ -710,6 +712,9 @@ def make_trade_offer(from_player, offer, to_player):
                 elif item.loc_class == 'real_estate' and (item.num_houses > 0 or item.num_hotels > 0):
                     logger.debug(item.name+' has improvements. Clear them before making an offer! Returning failure code.')
                     return flag_config_dict['failure_code']
+                elif (item.loc_class == 'real_estate' or item.loc_class == 'railroad' or item.loc_class == 'utility') and item.is_mortgaged:
+                    logger.debug(item.name+' is mortgaged. Cannot make an offer on mortgaged properties! Returning failure code.')
+                    return flag_config_dict['failure_code']
                 else:
                     offer_prop_set.add(item)
             logger.debug(from_player.player_name + ' wants to offer properties to ' + to_player.player_name + ' for cash = ' + str(offer['cash_wanted']))
@@ -725,6 +730,9 @@ def make_trade_offer(from_player, offer, to_player):
                     return flag_config_dict['failure_code']
                 elif item.loc_class == 'real_estate' and (item.num_houses > 0 or item.num_hotels > 0):
                     logger.debug(item.name+' has improvements. Can request for unimproved properties only. Returning failure code.')
+                    return flag_config_dict['failure_code']
+                elif (item.loc_class == 'real_estate' or item.loc_class == 'railroad' or item.loc_class == 'utility') and item.is_mortgaged:
+                    logger.debug(item.name+' is mortgaged. Cannot request mortgaged properties from other players! Returning failure code.')
                     return flag_config_dict['failure_code']
                 else:
                     want_prop_set.add(item)
@@ -746,10 +754,13 @@ def accept_trade_offer(player, current_gameboard):
     we will begin property and cash transfers.
     :param current_gameboard: A dict. The global data structure representing the current game board.
     :return: successful action code if the property offer is accepted and property is successfully transferred, otherwise failure code.
+
     accept_trade_offer becomes unsuccessful if:
     - player has no outstanding_trade_offer
     - if player does not have enough cash required for the transaction
     - if ownership of properties are incorrect
+    - if the properties involved in the trade are improved.
+    - if the properties involved in the trade are mortgaged.
     """
     if not player.is_trade_offer_outstanding:
         logger.debug(player.player_name+' does not have outstanding trade offers to accept. Returning failure code')
@@ -766,10 +777,26 @@ def accept_trade_offer(player, current_gameboard):
                 flag_properties_wanted = 0
                 logger.debug(player.player_name+ ' doesnot own ' + item.name + '. Cannot accept sell trade offer.')
                 break
+            elif item.loc_class == 'real_estate' and (item.num_houses > 0 or item.num_hotels > 0):
+                logger.debug(item.name+' has improvements. Cannot accept sell trade offer. Returning failure code.')
+                flag_properties_wanted = 0
+                break
+            elif (item.loc_class == 'real_estate' or item.loc_class == 'railroad' or item.loc_class == 'utility') and item.is_mortgaged:
+                logger.debug(item.name+' is mortgaged. Cannot accept sell trade offer! Returning failure code.')
+                flag_properties_wanted = 0
+                break
         for item in player.outstanding_trade_offer['property_set_offered']:
             if item.owned_by != player.outstanding_trade_offer['from_player']:
                 flag_properties_offered = 0
                 logger.debug(player.outstanding_trade_offer['from_player'].player_name+ ' doesnot own ' + item.name + '. Cannot accept sell trade offer.')
+                break
+            elif item.loc_class == 'real_estate' and (item.num_houses > 0 or item.num_hotels > 0):
+                logger.debug(item.name+' has improvements. Cannot accept sell trade offer. Returning failure code.')
+                flag_properties_offered = 0
+                break
+            elif (item.loc_class == 'real_estate' or item.loc_class == 'railroad' or item.loc_class == 'utility') and item.is_mortgaged:
+                logger.debug(item.name+' is mortgaged. Cannot accept sell trade offer! Returning failure code.')
+                flag_properties_offered = 0
                 break
         if flag_cash_offered and flag_cash_wanted and flag_properties_offered and flag_properties_wanted:
             logger.debug('Initiating trade offer transfer...')
