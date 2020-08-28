@@ -641,6 +641,8 @@ def handle_negative_cash_balance(player, current_gameboard):
     params = dict()
     params['player'] = player
     params['current_gameboard'] = current_gameboard
+    if isinstance(code, int):
+        code = [code]
     params['code'] = code
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(code)

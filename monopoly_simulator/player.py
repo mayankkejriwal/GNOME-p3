@@ -712,6 +712,8 @@ class Player(object):
         params['player'] = self
         params['current_gameboard'] = current_gameboard
         params['allowable_moves'] = allowable_actions
+        if isinstance(code, int):
+            code = [code]
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
@@ -772,6 +774,8 @@ class Player(object):
                 params['player'] = self
                 params['current_gameboard'] = current_gameboard
                 params['allowable_moves'] = allowable_actions
+                if isinstance(code, int):
+                    code = [code]
                 params['code'] = code
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(t)
@@ -821,6 +825,8 @@ class Player(object):
         params['player'] = self
         params['current_gameboard'] = current_gameboard
         params['allowable_moves'] = allowable_actions
+        if isinstance(code, int):
+            code = [code]
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
@@ -892,6 +898,8 @@ class Player(object):
                 params['player'] = self
                 params['current_gameboard'] = current_gameboard
                 params['allowable_moves'] = allowable_actions
+                if isinstance(code, int):
+                    code = [code]
                 params['code'] = code
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(t)
@@ -945,6 +953,8 @@ class Player(object):
         params['player'] = self
         params['current_gameboard'] = current_gameboard
         params['allowable_moves'] = allowable_actions
+        if isinstance(code, int):
+            code = [code]
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
@@ -976,6 +986,8 @@ class Player(object):
                 params['player'] = self
                 params['current_gameboard'] = current_gameboard
                 params['allowable_moves'] = allowable_actions
+                if isinstance(code, int):
+                    code = [code]
                 params['code'] = code
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(t)
