@@ -200,11 +200,11 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
             current_player.currently_in_jail = False  # the player is only allowed to skip one turn (i.e. this one)
 
         if current_player.current_cash < 0:
-            code = current_player.agent.handle_negative_cash_balance(current_player, game_elements)
+            code = current_player.handle_negative_cash_balance(game_elements)
             # add to game history
-            game_elements['history']['function'].append(current_player.agent.handle_negative_cash_balance)
+            game_elements['history']['function'].append(current_player.handle_negative_cash_balance)
             params = dict()
-            params['player'] = current_player
+            params['self'] = current_player
             params['current_gameboard'] = game_elements
             game_elements['history']['param'].append(params)
             game_elements['history']['return'].append(code)
@@ -466,4 +466,4 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
             return winner
 
 
-# play_game()
+play_game()

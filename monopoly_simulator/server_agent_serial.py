@@ -1,6 +1,5 @@
 from monopoly_simulator.agent import Agent
 import socket
-from monopoly_simulator.action_choices import *
 from monopoly_simulator.serialization import serialize_gameboard
 import json
 import sys
@@ -55,10 +54,7 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
     serial_dict_to_client = dict()
     serial_dict_to_client['player'] = player.player_name
     serial_dict_to_client['current_gameboard'] = serial_gameboard
-    allowable_moves_list = list()
-    for move in allowable_moves:
-        allowable_moves_list.append(move.__name__)
-    serial_dict_to_client['allowable_moves'] = allowable_moves_list
+    serial_dict_to_client['allowable_moves'] = list(allowable_moves)
     serial_dict_to_client['code'] = code
 
     serial_dict_to_client['function'] = "make_pre_roll_move"
@@ -69,23 +65,8 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
     result = json.loads(return_from_client.decode("utf-8"))
     func_name = result['function']
     param_dict = result['param_dict']
-    param_dict = _populate_param_dict(param_dict, player, current_gameboard)
 
-    func_ptr = getattr(sys.modules[__name__], func_name)
-    if func_name == "skip_turn":
-        logger.debug(player.player_name + ': I am skipping turn')
-    elif func_name == "concluded_actions":
-        logger.debug(player.player_name + ': I am concluding actions')
-    elif func_name == "use_get_out_of_jail_card":
-        logger.debug(player.player_name + ': I am attempting to use get out of jail card')
-    elif func_name == "pay_jail_fine":
-        logger.debug(player.player_name + ': I am attempting to pay jail fine')
-    else:
-        logger.error("Calling invalid action choice")
-        logger.error("raising Exception")
-        raise Exception
-
-    return (func_ptr, param_dict)
+    return (func_name, param_dict)
 
 
 def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
@@ -93,10 +74,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
     serial_dict_to_client = dict()
     serial_dict_to_client['player'] = player.player_name
     serial_dict_to_client['current_gameboard'] = serial_gameboard
-    allowable_moves_list = list()
-    for move in allowable_moves:
-        allowable_moves_list.append(move.__name__)
-    serial_dict_to_client['allowable_moves'] = allowable_moves_list
+    serial_dict_to_client['allowable_moves'] = list(allowable_moves)
     serial_dict_to_client['code'] = code
 
     serial_dict_to_client['function'] = "make_out_of_turn_move"
@@ -108,36 +86,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
     func_name = result['function']
     param_dict = result['param_dict']
 
-    if isinstance(func_name, list):
-        func_ptr = list()
-        for func in func_name:
-            func_ptr.append(getattr(sys.modules[__name__], func))
-        for i in range(len(param_dict)):
-            param_dict[i] = _populate_param_dict(param_dict[i], player, current_gameboard)
-        logger.debug("I am making multiple trade offers")
-
-    else:
-        param_dict = _populate_param_dict(param_dict, player, current_gameboard)
-
-        func_ptr = getattr(sys.modules[__name__], func_name)
-        if func_name == "skip_turn":
-            logger.debug(player.player_name + ': I am skipping turn')
-        elif func_name == "concluded_actions":
-            logger.debug(player.player_name + ': I am concluding actions')
-        elif func_name == "accept_trade_offer":
-            logger.debug(player.player_name + ': I am attempting to accept a trade offer')
-        elif func_name == "make_trade_offer":
-            logger.debug(player.player_name + ': I am attempting to make a trade offer')
-        elif func_name == "improve_property":
-            logger.debug(player.player_name + ': I am attempting to improve property')
-        elif func_name == "free_mortgage":
-            logger.debug(player.player_name + ': I am attempting to free mortgage')
-        else:
-            logger.error("Calling invalid action choice")
-            logger.error("raising Exception")
-            raise Exception
-
-    return (func_ptr, param_dict)
+    return (func_name, param_dict)
 
 
 def make_post_roll_move(player, current_gameboard, allowable_moves, code):
@@ -145,10 +94,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
     serial_dict_to_client = dict()
     serial_dict_to_client['player'] = player.player_name
     serial_dict_to_client['current_gameboard'] = serial_gameboard
-    allowable_moves_list = list()
-    for move in allowable_moves:
-        allowable_moves_list.append(move.__name__)
-    serial_dict_to_client['allowable_moves'] = allowable_moves_list
+    serial_dict_to_client['allowable_moves'] = list(allowable_moves)
     serial_dict_to_client['code'] = code
 
     serial_dict_to_client['function'] = "make_post_roll_move"
@@ -160,23 +106,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
     func_name = result['function']
     param_dict = result['param_dict']
 
-    param_dict = _populate_param_dict(param_dict, player, current_gameboard)
-
-    func_ptr = getattr(sys.modules[__name__], func_name)
-    if func_name == "buy_property":
-        logger.debug(player.player_name + ': I am attempting to buy property')
-    elif func_name == "mortgage_property":
-        logger.debug(player.player_name + ': I am attempting to mortgage property')
-    elif func_name == 'sell_property':
-        logger.debug(player.player_name + ': I am attempting to sell property')
-    elif func_name == "concluded_actions":
-        logger.debug(player.player_name + ': I am concluding actions')
-    else:
-        logger.error("Calling invalid action choice")
-        logger.error("raising Exception")
-        raise Exception
-
-    return (func_ptr, param_dict)
+    return (func_name, param_dict)
 
 
 def make_buy_property_decision(player, current_gameboard, asset):
@@ -213,62 +143,21 @@ def make_bid(player, current_gameboard, asset, current_bid):
 
 
 def handle_negative_cash_balance(player, current_gameboard):
-    current_gameboard['history']['function'].append(player.agent.handle_negative_cash_balance)
-    code = 0
-    params = dict()
-    params['player'] = player
-    params['current_gameboard'] = current_gameboard
-    if isinstance(code, int):
-        code = [code]
-    params['code'] = code
-    current_gameboard['history']['param'].append(params)
-    current_gameboard['history']['return'].append(code)
+    serial_gameboard = serialize_gameboard(current_gameboard)
+    serial_dict_to_client = dict()
+    serial_dict_to_client['player'] = player.player_name
+    serial_dict_to_client['current_gameboard'] = serial_gameboard
 
-    negative_cash_bal_flag = True
-    while negative_cash_bal_flag:
-        serial_gameboard = serialize_gameboard(current_gameboard)
-        serial_dict_to_client = dict()
-        serial_dict_to_client['player'] = player.player_name
-        serial_dict_to_client['current_gameboard'] = serial_gameboard
+    serial_dict_to_client['function'] = "handle_negative_cash_balance"
+    string_serial_dict_to_client = json.dumps(serial_dict_to_client)
+    player.agent.conn.sendall(bytes(string_serial_dict_to_client, encoding="utf-8"))
 
-        serial_dict_to_client['function'] = "handle_negative_cash_balance"
-        string_serial_dict_to_client = json.dumps(serial_dict_to_client)
-        player.agent.conn.sendall(bytes(string_serial_dict_to_client, encoding="utf-8"))
+    return_from_client = player.agent.conn.recv(50024)
+    result = json.loads(return_from_client.decode("utf-8"))
+    func_name = result['function']
+    param_dict = result['param_dict']
 
-        return_from_client = player.agent.conn.recv(50024)
-        result = json.loads(return_from_client.decode("utf-8"))
-        func_name = result['function']
-        param_dict = result['param_dict']
-        if func_name is None:
-            return param_dict['code']
-        else:
-            param_dict = _populate_param_dict(param_dict, player, current_gameboard)
-
-            func_ptr = getattr(sys.modules[__name__], func_name)
-            if func_name == "mortgage_property":
-                logger.debug(player.player_name + ': I am attempting to mortgage property')
-                ret_code = mortgage_property(param_dict['player'], param_dict['asset'], current_gameboard)
-            elif func_name == 'sell_house_hotel':
-                logger.debug(player.player_name + ': I am going to sell improvements')
-                ret_code = sell_house_hotel(param_dict['player'], param_dict['asset'], current_gameboard, param_dict['house'], param_dict['hotel'])
-            elif func_name == 'sell_property':
-                logger.debug(player.player_name + ': I am attempting to sell property')
-                ret_code = sell_property(param_dict['player'], param_dict['asset'], current_gameboard)
-            elif func_name == "mortgage_property":
-                logger.debug(player.player_name + ': I am attempting to mortgage property')
-                ret_code = mortgage_property(param_dict['player'], param_dict['asset'], current_gameboard)
-            else:
-                logger.error("Calling invalid action choice")
-                logger.error("raising Exception")
-                raise Exception
-
-            current_gameboard['history']['function'].append(func_ptr)
-            new_params = dict()
-            new_params['player'] = param_dict['player']
-            new_params['asset'] = param_dict['asset']
-            new_params['current_gameboard'] = current_gameboard
-            current_gameboard['history']['param'].append(new_params)
-            current_gameboard['history']['return'].append(ret_code)
+    return (func_name, param_dict)
 
 
 def _build_decision_agent_methods_dict():

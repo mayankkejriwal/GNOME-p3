@@ -262,6 +262,7 @@ class ClientAgent(Agent):
         while True:
             data_from_server = self.conn.recv(50000)
             data_from_server = data_from_server.decode("utf-8")
+
             data_dict_from_server = json.loads(data_from_server)
             func_name = data_dict_from_server['function']
 

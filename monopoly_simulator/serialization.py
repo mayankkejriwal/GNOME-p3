@@ -1,7 +1,8 @@
 import json
 import numpy
 from monopoly_simulator.player import Player
-from monopoly_simulator.location import RealEstateLocation
+from monopoly_simulator.bank import Bank
+from monopoly_simulator.location import Location, RealEstateLocation, UtilityLocation, RailroadLocation
 
 
 def _prune_serialize_history(pruned_gameboard_serial_obj):
@@ -9,14 +10,14 @@ def _prune_serialize_history(pruned_gameboard_serial_obj):
     total_chance_card_names = list(pruned_gameboard_serial_obj['cards']['chance_cards'].keys())
     picked_chance_card_details = dict()
     for card in total_chance_card_names:
-        if card in pruned_gameboard_serial_obj['cards']['picked_chance_cards']:   #nly retaining card details of picked cards
+        if card in pruned_gameboard_serial_obj['cards']['picked_chance_cards']:   # only retaining card details of picked cards
             picked_chance_card_details[card] = pruned_gameboard_serial_obj['cards']['chance_cards'][card]
     pruned_gameboard_serial_obj['cards']['picked_chance_card_details'] = picked_chance_card_details
 
     total_community_chest_card_names = list(pruned_gameboard_serial_obj['cards']['community_chest_cards'].keys())
     picked_cc_card_details = dict()
     for card in total_community_chest_card_names:
-        if card in pruned_gameboard_serial_obj['cards']['picked_community_chest_cards']:   #nly retaining card details of picked cards
+        if card in pruned_gameboard_serial_obj['cards']['picked_community_chest_cards']:   # only retaining card details of picked cards
             picked_cc_card_details[card] = pruned_gameboard_serial_obj['cards']['community_chest_cards'][card]
     pruned_gameboard_serial_obj['cards']['picked_community_chest_card_details'] = picked_cc_card_details
 
@@ -40,10 +41,7 @@ def _serialize_history(current_gameboard):
             if k == 'player':
                 hist_dict['param'][k] = v.player_name
             elif k == 'allowable_moves':
-                allowable_moves_list = list()
-                for move in v:
-                    allowable_moves_list.append(move.__name__)
-                hist_dict['param'][k] = allowable_moves_list
+                hist_dict['param'][k] = list(v)
             elif k == 'code':
                 hist_dict['param'][k] = v
             elif k == 'asset':
@@ -51,12 +49,16 @@ def _serialize_history(current_gameboard):
             elif k == 'self':
                 if isinstance(v, Player):
                     hist_dict['param'][k] = v.player_name
-                elif isinstance(v, RealEstateLocation):
+                elif isinstance(v, Location):
                     hist_dict['param'][k] = v.name
+                elif isinstance(v, Bank):
+                    hist_dict['param'][k] = 'bank'
+                else:
+                    print('This self is not included. Please add to history!', v)
             elif k == 'amount':
                 hist_dict['param'][k] = float(v)
             elif k == 'current_gameboard':
-                pass
+                hist_dict['param'][k] = 'current_gameboard'
             elif k == 'from_player':
                 hist_dict['param'][k] = v.player_name
             elif k == 'to_player':
@@ -83,7 +85,7 @@ def _serialize_history(current_gameboard):
             elif k == 'die_total':
                 hist_dict['param'][k] = int(v)
             elif k == 'card':
-                hist_dict['param'][k] = type(v).__name__
+                hist_dict['param'][k] = v.name
             elif k == 'current_bid':
                 hist_dict['param'][k] = float(v)
             elif k == 'pack':
@@ -94,6 +96,14 @@ def _serialize_history(current_gameboard):
                 pass
             elif k == 'description':
                 hist_dict['param'][k] = v
+            elif k == 'number of railroads':
+                hist_dict['param'][k] = v
+            elif k == 'number of utilities':
+                hist_dict['param'][k] = v
+            elif k == 'sell_house':
+                hist_dict['param'][k] = v
+            elif k == 'sell_hotel':
+                hist_dict['param'][k] = v
             else:
                 print('This param object not included, key: ', k, " value: ", v, " function name: ", func_name)
 
@@ -103,27 +113,27 @@ def _serialize_history(current_gameboard):
             hist_dict['return'] = None
         elif isinstance(return_obj, int):
             hist_dict['return'] = int(return_obj)
-        elif isinstance(return_obj, list):
+        elif isinstance(return_obj, list):   # list of code
             hist_dict['return'] = list()
             for i in return_obj:
                 hist_dict['return'].append(int(i))
-        elif isinstance(return_obj, float):
+        elif isinstance(return_obj, float):    # amounts
             hist_dict['return'] = float(return_obj)
-        elif isinstance(return_obj, numpy.int64):
+        elif isinstance(return_obj, numpy.int64):    # random generator
             hist_dict['return'] = int(return_obj)
-        elif isinstance(return_obj, bool):
+        elif isinstance(return_obj, bool):              # return from make_buy_property_offer()
             hist_dict['return'] = return_obj
-        elif isinstance(return_obj, tuple):
+        elif isinstance(return_obj, tuple):     # return from agent is a tuple of (action to execute, params)
             hist_dict['return'] = dict()
             for item in return_obj:
                 if isinstance(item, list):   # trade offer tuples contain 2 lists (for trade offers to multiple players)
                     function_list = list()
                     param_list = list()
                     for f in item:                             # --> one for the function, the other for params
-                        if not isinstance(f, dict):
-                            function_list.append(f.__name__)
+                        if not isinstance(f, dict):             # names of action to execute
+                            function_list.append(f)
                         else:
-                            prm_dict = dict()
+                            prm_dict = dict()                   # trade offer params
                             for k, v in f.items():
                                 if k == 'from_player':
                                     prm_dict[k] = v.player_name
@@ -141,8 +151,12 @@ def _serialize_history(current_gameboard):
                             param_list.append(prm_dict)
                     hist_dict['return']['function'] = function_list
                     hist_dict['return']['param'] = param_list
-                elif not isinstance(item, dict):
-                    hist_dict['return']['function'] = item.__name__
+                elif isinstance(item, int):
+                    hist_dict['return']['param'] = item     # handle negative cash balance returns (None, int) if it is done handling negative cash balance
+                elif item is None:
+                    hist_dict['return']['function'] = None    # handle negative cash balance returns (None, int) if it is done handling negative cash balance
+                elif isinstance(item, str):
+                    hist_dict['return']['function'] = item
                 elif isinstance(item, dict):
                     hist_dict['return']['param'] = dict()
                     for k, v in item.items():
@@ -154,7 +168,7 @@ def _serialize_history(current_gameboard):
                             hist_dict['return']['param'][k] = v
 
                 else:
-                    print("This return val not included in return history")
+                    print("This return val not included in return history ", item)
         else:
             print("This return val not included in return history: ", return_obj, type(return_obj))
 
