@@ -1,4 +1,3 @@
-from monopoly_simulator import action_choices
 from monopoly_simulator import agent_helper_functions # helper functions are internal to the agent and will not be recorded in the function log.
 from monopoly_simulator import diagnostics
 from monopoly_simulator import hypothetical_simulator
@@ -370,6 +369,9 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
                 else:
                     logger.debug(player.player_name+ ': I am going to improve property '+param['asset'].name)
                     player.agent._agent_memory['previous_action'] = "improve_property"
+                    param['player'] = param['player'].player_name
+                    param['asset'] = param['asset'].name
+                    param['current_gameboard'] = "current_gameboard"
                     return ("improve_property", param)
 
         player_mortgaged_assets_list = list()
