@@ -1,4 +1,5 @@
 import numpy as np
+from monopoly_simulator.location import RailroadLocation
 from monopoly_simulator.flag_config import flag_config_dict
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.card_utility_actions')
@@ -9,6 +10,16 @@ either correspond to an action or contingency contained in a card (e.g., go to j
 when we land on an 'action' location (such as community chest, wherein we must pick a card from the community chest
 card pack)
 """
+
+
+def _set_send_to_jail(player, current_gameboard):
+    """
+    Internal function that sets the currently_in_jail field of player to true.
+    :param player: player who is currently in jail and needs a status update
+    :param current_gameboard: The global game board data structure
+    :return: None
+    """
+    player.currently_in_jail = True
 
 
 def go_to_jail(player, current_gameboard):
@@ -66,6 +77,7 @@ def pick_card_from_community_chest(player, current_gameboard):
         logger.debug('removing get_out_of_jail card from community chest pack')
         current_gameboard['community_chest_cards'].remove(card)
         card.action(player, card, current_gameboard, pack='community_chest')
+        current_gameboard['history']['function'].append(card.action)
         params = dict()
         params['player'] = player
         params['card'] = card
@@ -106,6 +118,7 @@ def pick_card_from_chance(player, current_gameboard):
         logger.debug('removing get_out_of_jail card from chance pack')
         current_gameboard['chance_cards'].remove(card)
         card.action(player, card, current_gameboard, pack='chance')
+        current_gameboard['history']['function'].append(card.action)
         params = dict()
         params['player'] = player
         params['card'] = card
@@ -387,6 +400,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
         params = dict()
         params['self'] = player
         params['amount'] = amount_due
+        params['number of utilities'] = current_loc.owned_by.num_utilities_possessed
         params['description'] = 'utility dues'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
@@ -399,6 +413,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
             params = dict()
             params['self'] = current_owner
             params['amount'] = amount_due
+            params['number of utilities'] = current_loc.owned_by.num_utilities_possessed
             params['description'] = 'utility dues'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(code)
@@ -452,13 +467,14 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
         current_gameboard['history']['return'].append(None)
         return
     else:
-        amount_due = 2 * current_loc.calculate_railroad_dues()
+        amount_due = 2 * RailroadLocation.calculate_railroad_dues(current_loc, current_gameboard)
         player.charge_player(amount_due, current_gameboard, bank_flag=False)
         # add to game history
         current_gameboard['history']['function'].append(player.charge_player)
         params = dict()
         params['self'] = player
         params['amount'] = amount_due
+        params['number of railroads'] = current_loc.owned_by.num_railroads_possessed
         params['description'] = 'railroad dues'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
@@ -471,6 +487,7 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
             params = dict()
             params['self'] = current_owner
             params['amount'] = amount_due
+            params['number of railroads'] = current_loc.owned_by.num_railroads_possessed
             params['description'] = 'railroad dues'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(code)

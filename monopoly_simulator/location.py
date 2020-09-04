@@ -286,6 +286,10 @@ class TaxLocation(Location):
         super().__init__(loc_class, name, start_position, end_position, color)
         self.amount_due = float(amount_due)
 
+    @staticmethod
+    def calculate_tax(location, player, current_gameboard):
+        return location.amount_due
+
 
 class RailroadLocation(Location):
     def __init__(self, loc_class, name, start_position, end_position, color, price, mortgage, owned_by):
@@ -316,19 +320,20 @@ class RailroadLocation(Location):
         obj[4] = 200
         self._railroad_dues = obj
 
-    def calculate_railroad_dues(self):
+    @staticmethod
+    def calculate_railroad_dues(asset, current_gameboard):
         """
         Compute dues if a player lands on railroad owned by another player.
         :return: An integer. Specifies railroad dues
         """
-        logger.debug('calculating railroad dues for '+self.name)
-        if self.owned_by.num_railroads_possessed > 4 or self.owned_by.num_railroads_possessed < 0:
-            logger.debug('Error! num railroads possessed by '+ self.owned_by.player_name+ ' is '+ \
-                str(self.owned_by.num_railroads_possessed)+', which is impossible')
+        logger.debug('calculating railroad dues for '+asset.name)
+        if asset.owned_by.num_railroads_possessed > 4 or asset.owned_by.num_railroads_possessed < 0:
+            logger.debug('Error! num railroads possessed by '+ asset.owned_by.player_name+ ' is '+ \
+                str(asset.owned_by.num_railroads_possessed)+', which is impossible')
 
             logger.error("Exception")
             raise Exception
-        dues = self._railroad_dues[self.owned_by.num_railroads_possessed]
+        dues = asset._railroad_dues[asset.owned_by.num_railroads_possessed]
 
         logger.debug('railroad dues are '+str(dues))
         return dues
@@ -361,21 +366,22 @@ class UtilityLocation(Location):
         obj[2] = 10
         self._die_multiples = obj
 
-    def calculate_utility_dues(self, die_total):
+    @staticmethod
+    def calculate_utility_dues(asset, current_gameboard, die_total):
         """
         Compute dues if a player lands on utility owned by another player.
         :param die_total: An integer. The dice total (if there's more than 1 dice as there is in the default game)
         :return: An integer. Specifies utility dues.
         """
-        logger.debug('calculating utility dues for '+ self.name)
-        if self.owned_by.num_utilities_possessed > 2 or self.owned_by.num_utilities_possessed < 0:
-                logger.debug('Error! num utilities possessed by '+self.owned_by.player_name+' is '+ \
-                    str(self.owned_by.num_utilities_possessed)+ ', which is impossible')
+        logger.debug('calculating utility dues for '+ asset.name)
+        if asset.owned_by.num_utilities_possessed > 2 or asset.owned_by.num_utilities_possessed < 0:
+                logger.debug('Error! num utilities possessed by '+asset.owned_by.player_name+' is '+ \
+                    str(asset.owned_by.num_utilities_possessed)+ ', which is impossible')
 
                 logger.error("Exception")
                 raise Exception
 
-        dues = die_total*self._die_multiples[self.owned_by.num_utilities_possessed]
+        dues = die_total*asset._die_multiples[asset.owned_by.num_utilities_possessed]
         logger.debug('utility dues are '+ str(dues))
         return dues
 

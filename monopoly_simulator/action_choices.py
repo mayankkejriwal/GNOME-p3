@@ -1,5 +1,6 @@
 from monopoly_simulator.flag_config import flag_config_dict
 from monopoly_simulator.bank import Bank
+from monopoly_simulator.dice import Dice
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.action_choices')
 
@@ -152,7 +153,7 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
                 break
         if flag:
             logger.debug('Trying to sell a hotel to the bank')
-            code = player.receive_cash((asset.price_per_house*4)*current_gameboard['bank'].hotel_sell_percentage, current_gameboard, bank_flag=True) # player only gets half the initial cost back. Recall that you can sell the entire hotel or not at all.
+            code = player.receive_cash((asset.price_per_house*5)*current_gameboard['bank'].hotel_sell_percentage, current_gameboard, bank_flag=True) # player only gets half the initial cost back. Recall that you can sell the entire hotel or not at all.
             if code == flag_config_dict['successful_action']:
                 logger.debug('Bank Paid player for sale of hotel.')
                 logger.debug('Transferring hotel to bank and updating num_total_hotels and num_total_houses.')
@@ -164,7 +165,7 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
                 current_gameboard['history']['function'].append(player.receive_cash)
                 params = dict()
                 params['self'] = player
-                params['amount'] = (asset.price_per_house*4)*current_gameboard['bank'].hotel_sell_percentage   # changed hardcoded value to a bank parameter
+                params['amount'] = (asset.price_per_house*5)*current_gameboard['bank'].hotel_sell_percentage   # changed hardcoded value to a bank parameter
                 params['description'] = 'sell improvements'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
@@ -232,6 +233,7 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
         #should never reach here unless both sell_house and sell_hotel are False, if it does then return failure code.
         logger.debug("Dont know how I reached here but I didnot succeed in selling house/hotel. Returning failure code.")
         return flag_config_dict['failure_code']
+
 
 def accept_sell_property_offer(player, current_gameboard):
     """
@@ -385,8 +387,7 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
     elif asset.loc_class != 'real_estate':
         logger.debug(asset.name+' is not real estate and cannot be improved. Returning failure code')
         return flag_config_dict['failure_code']
-    elif (asset.color not in player.full_color_sets_possessed):
-
+    elif asset.color not in player.full_color_sets_possessed:
         # these are the usual conditions that we verify before allowing any improvement to proceed
         logger.debug(player.player_name+' does not own all properties of this color, hence it cannot be improved. Returning failure code')
         return flag_config_dict['failure_code']
@@ -441,7 +442,7 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
                 return flag_config_dict['failure_code']
 
         else:
-            logger.debug('All same-colored properties must be informly improved first before you can build a hotel on this property. Returning failure code')
+            logger.debug('All same-colored properties must be uniformly improved first before you can build a hotel on this property. Returning failure code')
             return flag_config_dict['failure_code']
 
     elif add_house:
@@ -486,7 +487,7 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
                 return flag_config_dict['failure_code']
 
         else:
-            logger.debug('All same-colored properties must be informly improved first before you can build a hotel on this property. Returning failure code')
+            logger.debug('All same-colored properties must be uniformly improved first before you can build a house on this property. Returning failure code')
             return flag_config_dict['failure_code']
 
     else:
@@ -569,7 +570,7 @@ def roll_die(die_objects, choice):
         if d.die_state_distribution == 'uniform':
             output_vector.append(choice(a=d.die_state))
         elif d.die_state_distribution == 'biased':
-            output_vector.append(_biased_die_roll_1(d.die_state, choice))
+            output_vector.append(Dice.biased_die_roll(d.die_state, choice))
         else:
             logger.error("Exception")
             raise Exception
@@ -657,21 +658,6 @@ def buy_property(player, asset, current_gameboard):
         current_gameboard['history']['return'].append(None)
 
         return flag_config_dict['successful_action']
-
-
-def _biased_die_roll_1(die_state, choice):
-    """
-    When the die type is biased, this function is an example of how the bias on a die can be defined. This function can be defined
-    in anyway that you want to define it.
-    :param die_state: A list. Represents a vector of integers, and indicates the possibilities for the dice (e.g., [1-6])
-    :param choice: The numpy choice function.
-    :return: choice function with an associated bias to make the die roll biased.
-    """
-    p = list()
-    die_total = sum(die_state)
-    for i in die_state:
-        p.append(i*1.0/die_total)
-    return choice(a=die_state, p=p)
 
 
 def make_trade_offer(from_player, offer, to_player):
