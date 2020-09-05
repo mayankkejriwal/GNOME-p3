@@ -145,15 +145,19 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
         for same_colored_asset in current_gameboard['color_assets'][asset.color]:
             if same_colored_asset == asset:
                 continue
-            if not (same_colored_asset.num_hotels == 1 or (same_colored_asset.num_hotels == 0 and
+            if asset.num_hotels == 1 and not (same_colored_asset.num_hotels == 1 or (same_colored_asset.num_hotels == 0 and
                                     same_colored_asset.num_houses == 0)) : # if there are no hotels on other properties,
                 # there must not be houses either, otherwise  the uniform improvement rule gets broken. The not on the
                 # outside enforces this rule.
                 flag = False
                 break
+            elif asset.num_hotels < same_colored_asset.num_hotels:    # need to follow uniform improvement rule
+                flag = False
+                break
+
         if flag:
             logger.debug('Trying to sell a hotel to the bank')
-            code = player.receive_cash((asset.price_per_house*5)*current_gameboard['bank'].hotel_sell_percentage, current_gameboard, bank_flag=True) # player only gets half the initial cost back. Recall that you can sell the entire hotel or not at all.
+            code = player.receive_cash((asset.price_per_house*(current_gameboard['bank'].house_limit_before_hotel + 1))*current_gameboard['bank'].hotel_sell_percentage, current_gameboard, bank_flag=True) # player only gets half the initial cost back. Recall that you can sell the entire hotel or not at all.
             if code == flag_config_dict['successful_action']:
                 logger.debug('Bank Paid player for sale of hotel.')
                 logger.debug('Transferring hotel to bank and updating num_total_hotels and num_total_houses.')
@@ -165,14 +169,14 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
                 current_gameboard['history']['function'].append(player.receive_cash)
                 params = dict()
                 params['self'] = player
-                params['amount'] = (asset.price_per_house*5)*current_gameboard['bank'].hotel_sell_percentage   # changed hardcoded value to a bank parameter
+                params['amount'] = (asset.price_per_house*(current_gameboard['bank'].house_limit_before_hotel + 1))*current_gameboard['bank'].hotel_sell_percentage   # changed hardcoded value to a bank parameter
                 params['description'] = 'sell improvements'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
 
                 logger.debug('Updating houses and hotels on the asset')
                 asset.num_houses = 0 # this should already be 0 but just in case
-                asset.num_hotels = 0
+                asset.num_hotels -= 1
                 logger.debug('Player has successfully sold hotel. Returning 1')
                 return flag_config_dict['successful_action']
 
@@ -397,18 +401,23 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
 
     if add_hotel: # this is the simpler case
         logger.debug('Looking to improve '+asset.name+' by adding a hotel.')
-        if asset.num_hotels == 1:
-            logger.debug('There is already a hotel here. You are only permitted one. Returning failure code')
+        if asset.num_hotels == current_gameboard['bank'].hotel_limit:
+            logger.debug('There is already ' + str(current_gameboard['bank'].hotel_limit) + ' hotel(s) here. You cannot exceed this limit. Returning failure code')
             return flag_config_dict['failure_code']
-        elif asset.num_houses != 4:
-            logger.debug('You need to have four houses before you can build a hotel...Returning failure code')
+        elif asset.num_houses != current_gameboard['bank'].house_limit_before_hotel:
+            logger.debug('You need to have ' + str(current_gameboard['bank'].house_limit_before_hotel)
+                         + ' houses before you can build a hotel...Returning failure code')
             return flag_config_dict['failure_code']
         flag = True
         for same_colored_asset in current_gameboard['color_assets'][asset.color]:
             if same_colored_asset == asset:
                 continue
-            if not (same_colored_asset.num_houses == 4 or same_colored_asset.num_hotels == 1): # as long as all other houses
-                # of that color have either 4 houses or a hotel, we can build a hotel on this asset.
+            if asset.num_hotels == 0 and not (same_colored_asset.num_houses == current_gameboard['bank'].house_limit_before_hotel
+                    or same_colored_asset.num_hotels == 1): # as long as all other houses
+                # of that color have either max limit of houses before hotel can be built or a hotel, we can build a hotel on this asset. (Uniform improvement rule)
+                flag = False
+                break
+            elif same_colored_asset.num_hotels < asset.num_hotels:
                 flag = False
                 break
         if flag:
@@ -433,7 +442,7 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
 
                 logger.debug('Updating houses and hotels on the asset')
                 asset.num_houses = 0
-                asset.num_hotels = 1
+                asset.num_hotels += 1
                 logger.debug('Player has successfully improved property. Returning successful action code')
                 return flag_config_dict['successful_action']
 
@@ -447,15 +456,16 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
 
     elif add_house:
         logger.debug('Looking to improve '+asset.name+' by adding a house.')
-        if asset.num_hotels == 1 or asset.num_houses == 4:
-            logger.debug('There is already a hotel or 4 houses here. You are not permitted another house. Returning failure code')
+        if asset.num_hotels > 0 or asset.num_houses == current_gameboard['bank'].house_limit_before_hotel:
+            logger.debug('There is already a hotel here or you have built the max number of houses that you can on a property. '
+                         'You are not permitted another house. Returning failure code')
             return flag_config_dict['failure_code']
         flag = True
         current_asset_num_houses = asset.num_houses
         for same_colored_asset in current_gameboard['color_assets'][asset.color]:
             if same_colored_asset == asset:
                 continue
-            if same_colored_asset.num_houses < current_asset_num_houses or same_colored_asset.num_hotels == 1:
+            if same_colored_asset.num_houses < current_asset_num_houses or same_colored_asset.num_hotels > 0:
                 flag = False
                 break
         if flag:
@@ -741,7 +751,7 @@ def accept_trade_offer(player, current_gameboard):
     :return: successful action code if the property offer is accepted and property is successfully transferred, otherwise failure code.
     accept_trade_offer becomes unsuccessful if:
     - player has no outstanding_trade_offer
-    - if player does not have enough cash required for passthe transaction
+    - if player does not have enough cash required for the transaction
     - if ownership of properties are incorrect
     - if the properties involved in the trade are improved.
     - if the properties involved in the trade are mortgaged.

@@ -9,6 +9,7 @@ from monopoly_simulator import background_agent_v3_1
 from monopoly_simulator import baseline_agent
 from monopoly_simulator import read_write_current_state
 from monopoly_simulator import simple_decision_agent_1
+from monopoly_simulator import card_utility_actions
 import json
 from monopoly_simulator import diagnostics
 from monopoly_simulator import novelty_generator
@@ -88,7 +89,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
     workbook = None
     if history_log_file:
         workbook = xlsxwriter.Workbook(history_log_file)
-    start_time = time.time()
+    game_elements['start_time'] = time.time()
     while num_active_players > 1:
         # disable_history(
         #     game_elements)  # comment this out when you want history to stay. Currently, it has high memory consumption, we are working to solve the problem (most likely due to deep copy run-off).
@@ -149,7 +150,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
                     if prop.loc_class == 'real_estate':
                         networth_p1ayer += prop.price
                         networth_p1ayer += prop.num_houses*prop.price_per_house
-                        networth_p1ayer += prop.num_hotels*prop.price_per_house*5
+                        networth_p1ayer += prop.num_hotels*prop.price_per_house*(game_elements['bank'].house_limit_before_hotel + 1)
                     elif prop.loc_class == 'railroad':
                         networth_p1ayer += prop.price
                     elif prop.loc_class == 'utility':
@@ -201,6 +202,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
             params['self'] = current_player
             params['current_gameboard'] = game_elements
             game_elements['history']['param'].append(params)
+            game_elements['history']['param'].append(params)
             game_elements['history']['return'].append(None)
 
         else:
@@ -240,18 +242,16 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
             current_player.status = 'waiting_for_move'
 
         current_player_index = (current_player_index + 1) % len(game_elements['players'])
-        tot_time = time.time() - start_time
+        tot_time = time.time() - game_elements['start_time']
 
-        if diagnostics.max_cash_balance(
-                game_elements) > 100000:  # this is our limit for runaway cash for testing purposes only.
-            # game terminates if cash reaches 100k limit.
+        if card_utility_actions.check_for_game_termination(game_elements, tot_time):
+            # game terminates if check_for_game_termination returns true.
             # We print some diagnostics and return if any player exceeds this.
             diagnostics.print_asset_owners(game_elements)
             diagnostics.print_player_cash_balances(game_elements)
             logger.debug("Game ran for " + str(tot_time) + " seconds.")
             logger.debug("Game terminated since max cash balance exceeded limit.")
-
-            return
+            break
 
         #This is an example of how you may want to write out gameboard state to file.
         #Uncomment the following piece of code to write out the gameboard current_state to file at the "count_json" iteration.
@@ -288,8 +288,14 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
     if winner:
         logger.debug('We have a winner: ' + winner.player_name)
         return winner.player_name
-
-    return None
+    else:
+        winner = card_utility_actions.check_for_winner(game_elements)
+        if winner is not None:
+            logger.debug('We have a winner: ' + winner.player_name)
+            return winner.player_name
+        else:
+            logger.debug('Game has no winner, do not know what went wrong!!!')
+            return None     # ideally should never get here
 
 
 def set_up_board(game_schema_file_path, player_decision_agents):
@@ -490,4 +496,4 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
             return winner
 
 
-play_game()
+# play_game()
