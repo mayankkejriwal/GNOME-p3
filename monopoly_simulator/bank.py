@@ -3,8 +3,26 @@ logger = logging.getLogger('monopoly_simulator.logging_info.bank')
 
 class Bank(object):
     def __init__(self):
+        """
+        :param mortgage_percentage: a float. % of the property mortgage amount that the player owes the bank in addition to the mortgage amount.
+        :param total_mortgage_rule: a bool. If true, then mortgage will be calculated as a percentage of total debt the player has outstanding
+        :param total_houses: an int. Total num of houses available to the players for improvement in this game.
+        :param total_hotels: an int. Total num of hotels available to the players for improvement in this game.
+        :param total_cash_with_bank: a float. Total cash that the bank has at the beginning of the game. Bank does not have an
+        infinite reserve of cash. If this amount drops to 0 during the game, then players cannot receive cash from bank until the bank replenishes its reserve
+        of money by getting tax or any other moves that the players make during the game.
+        :param property_sell_percentage: a float. % of the price of a property that a player can get back from the bank upon selling it back to the bank.
+        :param house_sell_percentage: a float. % of the price of a house that a player can get back from the bank upon selling it back to the bank.
+        :param hotel_sell_percentage: a float. % of the price of a hotel that a player can get back from the bank upon selling it back to the bank.
+        :param jail_fine: a float. In the event that a player ends up in jail, the amount that the player has to pay the bank if it has to free itself from jail.
+        :param monopolized_property_rent_factor: a float. If a player possess' a monopoly, the rent of the properties within this monopolized color group
+        gets multiplied by this factor.
+        :param house_limit_before_hotel: an int. The max number of houses that a player can build on a property. Once the num of houses has reached this limit on
+        all the properties in that color group (Uniform improvement rule), the player may set up a hotel.
+        :param hotel_limit: The max number of hotel(s) that a player can build on a property
+        """
         self.mortgage_percentage = 0.1
-        self.total_mortgage_rule = False  # if true, then mortgage will be calculated as a percentage of total debt the player has outstanding
+        self.total_mortgage_rule = False
         self.total_houses = 32
         self.total_hotels = 12
         self.total_cash_with_bank = float(10000)
@@ -12,7 +30,9 @@ class Bank(object):
         self.house_sell_percentage = 0.5
         self.hotel_sell_percentage = 0.5
         self.jail_fine = float(50)
-        self.monopolized_property_rent_factor = float(2)   #default = 2, players have to pay "twice" the property rent on "monopolized" unimproved properties
+        self.monopolized_property_rent_factor = float(2)
+        self.house_limit_before_hotel = 4
+        self.hotel_limit = 1
 
     @staticmethod
     def auction(starting_player_index, current_gameboard, asset):

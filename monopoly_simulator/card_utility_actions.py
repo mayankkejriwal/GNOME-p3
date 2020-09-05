@@ -1,6 +1,7 @@
 import numpy as np
 from monopoly_simulator.location import RailroadLocation
 from monopoly_simulator.flag_config import flag_config_dict
+from monopoly_simulator import diagnostics
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.card_utility_actions')
 
@@ -689,3 +690,54 @@ def _move_player__check_for_go(player, new_position, current_gameboard):
     params['current_gameboard'] = current_gameboard
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+
+
+def check_for_game_termination(current_gameboard, tot_time):
+    """
+    checks for game termination conditions, eg: runaway cash limit for player current cash, or to keep a tab on max time limit for a game
+    :param current_gameboard: global gameboard data structure
+    :param tot_time: total time the game has taken until this function was called
+    :return: bool, true if game termination condition is met, else false
+    """
+    return diagnostics.max_cash_balance(current_gameboard) > 10000   # this is our limit for runaway cash for testing purposes only.
+
+
+def check_for_winner(current_gameboard):
+    """
+    If the game is forced to terminate when it reaches game termination conditions, it is possible that there is more that 1 player remaining
+    in the game as the game did not terminate normally in which case the last man standing would have been the winner.
+    This function returns a winner in such a situation when there is more than one player remaining and the game is forced to terminate.
+    From among the players left in the game (ie, those that did not lose by that time), this function returns the winner as the player
+    with the "highest networth" when the game is forced to conclude.
+    :param current_gameboard: Global gameboard data structure
+    :return: winning player
+    """
+    winner = None
+    max_global_networth = 0
+    for pl in current_gameboard['players']:
+        if pl.status == 'win':                  # in case the game entered game termination condition right after the winner was found, return original winner
+            return winner
+    for pl in current_gameboard['players']:   # in case there are no winners, we find the winner as the player with highest networth
+        if pl.status != 'lost':
+            networth_player = 0
+            networth_player += pl.current_cash
+            if pl.assets:
+                for prop in pl.assets:
+                    if prop.loc_class == 'real_estate':
+                        networth_player += prop.price
+                        networth_player += prop.num_houses*prop.price_per_house
+                        networth_player += prop.num_hotels*prop.price_per_house*(current_gameboard['bank'].house_limit_before_hotel + 1)
+                    elif prop.loc_class == 'railroad':
+                        networth_player += prop.price
+                    elif prop.loc_class == 'utility':
+                        networth_player += prop.price
+            if networth_player > max_global_networth:
+                winner = pl
+                max_global_networth = networth_player
+            elif networth_player > 0 and winner is not None and networth_player == max_global_networth:
+                # in the highly unlikely event that 2 players end up with the same networth, tie breaker is the player with higher current cash
+                # if current cash also ends up being the same, then whoever entered the loop first just ends up getting the advantage of being the winner
+                if pl.current_cash > winner.current_cash:
+                    winner = pl
+
+    return winner
