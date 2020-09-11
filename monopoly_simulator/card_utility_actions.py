@@ -373,7 +373,40 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
             min_utility_position = u
 
     logger.debug('The utility position that player is being moved to is '+current_gameboard['location_sequence'][min_utility_position].name)
-    _move_player__check_for_go(player, min_utility_position, current_gameboard)
+
+    go_position = current_gameboard['go_position']
+    go_increment = current_gameboard['go_increment']
+
+    if 'auxiliary_check' in current_gameboard:
+        current_gameboard['auxiliary_check'](player, min_utility_position, current_gameboard)
+
+    if _has_player_passed_go(player.current_position, min_utility_position, go_position):
+        if 'auxiliary_check_for_go' in current_gameboard:
+            current_gameboard['auxiliary_check_for_go'](player, min_utility_position, current_gameboard)
+        code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
+        # add to game history
+        if code == 1:
+            current_gameboard['history']['function'].append(player.receive_cash)
+            params = dict()
+            params['self'] = player
+            params['amount'] = go_increment
+            params['description'] = 'go increment'
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(code)
+        else:
+            logger.debug('Current cash balance with the bank = '+ str(current_gameboard['bank'].total_cash_with_bank))
+            logger.debug("Player supposed to receive go increment, but bank has no sufficient funds, hence unable to pay player." +
+                         "Player will have to pass GO position without receiving go increment!")
+
+    player.update_player_position(min_utility_position, current_gameboard) # update this only after checking for go
+    # add to game history
+    current_gameboard['history']['function'].append(player.update_player_position)
+    params = dict()
+    params['self'] = player
+    params['new_position'] = min_utility_position
+    params['current_gameboard'] = current_gameboard
+    current_gameboard['history']['param'].append(params)
+    current_gameboard['history']['return'].append(None)
 
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
@@ -447,7 +480,40 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
 
     logger.debug('The railroad position that player is being moved to is '+ current_gameboard['location_sequence'][
         min_railroad_position].name)
-    _move_player__check_for_go(player, min_railroad_position, current_gameboard)
+
+    go_position = current_gameboard['go_position']
+    go_increment = current_gameboard['go_increment']
+
+    if 'auxiliary_check' in current_gameboard:
+        current_gameboard['auxiliary_check'](player, min_railroad_position, current_gameboard)
+
+    if _has_player_passed_go(player.current_position, min_railroad_position, go_position):
+        if 'auxiliary_check_for_go' in current_gameboard:
+            current_gameboard['auxiliary_check_for_go'](player, min_railroad_position, current_gameboard)
+        code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
+        # add to game history
+        if code == 1:
+            current_gameboard['history']['function'].append(player.receive_cash)
+            params = dict()
+            params['self'] = player
+            params['amount'] = go_increment
+            params['description'] = 'go increment'
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(code)
+        else:
+            logger.debug('Current cash balance with the bank = '+ str(current_gameboard['bank'].total_cash_with_bank))
+            logger.debug("Player supposed to receive go increment, but bank has no sufficient funds, hence unable to pay player." +
+                         "Player will have to pass GO position without receiving go increment!")
+
+    player.update_player_position(min_railroad_position, current_gameboard) # update this only after checking for go
+    # add to game history
+    current_gameboard['history']['function'].append(player.update_player_position)
+    params = dict()
+    params['self'] = player
+    params['new_position'] = min_railroad_position
+    params['current_gameboard'] = current_gameboard
+    current_gameboard['history']['param'].append(params)
+    current_gameboard['history']['return'].append(None)
 
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
@@ -615,7 +681,7 @@ def _has_player_passed_go(current_position, new_position, go_position):
         return True
 
     elif current_position < new_position:
-        if new_position <= go_position and go_position > current_position:
+        if new_position >= go_position > current_position:
             return True
 
     elif current_position > new_position:
@@ -699,7 +765,11 @@ def check_for_game_termination(current_gameboard, tot_time):
     :param tot_time: total time the game has taken until this function was called
     :return: bool, true if game termination condition is met, else false
     """
-    return diagnostics.max_cash_balance(current_gameboard) > 10000   # this is our limit for runaway cash for testing purposes only.
+    if diagnostics.max_cash_balance(current_gameboard) > 10000:   # this is our limit for runaway cash for testing purposes only.
+        logger.debug("Game terminated since max cash balance exceeded limit.")
+        return True
+    else:
+        return False
 
 
 def check_for_winner(current_gameboard):

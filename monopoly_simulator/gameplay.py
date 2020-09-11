@@ -2,17 +2,11 @@ from monopoly_simulator import initialize_game_elements
 from monopoly_simulator.action_choices import roll_die
 import numpy as np
 from monopoly_simulator import card_utility_actions
-from monopoly_simulator import background_agent_v1
-from monopoly_simulator import background_agent_v1_deprecated
-from monopoly_simulator import background_agent_v2
-from monopoly_simulator import background_agent_v3
 from monopoly_simulator import background_agent_v3_1
-from monopoly_simulator import baseline_agent
 from monopoly_simulator import read_write_current_state
 from monopoly_simulator import simple_decision_agent_1
 import json
 from monopoly_simulator import diagnostics
-from monopoly_simulator import novelty_generator
 from monopoly_simulator.agent import Agent
 import xlsxwriter
 from monopoly_simulator.flag_config import flag_config_dict
@@ -134,20 +128,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
         # but only if we're not in jail.
 
         logger.debug("Printing cash balance and net worth of each player: ")
-        for pl in game_elements['players']:
-            networth_p1ayer = 0
-            networth_p1ayer += pl.current_cash
-            if pl.assets:
-                for prop in pl.assets:
-                    if prop.loc_class == 'real_estate':
-                        networth_p1ayer += prop.price
-                        networth_p1ayer += prop.num_houses*prop.price_per_house
-                        networth_p1ayer += prop.num_hotels*prop.price_per_house*(game_elements['bank'].house_limit_before_hotel + 1)
-                    elif prop.loc_class == 'railroad':
-                        networth_p1ayer += prop.price
-                    elif prop.loc_class == 'utility':
-                        networth_p1ayer += prop.price
-            logger.debug(pl.player_name + ' has a cash balance of $' + str(pl.current_cash) + ' and a net worth of $' + str(networth_p1ayer))
+        diagnostics.print_player_net_worths_and_cash_bal(game_elements)
 
         r = roll_die(game_elements['dies'], np.random.choice)
         for i in range(len(r)):
@@ -242,7 +223,6 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
             diagnostics.print_asset_owners(game_elements)
             diagnostics.print_player_cash_balances(game_elements)
             logger.debug("Game ran for " + str(tot_time) + " seconds.")
-            logger.debug("Game terminated since max cash balance exceeded limit.")
             break
 
         #This is an example of how you may want to write out gameboard state to file.
@@ -275,6 +255,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=2):
     logger.debug('number of dice rolls: ' + str(num_die_rolls))
     logger.debug('printing final cash balances: ')
     diagnostics.print_player_cash_balances(game_elements)
+    logger.debug("printing net worth of each player: ")
+    diagnostics.print_player_net_worths(game_elements)
     logger.debug("Game ran for " + str(tot_time) + " seconds.")
 
     if winner:
