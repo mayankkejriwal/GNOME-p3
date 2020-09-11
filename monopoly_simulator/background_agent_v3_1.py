@@ -1,4 +1,3 @@
-from monopoly_simulator import action_choices
 from monopoly_simulator import agent_helper_functions # helper functions are internal to the agent and will not be recorded in the function log.
 from monopoly_simulator import diagnostics
 from monopoly_simulator import hypothetical_simulator
@@ -554,7 +553,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
                 to_mortgage = agent_helper_functions.identify_potential_mortgage(player,current_location.price,True)
                 if to_mortgage:
                     params['asset'] = to_mortgage.name
-                    logger.debug(player.player_name+ ': I am attempting to mortgage property '+ params['asset'].name)
+                    logger.debug(player.player_name+ ': I am attempting to mortgage property '+ params['asset'])
                     player.agent._agent_memory['previous_action'] = "mortgage_property"
                     return ("mortgage_property", params)
 

@@ -44,4 +44,45 @@ def max_cash_balance(game_elements):
     return max
 
 
+def print_player_net_worths_and_cash_bal(game_elements):
+    """
+    Print net worth and cash bal of the players. Calculated by liquidating properties (based on then prices) and adding cash balance.
+    :param game_elements: A dict. Specifies global gameboard data structure
+    :return: None
+    """
+    for pl in game_elements['players']:
+        networth_p1ayer = 0
+        networth_p1ayer += pl.current_cash
+        if pl.assets:
+            for prop in pl.assets:
+                if prop.loc_class == 'real_estate':
+                    networth_p1ayer += prop.price
+                    networth_p1ayer += prop.num_houses*prop.price_per_house
+                    networth_p1ayer += prop.num_hotels*prop.price_per_house*(game_elements['bank'].house_limit_before_hotel + 1)
+                elif prop.loc_class == 'railroad':
+                    networth_p1ayer += prop.price
+                elif prop.loc_class == 'utility':
+                    networth_p1ayer += prop.price
+        logger.debug(pl.player_name + ' has a cash balance of $' + str(pl.current_cash) + ' and a net worth of $' + str(networth_p1ayer))
 
+
+def print_player_net_worths(game_elements):
+    """
+    Print only net worth of the players. Calculated by liquidating properties (based on then prices) and adding cash balance.
+    :param game_elements: A dict. Specifies global gameboard data structure
+    :return: None
+    """
+    for pl in game_elements['players']:
+        networth_p1ayer = 0
+        networth_p1ayer += pl.current_cash
+        if pl.assets:
+            for prop in pl.assets:
+                if prop.loc_class == 'real_estate':
+                    networth_p1ayer += prop.price
+                    networth_p1ayer += prop.num_houses*prop.price_per_house
+                    networth_p1ayer += prop.num_hotels*prop.price_per_house*(game_elements['bank'].house_limit_before_hotel + 1)
+                elif prop.loc_class == 'railroad':
+                    networth_p1ayer += prop.price
+                elif prop.loc_class == 'utility':
+                    networth_p1ayer += prop.price
+        logger.debug(pl.player_name + ' has a net worth of ' + str(networth_p1ayer))
