@@ -75,6 +75,9 @@ class Bank(object):
             logger.debug(current_gameboard['players'][bidding_player_index].player_name+' will place the first bid')
 
         while len(players_out_of_auction) < len(current_gameboard['players']): # we iterate and bid till just one player remains
+            if winning_player is not None and len(players_out_of_auction) == len(current_gameboard['players']) - 1:
+                logger.debug("Current highest bid player is the last man standing in the auction, hence breaking out of auction loop.")
+                break
             bidding_player = current_gameboard['players'][bidding_player_index]
             if bidding_player in players_out_of_auction:
                 bidding_player_index = (bidding_player_index+1)%len(current_gameboard['players']) # next player
@@ -108,6 +111,7 @@ class Bank(object):
             logger.debug('The current highest bid is '+str(current_bid)+ ' and is held with '+bidding_player.player_name)
             winning_player = bidding_player
             bidding_player_index = (bidding_player_index + 1) % len(current_gameboard['players'])
+
 
         if winning_player:
             winning_player.charge_player(current_bid, current_gameboard, bank_flag=True) # if it got here then current_bid is non-zero.
