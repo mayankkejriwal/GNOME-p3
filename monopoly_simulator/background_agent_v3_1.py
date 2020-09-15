@@ -1,6 +1,5 @@
 from monopoly_simulator import agent_helper_functions # helper functions are internal to the agent and will not be recorded in the function log.
 from monopoly_simulator import diagnostics
-from monopoly_simulator import hypothetical_simulator
 from monopoly_simulator.flag_config import flag_config_dict
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.background_agent')
