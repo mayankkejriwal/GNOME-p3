@@ -419,10 +419,10 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
     player_decision_agents = dict()
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
-    player_decision_agents['player_1'] = Agent(**simple_decision_agent_1.decision_agent_methods)
-    player_decision_agents['player_2'] = Agent(**simple_decision_agent_1.decision_agent_methods)
-    player_decision_agents['player_3'] = Agent(**simple_decision_agent_1.decision_agent_methods)
-    player_decision_agents['player_4'] = Agent(**simple_decision_agent_1.decision_agent_methods)
+    player_decision_agents['player_1'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_2'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_3'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_4'] = Agent(**background_agent_v3_1.decision_agent_methods)
 
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                                  player_decision_agents)
