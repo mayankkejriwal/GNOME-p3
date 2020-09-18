@@ -685,6 +685,9 @@ def make_trade_offer(from_player, offer, to_player):
     - if the properties involved in the trade are improved.
     - if the properties involved in the trade are mortgaged.
     """
+    if to_player.status == 'lost':
+        logger.debug("Trade offer is being made to a player who has lost the game already! Returning failure code.")
+        return flag_config_dict['failure_code']
 
     if to_player.is_trade_offer_outstanding:
         logger.debug(to_player.player_name+' already has a trade offer. You must wait. Returning failure code')
@@ -696,10 +699,10 @@ def make_trade_offer(from_player, offer, to_player):
 
     else:
         logger.debug('Instantiating data structures outstanding_trade_offer and setting is_trade_offer_outstanding to True to enable trade offer to '+to_player.player_name)
+        offer_prop_set = set()
         if len(offer['property_set_offered'])==0:
             logger.debug(from_player.player_name + ' has no properties to offer to ' + to_player.player_name)
         else:
-            offer_prop_set = set()
             for item in offer['property_set_offered']:
                 if item.owned_by != from_player:
                     logger.debug(from_player.player_name+' player does not own ' + item.name +' . Hence cannot make an offer on this property. Returning failure code.')
@@ -713,12 +716,12 @@ def make_trade_offer(from_player, offer, to_player):
                 else:
                     offer_prop_set.add(item)
             logger.debug(from_player.player_name + ' wants to offer properties to ' + to_player.player_name + ' for cash = ' + str(offer['cash_wanted']))
-            to_player.outstanding_trade_offer['property_set_offered'] = offer_prop_set
+        to_player.outstanding_trade_offer['property_set_offered'] = offer_prop_set
 
+        want_prop_set = set()
         if len(offer['property_set_wanted'])==0:
             logger.debug(from_player.player_name + ' wants no properties from ' + to_player.player_name)
         else:
-            want_prop_set = set()
             for item in offer['property_set_wanted']:
                 if item.owned_by != to_player:
                     logger.debug(to_player.player_name+' player does not own ' + item.name +'. Invalid property requested. Returning failure code.')
@@ -732,7 +735,7 @@ def make_trade_offer(from_player, offer, to_player):
                 else:
                     want_prop_set.add(item)
             logger.debug(from_player.player_name + ' wants properties from ' + to_player.player_name + ' by offering cash = ' + str(offer['cash_offered']))
-            to_player.outstanding_trade_offer['property_set_wanted'] = want_prop_set
+        to_player.outstanding_trade_offer['property_set_wanted'] = want_prop_set
 
         to_player.outstanding_trade_offer['cash_offered'] = offer['cash_offered']
         to_player.outstanding_trade_offer['cash_wanted'] = offer['cash_wanted']
@@ -756,9 +759,14 @@ def accept_trade_offer(player, current_gameboard):
     - if the properties involved in the trade are improved.
     - if the properties involved in the trade are mortgaged.
     """
+    if player.outstanding_trade_offer['from_player'].status == 'lost':
+        logger.debug("I have an outstanding trade offer that was made to me by a player that has lost the game! Cannot process trade offer. Returning failure code.")
+        return flag_config_dict['failure_code']
+
     if not player.is_trade_offer_outstanding:
         logger.debug(player.player_name+' does not have outstanding trade offers to accept. Returning failure code')
         return flag_config_dict['failure_code']
+
     else:
         flag_cash_wanted = 0
         flag_cash_offered = 1

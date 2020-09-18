@@ -88,13 +88,13 @@ def identify_potential_sale(player, current_gameboard, amount_to_raise, lone_con
             continue
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
-        elif a.price*current_gameboard['bank'].total_cash_with_bank < amount_to_raise:
+        elif a.price*current_gameboard['bank'].property_sell_percentage < amount_to_raise:
             continue
         elif lone_constraint:
             if is_property_lone(player, a):
                 continue
         # a is a potential sale, and its sale price meets our fundraising bar.
-        potentials.append((a, a.price*current_gameboard['bank'].total_cash_with_bank))
+        potentials.append((a, a.price*current_gameboard['bank'].property_sell_percentage))
 
     if len(potentials) == 0:
         return None  # nothing got identified
@@ -148,7 +148,7 @@ def identify_improvement_opportunity(player, current_gameboard):
         param['current_gameboard'] = current_gameboard
         param['add_house'] = True
         param['add_hotel'] = False
-        if param ['asset'].num_houses == 4:
+        if param ['asset'].num_houses == current_gameboard['bank'].house_limit_before_hotel:
             param['add_hotel'] = True
             param['add_house'] = False
         return param

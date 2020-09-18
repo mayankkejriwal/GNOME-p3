@@ -687,11 +687,11 @@ def handle_negative_cash_balance(player, current_gameboard):
         if a.color in player.full_color_sets_possessed:
             continue
         elif a.is_mortgaged:
-            sale_potentials.append((a, (a.price*current_gameboard['bank'].total_cash_with_bank)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
+            sale_potentials.append((a, (a.price*current_gameboard['bank'].property_sell_percentage)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
         else:
-            sale_potentials.append((a,a.price*current_gameboard['bank'].total_cash_with_bank))
+            sale_potentials.append((a,a.price*current_gameboard['bank'].property_sell_percentage))
 
     if sale_potentials: # if the second condition is not met, no point in mortgaging
         sorted_potentials = sorted(sale_potentials, key=lambda x: x[1])  # sort by mortgage in ascending order
@@ -717,11 +717,11 @@ def handle_negative_cash_balance(player, current_gameboard):
     sorted_player_assets_list = _set_to_sorted_list_assets(player.assets)
     for a in sorted_player_assets_list:
         if a.is_mortgaged:
-            sale_potentials.append((a, (a.price*current_gameboard['bank'].total_cash_with_bank)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
+            sale_potentials.append((a, (a.price*current_gameboard['bank'].property_sell_percentage)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
         else:
-            sale_potentials.append((a,a.price*current_gameboard['bank'].total_cash_with_bank))
+            sale_potentials.append((a,a.price*current_gameboard['bank'].property_sell_percentage))
 
     if sale_potentials:
         sorted_potentials = sorted(sale_potentials, key=lambda x: x[1])  # sort by sell value in ascending order
@@ -806,11 +806,11 @@ def handle_negative_cash_balance(player, current_gameboard):
         if a.color in player.full_color_sets_possessed:
             continue
         elif a.is_mortgaged:
-            sale_potentials.append((a, (a.price*current_gameboard['bank'].total_cash_with_bank)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
+            sale_potentials.append((a, (a.price*current_gameboard['bank'].property_sell_percentage)-((1+current_gameboard['bank'].mortgage_percentage)*a.mortgage)))
         elif a.loc_class=='real_estate' and (a.num_houses>0 or a.num_hotels>0):
             continue
         else:
-            sale_potentials.append((a, a.price*current_gameboard['bank'].total_cash_with_bank))
+            sale_potentials.append((a, a.price*current_gameboard['bank'].property_sell_percentage))
 
     if sale_potentials: # if the second condition is not met, no point in mortgaging
         sorted_potentials = sorted(sale_potentials, key=lambda x: x[1])  # sort by mortgage in ascending order
