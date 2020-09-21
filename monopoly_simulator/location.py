@@ -52,9 +52,9 @@ class Location(object):
                 logger.debug("Bank has insufficient funds!!!  Rejected Transaction!!")
                 return flag_config_dict['failure_code']
             else:
+                player.remove_asset(self)
                 if self.is_mortgaged:
                     self.is_mortgaged = False
-                player.remove_asset(self)
                 # add to game history
                 current_gameboard['history']['function'].append(player.remove_asset)
                 params = dict()
@@ -63,12 +63,12 @@ class Location(object):
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
                 self.owned_by = current_gameboard['bank']
-            return cash_due - cash_owed
+                return cash_due - cash_owed
 
         else:
+            player.remove_asset(self)
             if self.is_mortgaged:
                 self.is_mortgaged = False
-            player.remove_asset(self)
             # add to game history
             current_gameboard['history']['function'].append(player.remove_asset)
             params = dict()
