@@ -404,7 +404,7 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
         if asset.num_hotels == current_gameboard['bank'].hotel_limit:
             logger.debug('There is already ' + str(current_gameboard['bank'].hotel_limit) + ' hotel(s) here. You cannot exceed this limit. Returning failure code')
             return flag_config_dict['failure_code']
-        elif asset.num_houses != current_gameboard['bank'].house_limit_before_hotel:
+        elif asset.num_hotels == 0 and asset.num_houses != current_gameboard['bank'].house_limit_before_hotel:
             logger.debug('You need to have ' + str(current_gameboard['bank'].house_limit_before_hotel)
                          + ' houses before you can build a hotel...Returning failure code')
             return flag_config_dict['failure_code']
@@ -422,7 +422,7 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
                 break
         if flag:
             if current_gameboard['bank'].improvement_possible(player, asset, current_gameboard, add_house=False, add_hotel=True):
-                logger.debug('Improving asset and updating num_total_hotels and num_total_houses.')
+                logger.debug('Improving asset and updating num_total_hotels and num_total_houses. Currently property has ' + str(asset.num_hotels))
                 player.num_total_hotels += 1
                 player.num_total_houses -= asset.num_houses
                 logger.debug(player.player_name+' now has num_total_hotels '+str(player.num_total_hotels)+' and num_total_houses '+str(player.num_total_houses))
@@ -455,7 +455,7 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
             return flag_config_dict['failure_code']
 
     elif add_house:
-        logger.debug('Looking to improve '+asset.name+' by adding a house.')
+        logger.debug('Looking to improve '+asset.name+' by adding a house. Currently property has ' + str(asset.num_houses))
         if asset.num_hotels > 0 or asset.num_houses == current_gameboard['bank'].house_limit_before_hotel:
             logger.debug('There is already a hotel here or you have built the max number of houses that you can on a property. '
                          'You are not permitted another house. Returning failure code')

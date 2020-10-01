@@ -207,7 +207,7 @@ def bank_cash_transaction(player, card, current_gameboard):
     elif card.amount > 0:
         code = player.receive_cash(card.amount, current_gameboard, bank_flag=True)
         # add to game history
-        if code == 1:
+        if code == flag_config_dict['successful_action']:
             current_gameboard['history']['function'].append(player.receive_cash)
             params = dict()
             params['self'] = player
@@ -239,7 +239,7 @@ def player_cash_transaction(player, card, current_gameboard):
 
             code = p.receive_cash(-1*card.amount_per_player, current_gameboard, bank_flag=False)
             # add to game history
-            if code == 1:
+            if code == flag_config_dict['successful_action']:
                 current_gameboard['history']['function'].append(p.receive_cash)
                 params = dict()
                 params['self'] = p
@@ -269,7 +269,7 @@ def player_cash_transaction(player, card, current_gameboard):
 
             code = player.receive_cash(card.amount_per_player, current_gameboard, bank_flag=False)
             # add to game history
-            if code == 1:
+            if code == flag_config_dict['successful_action']:
                 current_gameboard['history']['function'].append(player.receive_cash)
                 params = dict()
                 params['self'] = player
@@ -385,7 +385,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
             current_gameboard['auxiliary_check_for_go'](player, min_utility_position, current_gameboard)
         code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
         # add to game history
-        if code == 1:
+        if code == flag_config_dict['successful_action']:
             current_gameboard['history']['function'].append(player.receive_cash)
             params = dict()
             params['self'] = player
@@ -441,7 +441,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
 
         current_owner = current_loc.owned_by
         code = current_owner.receive_cash(amount_due, current_gameboard, bank_flag=False)
-        if code == 1:
+        if code == flag_config_dict['successful_action']:
             # add to game history
             current_gameboard['history']['function'].append(current_owner.receive_cash)
             params = dict()
@@ -492,7 +492,7 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
             current_gameboard['auxiliary_check_for_go'](player, min_railroad_position, current_gameboard)
         code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
         # add to game history
-        if code == 1:
+        if code == flag_config_dict['successful_action']:
             current_gameboard['history']['function'].append(player.receive_cash)
             params = dict()
             params['self'] = player
@@ -548,7 +548,7 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
 
         current_owner = current_loc.owned_by
         code = current_owner.receive_cash(amount_due, current_gameboard, bank_flag=False)
-        if code == 1:
+        if code == flag_config_dict['successful_action']:
             # add to game history
             current_gameboard['history']['function'].append(current_owner.receive_cash)
             params = dict()
@@ -639,7 +639,7 @@ def move_player_after_die_roll(player, rel_move, current_gameboard, check_for_go
             logger.debug(player.player_name+' passes Go.')
             code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
             # add to game history
-            if code == 1:
+            if code == flag_config_dict['successful_action']:
                 current_gameboard['history']['function'].append(player.receive_cash)
                 params = dict()
                 params['self'] = player
@@ -725,7 +725,7 @@ def _move_player__check_for_go(player, new_position, current_gameboard):
             current_gameboard['auxiliary_check_for_go'](player, new_position, current_gameboard)
         code = player.receive_cash(go_increment, current_gameboard, bank_flag=True)
         # add to game history
-        if code == 1:
+        if code == flag_config_dict['successful_action']:
             current_gameboard['history']['function'].append(player.receive_cash)
             params = dict()
             params['self'] = player

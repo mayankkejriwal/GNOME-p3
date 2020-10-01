@@ -369,7 +369,7 @@ class Player(object):
                 recipient = current_location.owned_by
                 code = recipient.receive_cash(dues, current_gameboard, bank_flag=False)
                 # add to game history
-                if code == 1:
+                if code == action_choices.flag_config_dict['successful_action']:
                     current_gameboard['history']['function'].append(recipient.receive_cash)
                     params = dict()
                     params['self'] = recipient
@@ -422,7 +422,7 @@ class Player(object):
                 recipient = current_location.owned_by
                 code = recipient.receive_cash(dues, current_gameboard, bank_flag=False)
                 # add to game history
-                if code == 1:
+                if code == action_choices.flag_config_dict['successful_action']:
                     current_gameboard['history']['function'].append(recipient.receive_cash)
                     params = dict()
                     params['self'] = recipient
@@ -507,7 +507,7 @@ class Player(object):
         recipient = current_loc.owned_by
         code = recipient.receive_cash(rent, current_gameboard, bank_flag=False)
         # add to game history
-        if code == 1:
+        if code == action_choices.flag_config_dict['successful_action']:
             current_gameboard['history']['function'].append(recipient.receive_cash)
             params = dict()
             params['self'] = recipient
