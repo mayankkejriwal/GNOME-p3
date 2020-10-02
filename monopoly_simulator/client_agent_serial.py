@@ -214,6 +214,23 @@ def handle_negative_cash_balance(serial_dict_to_client):
     return return_to_server_dict
 
 
+def shutdown(serial_dict_to_client, agent):
+    '''
+    This is an example of how you can return whether novelty was detected or not through the shutdown routine.
+    Note: Feel free to modify this code inside this function to whatever works best for you. Using the _agent_memory is just an example of
+    how to store novelty detection info when novelty gets detected by your agent. You could store it in whichever way you wish.
+    All that we require from you is an int return value that tells us that you detected novelty in this game or not.
+    :param serial_dict_to_client:
+    :param agent:
+    :return: 0->novelty not detected,   1->novelty detected
+    '''
+
+    if 'novelty_detection' in agent._agent_memory:
+        return agent._agent_memory['novelty_detection']
+    else:
+        return 0
+
+
 def _build_decision_agent_methods_dict():
     """
     This function builds the decision agent methods dictionary.
@@ -279,7 +296,8 @@ class ClientAgent(Agent):
 
             # When each game ends, we run the KG, but we don not shutdown the connection
             elif func_name == 'shutdown':
-                result = 1
+                serial_dict_to_client = data_dict_from_server
+                result = shutdown(serial_dict_to_client, self)
                 self.logger.info(str(self.game_num) + ' th game stops!')
 
             # When calling agent to make decision
