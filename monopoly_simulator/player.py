@@ -827,7 +827,7 @@ class Player(object):
         allowable_actions.add("concluded_actions")
         allowable_actions.remove("skip_turn") # from this time on, skip turn is not allowed.current_gameboard['bank'].total_houses += asset.num_houses
         count = 0
-        while count < 50: # the player is allowed up to 50 actions before we force conclude actions.
+        while count < 4: # the player is allowed up to 4 actions before we force conclude actions.
             count += 1
             if action_to_execute == "concluded_actions":
                 action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
@@ -959,7 +959,7 @@ class Player(object):
         allowable_actions.add("concluded_actions")
         allowable_actions.remove("skip_turn")  # from this time on, skip turn is not allowed.
         count = 0
-        while count < 50:  # the player is allowed up to 50 actions before we force conclude actions.
+        while count < 4:  # the player is allowed up to 4 actions before we force conclude actions.
             count += 1
             if action_to_execute == "concluded_actions":
                 action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
@@ -1080,7 +1080,7 @@ class Player(object):
             return self._execute_action(action_to_execute_temp, parameters_temp, current_gameboard) # now we can conclude actions
 
         count = 0
-        while count < 50:  # the player is allowed up to 50 actions before we force conclude actions.
+        while count < 4:  # the player is allowed up to 4 actions before we force conclude actions.
             count += 1
             if action_to_execute == "concluded_actions":
                 action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
