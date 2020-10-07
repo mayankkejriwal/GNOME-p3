@@ -857,7 +857,20 @@ class Player(object):
         if 'auxiliary_after_pre_roll_check' in current_gameboard:
             current_gameboard['auxiliary_after_pre_roll_check'](self, current_gameboard, allowable_actions, code)
 
-        t = (action_to_execute, parameters)
+        action_to_execute_temp = None
+        parameters_temp = None
+
+        if isinstance(action_to_execute, list):
+            action_to_execute_temp = list()
+            parameters_temp = list()
+            for i in range(len(action_to_execute)):
+                action_to_execute_temp.append(Player._resolve_function_names_to_pointers(action_to_execute[i], self, current_gameboard))
+                parameters_temp.append(Player._populate_param_dict(parameters[i], self, current_gameboard))
+        else:
+            action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
+            parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
+
+        t = (action_to_execute, parameters_temp)
         # add to game history
         current_gameboard['history']['function'].append(self.agent.make_pre_roll_move)
         params = dict()
@@ -871,8 +884,6 @@ class Player(object):
         current_gameboard['history']['return'].append(t)
 
         if action_to_execute == 'skip_turn':
-            action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
-            parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
             if self.is_property_offer_outstanding:
                 # player is clearly unwilling to accept the offer, so we negate it
                 self.is_property_offer_outstanding = False
@@ -892,11 +903,9 @@ class Player(object):
         allowable_actions.add("concluded_actions")
         allowable_actions.remove("skip_turn") # from this time on, skip turn is not allowed.current_gameboard['bank'].total_houses += asset.num_houses
         count = 0
-        while count < 50: # the player is allowed up to 50 actions before we force conclude actions.
+        while count < 4: # the player is allowed up to 4 actions before we force conclude actions.
             count += 1
             if action_to_execute == "concluded_actions":
-                action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
-                parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
                 if self.is_property_offer_outstanding:
                     # player is clearly unwilling to accept the offer, so we negate it
                     self.is_property_offer_outstanding = False
@@ -920,14 +929,10 @@ class Player(object):
                 if isinstance(action_to_execute, list):
                     code = []
                     for i in range(len(action_to_execute)):
-                        action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute[i], self, current_gameboard)
-                        parameters_temp = Player._populate_param_dict(parameters[i], self, current_gameboard)
-                        code_ret = self._execute_action(action_to_execute_temp, parameters_temp, current_gameboard)
+                        code_ret = self._execute_action(action_to_execute_temp[i], parameters_temp[i], current_gameboard)
                         logger.debug('Received code '+ str(code_ret)+ '. Continuing iteration...')
                         code.append(code_ret)
                 else:
-                    action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
-                    parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
                     code = self._execute_action(action_to_execute_temp, parameters_temp, current_gameboard)
                     logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
                     allowable_actions = self.compute_allowable_pre_roll_actions(current_gameboard)
@@ -938,7 +943,17 @@ class Player(object):
                 if 'auxiliary_after_pre_roll_check' in current_gameboard:
                     current_gameboard['auxiliary_after_pre_roll_check'](self, current_gameboard, allowable_actions, code)
 
-                t = (action_to_execute, parameters)
+                if isinstance(action_to_execute, list):
+                    action_to_execute_temp = list()
+                    parameters_temp = list()
+                    for i in range(len(action_to_execute)):
+                        action_to_execute_temp.append(Player._resolve_function_names_to_pointers(action_to_execute[i], self, current_gameboard))
+                        parameters_temp.append(Player._populate_param_dict(parameters[i], self, current_gameboard))
+                else:
+                    action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
+                    parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
+
+                t = (action_to_execute, parameters_temp)
                 # add to game history
                 current_gameboard['history']['function'].append(self.agent.make_pre_roll_move)
                 params = dict()
@@ -968,6 +983,7 @@ class Player(object):
             self.outstanding_trade_offer['from_player'] = None
         return self._execute_action(action_choices.concluded_actions, dict(), current_gameboard)  # now we can conclude actions
 
+
     def make_out_of_turn_moves(self, current_gameboard):
         """
         The player's out-of-turn phase. The function will only return either if the player skips the turn on the first move,
@@ -989,7 +1005,20 @@ class Player(object):
         if 'auxiliary_after_out_of_turn_check' in current_gameboard:
             current_gameboard['auxiliary_after_out_of_turn_check'](self, current_gameboard, allowable_actions, code)
 
-        t = (action_to_execute, parameters)
+        action_to_execute_temp = None
+        parameters_temp = None
+
+        if isinstance(action_to_execute, list):
+            action_to_execute_temp = list()
+            parameters_temp = list()
+            for i in range(len(action_to_execute)):
+                action_to_execute_temp.append(Player._resolve_function_names_to_pointers(action_to_execute[i], self, current_gameboard))
+                parameters_temp.append(Player._populate_param_dict(parameters[i], self, current_gameboard))
+        else:
+            action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
+            parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
+
+        t = (action_to_execute, parameters_temp)
         # add to game history
         current_gameboard['history']['function'].append(self.agent.make_out_of_turn_move)
         params = dict()
@@ -1003,8 +1032,6 @@ class Player(object):
         current_gameboard['history']['return'].append(t)
 
         if action_to_execute == "skip_turn":
-            action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
-            parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
             if self.is_property_offer_outstanding:
                 # player is clearly unwilling to accept the offer, so we negate it
                 self.is_property_offer_outstanding = False
@@ -1024,11 +1051,9 @@ class Player(object):
         allowable_actions.add("concluded_actions")
         allowable_actions.remove("skip_turn")  # from this time on, skip turn is not allowed.
         count = 0
-        while count < 50:  # the player is allowed up to 50 actions before we force conclude actions.
+        while count < 4:  # the player is allowed up to 4 actions before we force conclude actions.
             count += 1
             if action_to_execute == "concluded_actions":
-                action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
-                parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
                 if self.is_property_offer_outstanding:
                     # player is clearly unwilling to accept the offer, so we negate it
                     self.is_property_offer_outstanding = False
@@ -1052,14 +1077,10 @@ class Player(object):
                 if isinstance(action_to_execute, list):
                     code = []
                     for i in range(len(action_to_execute)):
-                        action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute[i], self, current_gameboard)
-                        parameters_temp = Player._populate_param_dict(parameters[i], self, current_gameboard)
-                        code_ret = self._execute_action(action_to_execute_temp, parameters_temp, current_gameboard)
+                        code_ret = self._execute_action(action_to_execute_temp[i], parameters_temp[i], current_gameboard)
                         logger.debug('Received code '+ str(code_ret)+ '. Continuing iteration...')
                         code.append(code_ret)
                 else:
-                    action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
-                    parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
                     code = self._execute_action(action_to_execute_temp, parameters_temp, current_gameboard)
                     logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
 
@@ -1070,7 +1091,17 @@ class Player(object):
                 if 'auxiliary_after_out_of_turn_check' in current_gameboard:
                     current_gameboard['auxiliary_after_out_of_turn_check'](self, current_gameboard, allowable_actions, code)
 
-                t = (action_to_execute, parameters)
+                if isinstance(action_to_execute, list):
+                    action_to_execute_temp = list()
+                    parameters_temp = list()
+                    for i in range(len(action_to_execute)):
+                        action_to_execute_temp.append(Player._resolve_function_names_to_pointers(action_to_execute[i], self, current_gameboard))
+                        parameters_temp.append(Player._populate_param_dict(parameters[i], self, current_gameboard))
+                else:
+                    action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
+                    parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
+
+                t = (action_to_execute, parameters_temp)
                 # add to game history
                 current_gameboard['history']['function'].append(self.agent.make_out_of_turn_move)
                 params = dict()
@@ -1123,7 +1154,10 @@ class Player(object):
         if 'auxiliary_after_post_roll_check' in current_gameboard:
             current_gameboard['auxiliary_after_post_roll_check'](self, current_gameboard, allowable_actions, code)
 
-        t = (action_to_execute, parameters)
+        action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
+        parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
+
+        t = (action_to_execute, parameters_temp)
         # add to game history
         current_gameboard['history']['function'].append(self.agent.make_post_roll_move)
         params = dict()
@@ -1137,22 +1171,16 @@ class Player(object):
         current_gameboard['history']['return'].append(t)
 
         if action_to_execute == "concluded_actions":
-            action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
-            parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
             self._force_buy_outcome(current_gameboard) # if option to buy is not set, this will make no difference.
             return self._execute_action(action_to_execute_temp, parameters_temp, current_gameboard) # now we can conclude actions
 
         count = 0
-        while count < 50:  # the player is allowed up to 50 actions before we force conclude actions.
+        while count < 4:  # the player is allowed up to 4 actions before we force conclude actions.
             count += 1
             if action_to_execute == "concluded_actions":
-                action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
-                parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
                 self._force_buy_outcome(current_gameboard)
                 return self._execute_action(action_to_execute_temp, parameters_temp, current_gameboard)  # now we can conclude actions
             else:
-                action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
-                parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
                 code = self._execute_action(action_to_execute_temp, parameters_temp, current_gameboard)
                 logger.debug('Received code '+ str(code)+ '. Continuing iteration...')
                 allowable_actions = self.compute_allowable_post_roll_actions(current_gameboard)
@@ -1163,7 +1191,10 @@ class Player(object):
                 if 'auxiliary_after_post_roll_check' in current_gameboard:
                     current_gameboard['auxiliary_after_post_roll_check'](self, current_gameboard, allowable_actions, code)
 
-                t = (action_to_execute, parameters)
+                action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
+                parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
+
+                t = (action_to_execute, parameters_temp)
                 # add to game history
                 current_gameboard['history']['function'].append(self.agent.make_post_roll_move)
                 params = dict()
@@ -1179,6 +1210,7 @@ class Player(object):
 
         self._force_buy_outcome(current_gameboard) # if we got here, we need to conclude actions
         return self._execute_action(action_choices.concluded_actions, dict(), current_gameboard)  # now we can conclude actions
+
 
     def handle_negative_cash_balance(self, current_gameboard):
         """
