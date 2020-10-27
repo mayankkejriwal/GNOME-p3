@@ -407,7 +407,7 @@ def play_game():
             return winner
 
 
-def play_game_in_tournament(game_seed, inject_novelty_function=None):
+def play_game_in_tournament(game_seed, novelty_info=False, inject_novelty_function=None):
     logger.debug('seed used: ' + str(game_seed))
     player_decision_agents = dict()
     # for p in ['player_1','player_3']:
@@ -432,25 +432,66 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
     if inject_novelty_function:
         inject_novelty_function(game_elements)
 
-    if player_decision_agents['player_1'].startup(game_elements) == flag_config_dict['failure_code'] or \
-            player_decision_agents['player_2'].startup(game_elements) == flag_config_dict['failure_code'] or \
-            player_decision_agents['player_3'].startup(game_elements) == flag_config_dict['failure_code'] or \
-            player_decision_agents['player_4'].startup(game_elements) == flag_config_dict['failure_code']:
-        logger.error("Error in initializing agents. Cannot play the game.")
-        return None
-    else:
-        logger.debug("Sucessfully initialized all player agents.")
-        winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
-        if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
-                player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
-                player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
-                player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
-            logger.error("Error in agent shutdown.")
+    if not novelty_info:
+        if player_decision_agents['player_1'].startup(game_elements) == flag_config_dict['failure_code'] or \
+                player_decision_agents['player_2'].startup(game_elements) == flag_config_dict['failure_code'] or \
+                player_decision_agents['player_3'].startup(game_elements) == flag_config_dict['failure_code'] or \
+                player_decision_agents['player_4'].startup(game_elements) == flag_config_dict['failure_code']:
+            logger.error("Error in initializing agents. Cannot play the game.")
             return None
         else:
-            logger.debug("All player agents have been shutdown. ")
-            logger.debug("GAME OVER")
-            return winner
-
+            logger.debug("Sucessfully initialized all player agents.")
+            winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
+            if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
+                logger.error("Error in agent shutdown.")
+                return None
+            else:
+                logger.debug("All player agents have been shutdown. ")
+                logger.debug("GAME OVER")
+                return winner
+    else:
+        if inject_novelty_function:
+            if player_decision_agents['player_1'].startup(game_elements, indicator=True) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_2'].startup(game_elements, indicator=True) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_3'].startup(game_elements, indicator=True) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_4'].startup(game_elements, indicator=True) == flag_config_dict['failure_code']:
+                logger.error("Error in initializing agents. Cannot play the game.")
+                return None
+            else:
+                logger.debug("Sucessfully initialized all player agents.")
+                winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
+                if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
+                    logger.error("Error in agent shutdown.")
+                    return None
+                else:
+                    logger.debug("All player agents have been shutdown. ")
+                    logger.debug("GAME OVER")
+                    return winner
+        else:
+            if player_decision_agents['player_1'].startup(game_elements, indicator=False) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_2'].startup(game_elements, indicator=False) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_3'].startup(game_elements, indicator=False) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_4'].startup(game_elements, indicator=False) == flag_config_dict['failure_code']:
+                logger.error("Error in initializing agents. Cannot play the game.")
+                return None
+            else:
+                logger.debug("Sucessfully initialized all player agents.")
+                winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
+                if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
+                    logger.error("Error in agent shutdown.")
+                    return None
+                else:
+                    logger.debug("All player agents have been shutdown. ")
+                    logger.debug("GAME OVER")
+                    return winner
 
 # play_game()

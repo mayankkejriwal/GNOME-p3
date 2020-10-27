@@ -1,15 +1,9 @@
 from monopoly_simulator import initialize_game_elements
 from monopoly_simulator.action_choices import roll_die
 import numpy as np
-from monopoly_simulator import background_agent_v1
-from monopoly_simulator import background_agent_v1_deprecated
-from monopoly_simulator import background_agent_v2
-from monopoly_simulator import background_agent_v3
-from monopoly_simulator import background_agent_v3_1
-from monopoly_simulator import baseline_agent
-from monopoly_simulator import read_write_current_state
-from monopoly_simulator import simple_decision_agent_1
 from monopoly_simulator import card_utility_actions
+from monopoly_simulator import background_agent_v3_1
+from monopoly_simulator import read_write_current_state
 import json
 from monopoly_simulator import diagnostics
 from monopoly_simulator import novelty_generator
@@ -20,6 +14,9 @@ from monopoly_simulator.logging_info import log_file_create
 import os
 import time
 from monopoly_simulator.server_agent_serial import ServerAgent
+
+import logging
+logger = logging.getLogger('monopoly_simulator.logging_info')
 
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info')
@@ -142,20 +139,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
         # but only if we're not in jail.
 
         logger.debug("Printing cash balance and net worth of each player: ")
-        for pl in game_elements['players']:
-            networth_p1ayer = 0
-            networth_p1ayer += pl.current_cash
-            if pl.assets:
-                for prop in pl.assets:
-                    if prop.loc_class == 'real_estate':
-                        networth_p1ayer += prop.price
-                        networth_p1ayer += prop.num_houses*prop.price_per_house
-                        networth_p1ayer += prop.num_hotels*prop.price_per_house*(game_elements['bank'].house_limit_before_hotel + 1)
-                    elif prop.loc_class == 'railroad':
-                        networth_p1ayer += prop.price
-                    elif prop.loc_class == 'utility':
-                        networth_p1ayer += prop.price
-            logger.debug(pl.player_name + ' has a cash balance of $' + str(pl.current_cash) + ' and a net worth of $' + str(networth_p1ayer))
+        diagnostics.print_player_net_worths_and_cash_bal(game_elements)
 
         r = roll_die(game_elements['dies'], np.random.choice)
         for i in range(len(r)):
@@ -250,7 +234,6 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
             diagnostics.print_asset_owners(game_elements)
             diagnostics.print_player_cash_balances(game_elements)
             logger.debug("Game ran for " + str(tot_time) + " seconds.")
-            logger.debug("Game terminated since max cash balance exceeded limit.")
             break
 
         #This is an example of how you may want to write out gameboard state to file.
@@ -283,6 +266,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
     logger.debug('number of dice rolls: ' + str(num_die_rolls))
     logger.debug('printing final cash balances: ')
     diagnostics.print_player_cash_balances(game_elements)
+    logger.debug("printing net worth of each player: ")
+    diagnostics.print_player_net_worths(game_elements)
     logger.debug("Game ran for " + str(tot_time) + " seconds.")
 
     if winner:
@@ -450,19 +435,19 @@ def play_game():
             return winner
 
 
-def play_game_in_tournament(game_seed, inject_novelty_function=None):
+def play_game_in_tournament(game_seed, novelty_info=False, inject_novelty_function=None):
     logger.debug('seed used: ' + str(game_seed))
     player_decision_agents = dict()
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
-    player_decision_agents['player_1'] = Agent(**background_agent_v3.decision_agent_methods)
-    player_decision_agents['player_2'] = Agent(**background_agent_v3.decision_agent_methods)
-    player_decision_agents['player_3'] = Agent(**background_agent_v3.decision_agent_methods)
-    player_decision_agents['player_4'] = Agent(**background_agent_v3.decision_agent_methods)
+    player_decision_agents['player_1'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_2'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_3'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_4'] = Agent(**background_agent_v3_1.decision_agent_methods)
 
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                                  player_decision_agents)
-    
+
     #Comment out the above line and uncomment the piece of code to read the gameboard state from an existing json file so that
     #the game starts from a particular game state instead of initializing the gameboard with default start values.
     #Note that the novelties introduced in that particular game which was saved to file will be loaded into this game board as well.
@@ -475,25 +460,173 @@ def play_game_in_tournament(game_seed, inject_novelty_function=None):
     if inject_novelty_function:
         inject_novelty_function(game_elements)
 
-    if player_decision_agents['player_1'].startup(game_elements) == flag_config_dict['failure_code'] or \
-            player_decision_agents['player_2'].startup(game_elements) == flag_config_dict['failure_code'] or \
-            player_decision_agents['player_3'].startup(game_elements) == flag_config_dict['failure_code'] or \
-            player_decision_agents['player_4'].startup(game_elements) == flag_config_dict['failure_code']:
-        logger.error("Error in initializing agents. Cannot play the game.")
-        return None
-    else:
-        logger.debug("Sucessfully initialized all player agents.")
-        winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
-        if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
-            player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
-            player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
-            player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
-            logger.error("Error in agent shutdown.")
+    if not novelty_info:
+        if player_decision_agents['player_1'].startup(game_elements) == flag_config_dict['failure_code'] or \
+                player_decision_agents['player_2'].startup(game_elements) == flag_config_dict['failure_code'] or \
+                player_decision_agents['player_3'].startup(game_elements) == flag_config_dict['failure_code'] or \
+                player_decision_agents['player_4'].startup(game_elements) == flag_config_dict['failure_code']:
+            logger.error("Error in initializing agents. Cannot play the game.")
             return None
         else:
-            logger.debug("All player agents have been shutdown. ")
-            logger.debug("GAME OVER")
-            return winner
+            logger.debug("Sucessfully initialized all player agents.")
+            winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
+            if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
+                logger.error("Error in agent shutdown.")
+                return None
+            else:
+                logger.debug("All player agents have been shutdown. ")
+                logger.debug("GAME OVER")
+                return winner
+    else:
+        if inject_novelty_function:
+            if player_decision_agents['player_1'].startup(game_elements, indicator=True) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_2'].startup(game_elements, indicator=True) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_3'].startup(game_elements, indicator=True) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_4'].startup(game_elements, indicator=True) == flag_config_dict['failure_code']:
+                logger.error("Error in initializing agents. Cannot play the game.")
+                return None
+            else:
+                logger.debug("Sucessfully initialized all player agents.")
+                winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
+                if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
+                    logger.error("Error in agent shutdown.")
+                    return None
+                else:
+                    logger.debug("All player agents have been shutdown. ")
+                    logger.debug("GAME OVER")
+                    return winner
+        else:
+            if player_decision_agents['player_1'].startup(game_elements, indicator=False) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_2'].startup(game_elements, indicator=False) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_3'].startup(game_elements, indicator=False) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_4'].startup(game_elements, indicator=False) == flag_config_dict['failure_code']:
+                logger.error("Error in initializing agents. Cannot play the game.")
+                return None
+            else:
+                logger.debug("Sucessfully initialized all player agents.")
+                winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
+                if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
+                    logger.error("Error in agent shutdown.")
+                    return None
+                else:
+                    logger.debug("All player agents have been shutdown. ")
+                    logger.debug("GAME OVER")
+                    return winner
+
+
+def play_game_in_tournament_socket(game_seed, agent1, agent2, agent3, agent4, novelty_info=False, inject_novelty_function=None):
+    """
+    Use this function if you want to test a single game instance and control lots of things. For experiments, we will directly
+    call some of the functions in gameplay from test_harness.py.
+
+    This is where everything begins. Assign decision agents to your players, set up the board and start simulating! You can
+    control any number of players you like, and assign the rest to the simple agent. We plan to release a more sophisticated
+    but still relatively simple agent soon.
+    :return: String. the name of the player who won the game, if there was a winner, otherwise None.
+    """
+    print("using seed: ", game_seed)
+    try:
+        os.makedirs('../single_tournament/')
+        print('Creating folder and logging gameplay.')
+    except:
+        print('Logging gameplay.')
+
+    logger = log_file_create('../single_tournament/seed_6.log')
+    player_decision_agents = dict()
+
+    if agent1 is not None:
+        player_decision_agents['player_1'] = agent1
+    else:
+        player_decision_agents['player_1'] = Agent(**background_agent_v3_1.decision_agent_methods)
+    player_decision_agents['player_2'] = Agent(**agent2.decision_agent_methods)
+    player_decision_agents['player_3'] = Agent(**agent3.decision_agent_methods)
+    player_decision_agents['player_4'] = Agent(**agent4.decision_agent_methods)
+
+    game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
+                                 player_decision_agents)
+
+    #Comment out the above line and uncomment the piece of code to read the gameboard state from an existing json file so that
+    #the game starts from a particular game state instead of initializing the gameboard with default start values.
+    #Note that the novelties introduced in that particular game which was saved to file will be loaded into this game board as well.
+    '''
+    logger.debug("Loading gameboard from an existing game state that was saved to file.")
+    infile = '../current_gameboard_state.json'
+    game_elements = read_write_current_state.read_in_current_state_from_file(infile, player_decision_agents)
+    '''
+
+    if inject_novelty_function:
+        inject_novelty_function(game_elements)
+
+    if not novelty_info:
+        if player_decision_agents['player_1'].startup(game_elements) == flag_config_dict['failure_code'] or \
+                player_decision_agents['player_2'].startup(game_elements) == flag_config_dict['failure_code'] or \
+                player_decision_agents['player_3'].startup(game_elements) == flag_config_dict['failure_code'] or \
+                player_decision_agents['player_4'].startup(game_elements) == flag_config_dict['failure_code']:
+            logger.error("Error in initializing agents. Cannot play the game.")
+            return None
+        else:
+            logger.debug("Sucessfully initialized all player agents.")
+            winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
+            if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
+                logger.error("Error in agent shutdown.")
+                return None
+            else:
+                logger.debug("All player agents have been shutdown. ")
+                logger.debug("GAME OVER")
+                return winner
+    else:
+        if inject_novelty_function:
+            if player_decision_agents['player_1'].startup(game_elements, indicator=True) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_2'].startup(game_elements, indicator=True) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_3'].startup(game_elements, indicator=True) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_4'].startup(game_elements, indicator=True) == flag_config_dict['failure_code']:
+                logger.error("Error in initializing agents. Cannot play the game.")
+                return None
+            else:
+                logger.debug("Sucessfully initialized all player agents.")
+                winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
+                if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
+                    logger.error("Error in agent shutdown.")
+                    return None
+                else:
+                    logger.debug("All player agents have been shutdown. ")
+                    logger.debug("GAME OVER")
+                    return winner
+        else:
+            if player_decision_agents['player_1'].startup(game_elements, indicator=False) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_2'].startup(game_elements, indicator=False) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_3'].startup(game_elements, indicator=False) == flag_config_dict['failure_code'] or \
+                    player_decision_agents['player_4'].startup(game_elements, indicator=False) == flag_config_dict['failure_code']:
+                logger.error("Error in initializing agents. Cannot play the game.")
+                return None
+            else:
+                logger.debug("Sucessfully initialized all player agents.")
+                winner = simulate_game_instance(game_elements, history_log_file=None, np_seed=game_seed)
+                if player_decision_agents['player_1'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_2'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_3'].shutdown() == flag_config_dict['failure_code'] or \
+                        player_decision_agents['player_4'].shutdown() == flag_config_dict['failure_code']:
+                    logger.error("Error in agent shutdown.")
+                    return None
+                else:
+                    logger.debug("All player agents have been shutdown. ")
+                    logger.debug("GAME OVER")
+                    return winner
 
 
 # play_game()
