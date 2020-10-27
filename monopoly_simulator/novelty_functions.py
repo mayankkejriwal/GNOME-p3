@@ -14,7 +14,7 @@ def alternate_contingency_function_1(player, card, current_gameboard):
     cost_per_house = 70
     cost_per_hotel = 145
     cost = player.num_total_houses * cost_per_house + player.num_total_hotels * cost_per_hotel
-    player.charge_player(cost)
+    player.charge_player(cost, current_gameboard, bank_flag=True)
     # add to game history
     current_gameboard['history']['function'].append(player.charge_player)
     params = dict()
