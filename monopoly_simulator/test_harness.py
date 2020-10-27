@@ -64,13 +64,14 @@ def play_tournament_without_novelty(tournament_log_folder=None, meta_seed=5, num
     print(winners)
 
 
-def play_tournament_with_novelty_1(tournament_log_folder=None, meta_seed=5, num_games=100, novelty_index=23):
+def play_tournament_with_novelty_1(tournament_log_folder=None, meta_seed=5, num_games=100, novelty_index=23, novelty_info=False):
     """
 
     :param tournament_log_folder:
     :param meta_seed:
     :param num_games:
     :param novelty_index: an integer between 1 and num_games-1. We will play this many games BEFORE introducing novelty.
+    :param novelty_info: boolean that specifies if the agent will be notified when novelty is injected or not.
     :return:
     """
 
@@ -109,10 +110,13 @@ def play_tournament_with_novelty_1(tournament_log_folder=None, meta_seed=5, num_
     out_file.close()
 
     for t in range(0,novelty_index):
-        print('Logging gameplay without novelty for seed: ', str(t), ' ---> Game ' + str(count))
+        print('Logging gameplay without novelty for seed: ', str(tournament_seeds[t]), ' ---> Game ' + str(count))
         filename = folder_name + "meta_seed_" + str(meta_seed) + '_without_novelty' + '_num_games_' + str(count) + '.log'
         logger = log_file_create(filename)
-        winners.append(gameplay.play_game_in_tournament(tournament_seeds[t]))
+        if not novelty_info:
+            winners.append(gameplay.play_game_in_tournament(tournament_seeds[t]))
+        else:
+            winners.append(gameplay.play_game_in_tournament(tournament_seeds[t], novelty_info))
         handlers_copy = logger.handlers[:]
         for handler in handlers_copy:
             logger.removeHandler(handler)
@@ -122,10 +126,10 @@ def play_tournament_with_novelty_1(tournament_log_folder=None, meta_seed=5, num_
 
     new_winners = list()
     for t in range(novelty_index, len(tournament_seeds)):
-        print('Logging gameplay with novelty for seed: ', str(t), ' ---> Game ' + str(count))
+        print('Logging gameplay with novelty for seed: ', str(tournament_seeds[t]), ' ---> Game ' + str(count))
         filename = folder_name + "meta_seed_" + str(meta_seed) + '_with_novelty' + '_num_games_' + str(count) + '.log'
         logger = log_file_create(filename)
-        new_winners.append(gameplay.play_game_in_tournament(tournament_seeds[t], class_novelty_1))
+        new_winners.append(gameplay.play_game_in_tournament(tournament_seeds[t], novelty_info, class_novelty_1))
         handlers_copy = logger.handlers[:]
         for handler in handlers_copy:
             logger.removeHandler(handler)
@@ -153,5 +157,6 @@ except:
     pass
 
 #Specify the name of the folder in which the tournament games has to be logged in the following format: "/name_of_your_folder/"
-play_tournament_without_novelty('/tournament_without_novelty_4/', meta_seed=10, num_games=10)
-#play_tournament_with_novelty_1('/tournament_with_novelty/')
+
+# play_tournament_with_novelty_1('/tournament_with_novelty/')
+play_tournament_with_novelty_1(tournament_log_folder='/tournament_with_novelty/', meta_seed=5, num_games=20, novelty_index=10, novelty_info=True)
