@@ -2,15 +2,15 @@ import numpy as np
 from monopoly_simulator import gameplay
 from monopoly_simulator import gameplay_socket
 from monopoly_simulator import novelty_generator
-from monopoly_simulator import background_agent_v1_2
-from monopoly_simulator import background_agent_v3_2
+from monopoly_simulator import background_agent_v3_1
 from monopoly_simulator.server_agent_serial import ServerAgent
 from monopoly_simulator.logging_info import log_file_create
 import os
 import shutil
 import json
 
-agent_combination_1 = [[background_agent_v1_2, background_agent_v3_2, background_agent_v3_2]]
+agent_combination_1 = [[background_agent_v3_1, background_agent_v3_1, background_agent_v3_1]]
+
 
 def play_tournament_without_novelty(tournament_log_folder=None, meta_seed=5, num_games=100):
     """
@@ -71,6 +71,7 @@ def play_tournament_without_novelty(tournament_log_folder=None, meta_seed=5, num
 
 def play_tournament_with_novelty_1(tournament_log_folder=None, meta_seed=5, num_games=100, novelty_index=23, novelty_info=False):
     """
+    Use this function for the normal gameplay without socket communication
     :param tournament_log_folder:
     :param meta_seed:
     :param num_games:
@@ -144,10 +145,12 @@ def play_tournament_with_novelty_1(tournament_log_folder=None, meta_seed=5, num_
 
 def play_tournament_with_novelty_2(tournament_log_folder=None, nov=None, meta_seed=5, num_games=100, novelty_index=25, novelty_info=False):
     """
-    Tournament logging is not currently supported, but will be soon.
+    Use this function when using the the server-clent agent to communicate over the socket
     :param tournament_log_folder: String. The path to a folder.
     :param meta_seed: This is the seed we will use to generate a sequence of seeds, that will (in turn) spawn the games in gameplay/simulate_game_instance
+    :param novelty_index: game from which novelty will be injected
     :param num_games: The number of games to simulate in a tournament
+    :param novelty_info: boolean that specifies if the agent will be notified when novelty is injected or not.
     :return: None. Will print out the win-loss metrics, and will write out game logs
     """
 
@@ -243,4 +246,4 @@ except:
 
 #Specify the name of the folder in which the tournament games has to be logged in the following format: "/name_of_your_folder/"
 # play_tournament_without_novelty('/tournament_without_novelty_4/', meta_seed=10, num_games=10)
-play_tournament_with_novelty_1(tournament_log_folder='/tournament_with_novelty/', meta_seed=15, num_games=20, novelty_index=10, novelty_info=True)
+play_tournament_with_novelty_2(tournament_log_folder='/tournament_with_novelty/', meta_seed=15, num_games=20, novelty_index=10, novelty_info=True)
