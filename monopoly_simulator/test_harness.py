@@ -113,10 +113,7 @@ def play_tournament_with_novelty_1(tournament_log_folder=None, meta_seed=5, num_
         print('Logging gameplay without novelty for seed: ', str(tournament_seeds[t]), ' ---> Game ' + str(count))
         filename = folder_name + "meta_seed_" + str(meta_seed) + '_without_novelty' + '_num_games_' + str(count) + '.log'
         logger = log_file_create(filename)
-        if not novelty_info:
-            winners.append(gameplay.play_game_in_tournament(tournament_seeds[t]))
-        else:
-            winners.append(gameplay.play_game_in_tournament(tournament_seeds[t], novelty_info))
+        winners.append(gameplay.play_game_in_tournament(tournament_seeds[t], novelty_info))
         handlers_copy = logger.handlers[:]
         for handler in handlers_copy:
             logger.removeHandler(handler)
