@@ -255,7 +255,7 @@ class ClientAgent(Agent):
     """
     An Agent that can be sent requests from a ServerAgent and send back desired moves. Instantiate the client like you
     would a normal agent, either by passing in the functions to the constructor or by subclassing. The ClientAgent
-    can be used for local play as usual, or if the game has been set up with a ServerAgent, call play_remote_game
+    can be used for local play as usual, or if the game has been set up with a ServerAgent, call play_game
     to have the client receive game information from the server and send back desired moves.
     """
 
@@ -268,7 +268,7 @@ class ClientAgent(Agent):
     def play_remote_game(self, address=('localhost', 6010), authkey=b"password"):
         """
         Connects to a ServerAgent and begins the loop of waiting for requests and responding to them.
-        @param address: Tuple, the address and port number. Defaults to localhost:6000
+        @param address: Tuple, the address and port number. Defaults to localhost:6010
         @param authkey: Byte string, the password used to authenticate the client. Must be same as server's authkey.
             Defaults to "password"
         """
@@ -283,24 +283,19 @@ class ClientAgent(Agent):
             data_dict_from_server = json.loads(data_from_server)
             func_name = data_dict_from_server['function']
 
-            # When the tournament begins, we need to
             if func_name == "start_tournament":
                 self.logger.info('Tournament starts!')
                 result = 1
 
-            # Before simulating each game, we have to make sure if we need retrain the network
             elif func_name == "startup": # args = (current_gameboard, indicator)
-                # Clear interface history and set the init for interface
                 self.game_num += 1
                 self.logger.info(str(self.game_num) + ' th game starts!')
 
-            # When each game ends, we run the KG, but we don not shutdown the connection
             elif func_name == 'shutdown':
                 serial_dict_to_client = data_dict_from_server
                 result = shutdown(serial_dict_to_client, self)
                 self.logger.info(str(self.game_num) + ' th game stops!')
 
-            # When calling agent to make decision
             elif func_name == 'make_post_roll_move':
                 serial_dict_to_client = data_dict_from_server
                 result = make_post_roll_move(serial_dict_to_client)
@@ -325,7 +320,6 @@ class ClientAgent(Agent):
                 serial_dict_to_client = data_dict_from_server
                 result = handle_negative_cash_balance(serial_dict_to_client)
 
-            # Send we will close the connection now back to server
             elif func_name == "end_tournament":
                 result = 1
                 self.logger.info('Tournament Finished!')
@@ -341,12 +335,10 @@ class ClientAgent(Agent):
                 self.conn.sendall(bytes(str(result), encoding="utf-8"))
             elif isinstance(result, bool):
                 self.conn.sendall(bytes(str(result), encoding="utf-8"))
-            else:  #dictionary
+            else:
                 json_serial_return_to_server = json.dumps(result)
                 self.conn.sendall(bytes(json_serial_return_to_server, encoding="utf-8"))
 
-
-            # Close connection after each tournament
             if func_name == "end_tournament":
                 self.conn.close()
                 break

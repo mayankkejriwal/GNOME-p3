@@ -62,6 +62,7 @@ class Location(object):
                 params['asset'] = self
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 self.owned_by = current_gameboard['bank']
                 return cash_due - cash_owed
 
@@ -76,6 +77,7 @@ class Location(object):
             params['asset'] = self
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             self.owned_by = current_gameboard['bank']
             return 0 # foreclosure.
 
@@ -97,6 +99,7 @@ class Location(object):
         # params['asset'] = self
         # current_gameboard['history']['param'].append(params)
         # current_gameboard['history']['return'].append(None)
+        # current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         self.update_asset_owner(to_player, current_gameboard)
         # add to game history
@@ -107,6 +110,7 @@ class Location(object):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
     def update_asset_owner(self, player, current_gameboard):
         """
@@ -134,6 +138,7 @@ class Location(object):
                 params['asset'] = self
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                 self.owned_by = current_gameboard['bank'] # this is temporary, but we want to enforce safe behavior
 
@@ -147,6 +152,7 @@ class Location(object):
             params['current_gameboard'] = current_gameboard
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             logger.debug('Asset ownership update succeeded.')
         else:

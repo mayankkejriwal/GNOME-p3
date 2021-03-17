@@ -96,6 +96,7 @@ def sell_property(player, asset, current_gameboard):
             params['current_gameboard'] = current_gameboard
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(cash_due)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             logger.debug('Transfer successful. Paying player what they are due for the property and returning successful action code...')
             code = player.receive_cash(cash_due, current_gameboard, bank_flag=True)
@@ -108,6 +109,7 @@ def sell_property(player, asset, current_gameboard):
                 params['description'] = 'sell property'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 return flag_config_dict['successful_action']     # property has been successfully sold
             else:
                 logger.debug("Not sure what happened! Something broke although bank had sufficient funds !")
@@ -173,6 +175,7 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
                 params['description'] = 'sell improvements'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                 logger.debug('Updating houses and hotels on the asset')
                 asset.num_houses = 0 # this should already be 0 but just in case
@@ -218,6 +221,7 @@ def sell_house_hotel(player, asset, current_gameboard, sell_house=True, sell_hot
                 params['description'] = 'sell improvements'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                 logger.debug('Updating houses and hotels on the asset')
                 asset.num_houses -= 1
@@ -272,6 +276,7 @@ def accept_sell_property_offer(player, current_gameboard):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         logger.debug('Initiating cash transfer from one player to another')
         player.charge_player(player.outstanding_property_offer['price'], current_gameboard, bank_flag=False)
@@ -283,6 +288,7 @@ def accept_sell_property_offer(player, current_gameboard):
         params['description'] = 'accept sell property offer'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         code = player.outstanding_property_offer['from_player'].receive_cash(player.outstanding_property_offer['price'], current_gameboard, bank_flag=False)
         # add to game history
@@ -294,6 +300,7 @@ def accept_sell_property_offer(player, current_gameboard):
             params['description'] = 'sell property'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(code)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         else:
             logger.debug("Not sure what happened! Something broke!")
             logger.error("Exception")
@@ -358,6 +365,7 @@ def mortgage_property(player, asset, current_gameboard):
                 params['description'] = 'mortgage property'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                 logger.debug("Property has been mortgaged and player has received cash. Returning successful action code")
                 return flag_config_dict['successful_action'] # property has been successfully mortgaged
@@ -439,6 +447,7 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
                 params['description'] = 'improvements'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                 logger.debug('Updating houses and hotels on the asset')
                 asset.num_houses = 0
@@ -486,6 +495,7 @@ def improve_property(player, asset, current_gameboard, add_house=True, add_hotel
                 params['description'] = 'improvements'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                 logger.debug('Updating houses and hotels on the asset')
                 asset.num_houses += 1
@@ -558,6 +568,7 @@ def pay_jail_fine(player, current_gameboard):
         params['description'] = 'jail fine'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         logger.debug('Player has been charged the fine. Setting currently_in_status to False and returning successful action code')
         player.currently_in_jail = False
@@ -608,6 +619,7 @@ def buy_property(player, asset, current_gameboard):
         params['self'] = player
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         return flag_config_dict['failure_code']
 
@@ -622,6 +634,7 @@ def buy_property(player, asset, current_gameboard):
         params['self'] = player
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         logger.debug(asset.name+ ' is going up for auction since '+ player.player_name+ ' does not have enough cash to purchase this property. Conducting auction and returning failure code')
         Bank.auction(starting_player_index, current_gameboard, asset)
@@ -634,6 +647,7 @@ def buy_property(player, asset, current_gameboard):
         params['asset'] = asset
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         return flag_config_dict['failure_code'] # this is a failure code even though you may still succeed in buying the property at auction
     else:
@@ -647,6 +661,7 @@ def buy_property(player, asset, current_gameboard):
         params['description'] = 'buy property'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         asset.update_asset_owner(player, current_gameboard)
         # add to game history
@@ -657,6 +672,7 @@ def buy_property(player, asset, current_gameboard):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         logger.debug(asset.name+ ' ownership has been updated! Resetting option_to_buy for player and returning code successful action code')
         player.reset_option_to_buy()
@@ -666,6 +682,7 @@ def buy_property(player, asset, current_gameboard):
         params['self'] = player
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         return flag_config_dict['successful_action']
 
@@ -815,6 +832,7 @@ def accept_trade_offer(player, current_gameboard):
                 params['current_gameboard'] = current_gameboard
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             for item in player.outstanding_trade_offer['property_set_wanted']:
                 func_asset = item
@@ -829,6 +847,7 @@ def accept_trade_offer(player, current_gameboard):
                 params['current_gameboard'] = current_gameboard
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             player.charge_player(player.outstanding_trade_offer['cash_wanted'], current_gameboard, bank_flag=False)
             current_gameboard['history']['function'].append(player.charge_player)
@@ -838,6 +857,7 @@ def accept_trade_offer(player, current_gameboard):
             params['description'] = 'trade'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             code = player.outstanding_trade_offer['from_player'].receive_cash(player.outstanding_trade_offer['cash_wanted'], current_gameboard, bank_flag=False)
             if code == flag_config_dict['successful_action']:
@@ -848,6 +868,7 @@ def accept_trade_offer(player, current_gameboard):
                 params['description'] = 'trade'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             else:
                 logger.debug("Not sure what happened! Something broke!")
                 logger.error("Exception")
@@ -862,6 +883,7 @@ def accept_trade_offer(player, current_gameboard):
                 params['description'] = 'trade'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             else:
                 logger.debug("Not sure what happened! Something broke!")
                 logger.error("Exception")
@@ -875,6 +897,7 @@ def accept_trade_offer(player, current_gameboard):
             params['description'] = 'trade'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             logger.debug('Transaction successful. Nulling outstanding trade offers data structures and returning successful action code')
             player.is_trade_offer_outstanding = False

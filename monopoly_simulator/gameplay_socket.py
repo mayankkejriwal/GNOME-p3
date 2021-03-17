@@ -18,9 +18,6 @@ from monopoly_simulator.server_agent_serial import ServerAgent
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info')
 
-import logging
-logger = logging.getLogger('monopoly_simulator.logging_info')
-
 
 def write_history_to_file(game_board, workbook):
     worksheet = workbook.add_worksheet()
@@ -55,6 +52,7 @@ def disable_history(game_elements):
     game_elements['history']['function'] = list()
     game_elements['history']['param'] = list()
     game_elements['history']['return'] = list()
+    game_elements['history']['time_step'] = list()
 
 
 def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
@@ -87,6 +85,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
     if history_log_file:
         workbook = xlsxwriter.Workbook(history_log_file)
     game_elements['start_time'] = time.time()
+    game_elements['time_step_indicator'] = 0
+
     while num_active_players > 1:
         # disable_history(
         #     game_elements)  # comment this out when you want history to stay. Currently, it has high memory consumption, we are working to solve the problem (most likely due to deep copy run-off).
@@ -105,7 +105,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
             skip_turn += 1
         out_of_turn_player_index = current_player_index + 1
         out_of_turn_count = 0
-        while skip_turn != num_active_players and out_of_turn_count <= 5:  ##oot count reduced to 20 from 200 to keep the game short
+        while skip_turn != num_active_players and out_of_turn_count <= 5:  ##oot count reduced to 5 to keep the game short
             out_of_turn_count += 1
             # print('checkpoint 1')
             out_of_turn_player = game_elements['players'][out_of_turn_player_index % len(game_elements['players'])]
@@ -127,6 +127,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
             params['current_gameboard'] = game_elements
             game_elements['history']['param'].append(params)
             game_elements['history']['return'].append(oot_code)
+            game_elements['history']['time_step'].append(game_elements['time_step_indicator'])
 
             if oot_code == 2:
                 skip_turn += 1
@@ -152,6 +153,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
         params['choice'] = np.random.choice
         game_elements['history']['param'].append(params)
         game_elements['history']['return'].append(r)
+        game_elements['history']['time_step'].append(game_elements['time_step_indicator'])
 
         num_die_rolls += 1
         game_elements['current_die_total'] = sum(r)
@@ -168,6 +170,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
             params['check_for_go'] = check_for_go
             game_elements['history']['param'].append(params)
             game_elements['history']['return'].append(None)
+            game_elements['history']['time_step'].append(game_elements['time_step_indicator'])
 
             current_player.process_move_consequences(game_elements)
             # add to game history
@@ -177,6 +180,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
             params['current_gameboard'] = game_elements
             game_elements['history']['param'].append(params)
             game_elements['history']['return'].append(None)
+            game_elements['history']['time_step'].append(game_elements['time_step_indicator'])
 
             # post-roll for current player. No out-of-turn moves allowed at this point.
             current_player.make_post_roll_moves(game_elements)
@@ -186,8 +190,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
             params['self'] = current_player
             params['current_gameboard'] = game_elements
             game_elements['history']['param'].append(params)
-            game_elements['history']['param'].append(params)
             game_elements['history']['return'].append(None)
+            game_elements['history']['time_step'].append(game_elements['time_step_indicator'])
 
         else:
             current_player.currently_in_jail = False  # the player is only allowed to skip one turn (i.e. this one)
@@ -201,6 +205,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
             params['current_gameboard'] = game_elements
             game_elements['history']['param'].append(params)
             game_elements['history']['return'].append(code)
+            game_elements['history']['time_step'].append(game_elements['time_step_indicator'])
             if code == flag_config_dict['failure_code'] or current_player.current_cash < 0:
                 current_player.begin_bankruptcy_proceedings(game_elements)
                 # add to game history
@@ -210,6 +215,7 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
                 params['current_gameboard'] = game_elements
                 game_elements['history']['param'].append(params)
                 game_elements['history']['return'].append(None)
+                game_elements['history']['time_step'].append(game_elements['time_step_indicator'])
 
                 num_active_players -= 1
                 diagnostics.print_asset_owners(game_elements)
@@ -629,4 +635,4 @@ def play_game_in_tournament_socket(game_seed, agent1, agent2, agent3, agent4, no
                     return winner
 
 
-# play_game()
+play_game()

@@ -225,6 +225,8 @@ def play_tournament_with_novelty_2(tournament_log_folder=None, nov=None, meta_se
                 handler.flush()
             count += 1
 
+        agent.end_tournament()
+
         print("Pre-novelty winners: ", winners)
         print("Post-novelty winners: ", new_winners)
 

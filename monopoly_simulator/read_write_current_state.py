@@ -730,3 +730,4 @@ def _initialize_game_history_structs(current_gameboard):
     current_gameboard['history']['function'] = list()
     current_gameboard['history']['param'] = list()
     current_gameboard['history']['return'] = list()
+    current_gameboard['history']['time_step'] = list()

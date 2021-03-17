@@ -50,6 +50,7 @@ def _populate_param_dict(param_dict, player, current_gameboard):
 
 
 def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
+    current_gameboard['time_step_indicator'] += 1
     serial_gameboard = serialize_gameboard(current_gameboard)
     serial_dict_to_client = dict()
     serial_dict_to_client['player'] = player.player_name
@@ -70,6 +71,7 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
 
 
 def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
+    current_gameboard['time_step_indicator'] += 1
     serial_gameboard = serialize_gameboard(current_gameboard)
     serial_dict_to_client = dict()
     serial_dict_to_client['player'] = player.player_name
@@ -90,6 +92,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
 
 
 def make_post_roll_move(player, current_gameboard, allowable_moves, code):
+    current_gameboard['time_step_indicator'] += 1
     serial_gameboard = serialize_gameboard(current_gameboard)
     serial_dict_to_client = dict()
     serial_dict_to_client['player'] = player.player_name
@@ -110,6 +113,7 @@ def make_post_roll_move(player, current_gameboard, allowable_moves, code):
 
 
 def make_buy_property_decision(player, current_gameboard, asset):
+    current_gameboard['time_step_indicator'] += 1
     serial_gameboard = serialize_gameboard(current_gameboard)
     serial_dict_to_client = dict()
     serial_dict_to_client['player'] = player.player_name
@@ -126,6 +130,7 @@ def make_buy_property_decision(player, current_gameboard, asset):
 
 
 def make_bid(player, current_gameboard, asset, current_bid):
+    current_gameboard['time_step_indicator'] += 1
     serial_gameboard = serialize_gameboard(current_gameboard)
     serial_dict_to_client = dict()
     serial_dict_to_client['player'] = player.player_name
@@ -143,6 +148,7 @@ def make_bid(player, current_gameboard, asset, current_bid):
 
 
 def handle_negative_cash_balance(player, current_gameboard):
+    current_gameboard['time_step_indicator'] += 1
     serial_gameboard = serialize_gameboard(current_gameboard)
     serial_dict_to_client = dict()
     serial_dict_to_client['player'] = player.player_name

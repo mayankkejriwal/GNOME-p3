@@ -39,6 +39,7 @@ def go_to_jail(player, current_gameboard):
     params['current_gameboard'] = current_gameboard
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
 
 def _set_to_sorted_list_func(set_cards):
@@ -86,6 +87,7 @@ def pick_card_from_community_chest(player, current_gameboard):
         params['pack'] = 'community_chest'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
     else:
         card.action(player, card, current_gameboard) # all card actions except get out of jail free must take this signature
         # add to game history
@@ -96,6 +98,7 @@ def pick_card_from_community_chest(player, current_gameboard):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
 
 def pick_card_from_chance(player, current_gameboard):
@@ -127,6 +130,7 @@ def pick_card_from_chance(player, current_gameboard):
         params['pack'] = 'chance'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
     else:
         card.action(player, card, current_gameboard) # all card actions except get out of jail free must take this signature
         # add to game history
@@ -137,6 +141,7 @@ def pick_card_from_chance(player, current_gameboard):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
 
 def move_player(player, card, current_gameboard):
@@ -160,6 +165,7 @@ def move_player(player, card, current_gameboard):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
     else:
         _move_player__check_for_go(player, new_position, current_gameboard)
 
@@ -204,6 +210,7 @@ def bank_cash_transaction(player, card, current_gameboard):
         params['description'] = 'bank cash transaction'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
     elif card.amount > 0:
         code = player.receive_cash(card.amount, current_gameboard, bank_flag=True)
         # add to game history
@@ -215,6 +222,7 @@ def bank_cash_transaction(player, card, current_gameboard):
             params['description'] = 'bank cash transaction'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(code)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         elif code == flag_config_dict['failure_code']:
             logger.debug('Transaction broke due to insufficient funds. Player does not receive the stated funds.')
     else:
@@ -247,6 +255,7 @@ def player_cash_transaction(player, card, current_gameboard):
                 params['description'] = 'player cash transaction'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             else:
                 logger.debug("Not sure what happened! Something broke!")
                 logger.error("Exception")
@@ -261,6 +270,7 @@ def player_cash_transaction(player, card, current_gameboard):
             params['description'] = 'player cash transaction'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
     elif card.amount_per_player > 0:
         for p in current_gameboard['players']:
@@ -277,6 +287,7 @@ def player_cash_transaction(player, card, current_gameboard):
                 params['description'] = 'player cash transaction'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             else:
                 logger.debug("Not sure what happened! Something broke!")
                 logger.error("Exception")
@@ -291,6 +302,7 @@ def player_cash_transaction(player, card, current_gameboard):
             params['description'] = 'player cash transaction'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
 
 def contingent_bank_cash_transaction(player, card, current_gameboard):
@@ -312,6 +324,7 @@ def contingent_bank_cash_transaction(player, card, current_gameboard):
     params['current_gameboard'] = current_gameboard
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
 
 def calculate_street_repair_cost(player, card, current_gameboard): # assesses, not just calculates
@@ -335,6 +348,7 @@ def calculate_street_repair_cost(player, card, current_gameboard): # assesses, n
     params['description'] = 'street repair'
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
 
 def move_player__check_for_go(player, card, current_gameboard):
@@ -393,6 +407,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
             params['description'] = 'go increment'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(code)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         else:
             logger.debug('Current cash balance with the bank = '+ str(current_gameboard['bank'].total_cash_with_bank))
             logger.debug("Player supposed to receive go increment, but bank has no sufficient funds, hence unable to pay player." +
@@ -407,6 +422,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
     params['current_gameboard'] = current_gameboard
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
@@ -425,6 +441,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         return
     else:
         amount_due = current_gameboard['current_die_total']*10
@@ -438,6 +455,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
         params['description'] = 'utility dues'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         current_owner = current_loc.owned_by
         code = current_owner.receive_cash(amount_due, current_gameboard, bank_flag=False)
@@ -451,6 +469,7 @@ def move_to_nearest_utility__pay_or_buy__check_for_go(player, card, current_game
             params['description'] = 'utility dues'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(code)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         else:
             logger.debug("Not sure what happened! Something broke!")
             logger.error("Exception")
@@ -500,6 +519,7 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
             params['description'] = 'go increment'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(code)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         else:
             logger.debug('Current cash balance with the bank = '+ str(current_gameboard['bank'].total_cash_with_bank))
             logger.debug("Player supposed to receive go increment, but bank has no sufficient funds, hence unable to pay player." +
@@ -514,6 +534,7 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
     params['current_gameboard'] = current_gameboard
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
     current_loc = current_gameboard['location_sequence'][player.current_position]
 
@@ -532,6 +553,7 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         return
     else:
         amount_due = 2 * RailroadLocation.calculate_railroad_dues(current_loc, current_gameboard)
@@ -545,6 +567,7 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
         params['description'] = 'railroad dues'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         current_owner = current_loc.owned_by
         code = current_owner.receive_cash(amount_due, current_gameboard, bank_flag=False)
@@ -558,6 +581,7 @@ def move_to_nearest_railroad__pay_double_or_buy__check_for_go(player, card, curr
             params['description'] = 'railroad dues'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(code)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         else:
             logger.debug("Not sure what happened! Something broke!")
             logger.error("Exception")
@@ -585,6 +609,7 @@ def calculate_general_repair_cost(player, card, current_gameboard):
     params['description'] = 'general repair'
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
 
 def move_player_relative(player, card, current_gameboard):
@@ -606,6 +631,7 @@ def move_player_relative(player, card, current_gameboard):
     params['check_for_go'] = True
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
 
 def move_player_after_die_roll(player, rel_move, current_gameboard, check_for_go=True):
@@ -647,6 +673,7 @@ def move_player_after_die_roll(player, rel_move, current_gameboard, check_for_go
                 params['description'] = 'go increment'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(code)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             else:
                 logger.debug('Current cash balance with the bank = '+ str(current_gameboard['bank'].total_cash_with_bank))
                 logger.debug("Player supposed to receive go increment, but bank has no sufficient funds, hence unable to pay player." +
@@ -661,6 +688,7 @@ def move_player_after_die_roll(player, rel_move, current_gameboard, check_for_go
     params['current_gameboard'] = current_gameboard
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
 
 """
@@ -733,6 +761,7 @@ def _move_player__check_for_go(player, new_position, current_gameboard):
             params['description'] = 'go increment'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(code)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         else:
             logger.debug('Current cash balance with the bank = '+ str(current_gameboard['bank'].total_cash_with_bank))
             logger.debug("Player supposed to receive go increment, but bank has no sufficient funds, hence unable to pay player." +
@@ -747,6 +776,7 @@ def _move_player__check_for_go(player, new_position, current_gameboard):
     params['current_gameboard'] = current_gameboard
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
     player.process_move_consequences(current_gameboard)
     # add to game history
@@ -756,6 +786,7 @@ def _move_player__check_for_go(player, new_position, current_gameboard):
     params['current_gameboard'] = current_gameboard
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
 
 def check_for_game_termination(current_gameboard, tot_time):

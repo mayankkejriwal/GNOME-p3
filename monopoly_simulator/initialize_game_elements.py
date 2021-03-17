@@ -343,3 +343,4 @@ def _initialize_game_history_structs(game_elements):
     game_elements['history']['function'] = list()
     game_elements['history']['param'] = list()
     game_elements['history']['return'] = list()
+    game_elements['history']['time_step'] = list()

@@ -22,3 +22,4 @@ def alternate_contingency_function_1(player, card, current_gameboard):
     params['amount'] = cost
     current_gameboard['history']['param'].append(params)
     current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])

@@ -170,6 +170,7 @@ class Player(object):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         self.num_total_houses = 0
         self.num_total_hotels = 0
@@ -398,8 +399,9 @@ class Player(object):
                 params['current_gameboard'] = current_gameboard
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
-
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 return
+
         elif current_location.loc_class == 'tax':
             logger.debug(self.player_name+ ' is on a tax location, namely '+ current_location.name+ '. Deducting tax...')
             tax_due = TaxLocation.calculate_tax(current_location, self, current_gameboard)
@@ -412,8 +414,9 @@ class Player(object):
             params['description'] = 'tax'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return
+
         elif current_location.loc_class == 'railroad':
             logger.debug(self.player_name+ ' is on a railroad location, namely '+ current_location.name)
             if 'bank.Bank' in str(type(current_location.owned_by)):
@@ -436,6 +439,7 @@ class Player(object):
                 params['current_gameboard'] = current_gameboard
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(dues)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                 recipient = current_location.owned_by
                 code = recipient.receive_cash(dues, current_gameboard, bank_flag=False)
@@ -449,6 +453,7 @@ class Player(object):
                     params['description'] = 'railroad dues'
                     current_gameboard['history']['param'].append(params)
                     current_gameboard['history']['return'].append(code)
+                    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 else:
                     logger.debug("Not sure what happened! Something broke!")
                     logger.error("Exception")
@@ -464,8 +469,9 @@ class Player(object):
                 params['description'] = 'railroad dues'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
-
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 return
+
         elif current_location.loc_class == 'utility':
             logger.debug(self.player_name+ ' is on a utility location, namely '+ current_location.name)
             if 'bank.Bank' in str(type(current_location.owned_by)):
@@ -489,6 +495,7 @@ class Player(object):
                 params['die_total'] = current_gameboard['current_die_total']
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(dues)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                 recipient = current_location.owned_by
                 code = recipient.receive_cash(dues, current_gameboard, bank_flag=False)
@@ -502,6 +509,7 @@ class Player(object):
                     params['description'] = 'utility dues'
                     current_gameboard['history']['param'].append(params)
                     current_gameboard['history']['return'].append(code)
+                    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 else:
                     logger.debug("Not sure what happened! Something broke!")
                     logger.error("Exception")
@@ -517,8 +525,9 @@ class Player(object):
                 params['description'] = 'utility dues'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
-
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 return
+
         elif current_location.loc_class == 'action':
             logger.debug(self.player_name+ ' is on an action location, namely '+ current_location.name+ '. Performing action...')
             current_location.perform_action(self, current_gameboard)
@@ -529,8 +538,9 @@ class Player(object):
             params['current_gameboard'] = current_gameboard
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return
+
         else:
             logger.error(self.player_name+' is on an unidentified location type. Raising exception.')
             logger.error("Exception")
@@ -574,6 +584,7 @@ class Player(object):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(rent)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         recipient = current_loc.owned_by
         code = recipient.receive_cash(rent, current_gameboard, bank_flag=False)
@@ -586,6 +597,7 @@ class Player(object):
             params['description'] = 'rent'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         else:
             logger.debug("Not sure what happened! Something broke!")
             logger.error("Exception")
@@ -600,6 +612,7 @@ class Player(object):
         params['description'] = 'rent'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
     def receive_cash(self, amount, current_gameboard, bank_flag=False):
         """
@@ -882,6 +895,7 @@ class Player(object):
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         if action_to_execute == 'skip_turn':
             if self.is_property_offer_outstanding:
@@ -965,6 +979,7 @@ class Player(object):
                 params['code'] = code
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(t)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         # if we got here, we resolve property offers and move on.
         if self.is_property_offer_outstanding:
@@ -1030,6 +1045,7 @@ class Player(object):
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         if action_to_execute == "skip_turn":
             if self.is_property_offer_outstanding:
@@ -1113,6 +1129,7 @@ class Player(object):
                 params['code'] = code
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(t)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         # if we got here, we resolve property offers and move on.
         if self.is_property_offer_outstanding:
@@ -1169,6 +1186,7 @@ class Player(object):
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         if action_to_execute == "concluded_actions":
             self._force_buy_outcome(current_gameboard) # if option to buy is not set, this will make no difference.
@@ -1206,6 +1224,7 @@ class Player(object):
                 params['code'] = code
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(t)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 # logger.debug(action_to_execute)
 
         self._force_buy_outcome(current_gameboard) # if we got here, we need to conclude actions
@@ -1253,6 +1272,7 @@ class Player(object):
             params['code'] = code
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(t)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             if action_to_execute is None:
                 return parameters    # done handling negative cash balance, parameters will be an int (successful action code or failure code
@@ -1303,7 +1323,7 @@ class Player(object):
         params['self'] = self
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
-
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         return
 
     def _own_or_auction(self, current_gameboard, asset):
@@ -1325,6 +1345,7 @@ class Player(object):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(dec)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         logger.debug(self.player_name+' decides to purchase? '+str(dec))
         if dec is True:
@@ -1337,8 +1358,9 @@ class Player(object):
             params['current_gameboard'] = current_gameboard
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return
+
         else:
             logger.debug('Since '+self.player_name+' decided not to purchase, we are invoking auction proceedings for asset '+asset.name)
             index_current_player = current_gameboard['players'].index(self)  # in players, find the index of the current player
@@ -1355,7 +1377,7 @@ class Player(object):
             params['asset'] = asset
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return
 
     def _execute_action(self, action_to_execute, parameters, current_gameboard):
@@ -1378,7 +1400,7 @@ class Player(object):
             params = parameters.copy()
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(p)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return p
         else:
             p = action_to_execute()
@@ -1387,5 +1409,5 @@ class Player(object):
             params = dict()
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(p)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return p

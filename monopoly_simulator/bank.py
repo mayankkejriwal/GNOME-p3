@@ -93,6 +93,7 @@ class Bank(object):
             params['current_bid'] = current_bid
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(proposed_bid)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             logger.debug(bidding_player.player_name+' proposed bid '+str(proposed_bid))
 
@@ -123,6 +124,7 @@ class Bank(object):
             params['description'] = 'auction'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             asset.update_asset_owner(winning_player, current_gameboard)
             # add to game history
@@ -133,6 +135,7 @@ class Bank(object):
             params['current_gameboard'] = current_gameboard
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         else:
             logger.debug('Auction did not succeed in a sale.')
         return

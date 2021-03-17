@@ -29,12 +29,13 @@ def _prune_serialize_history(pruned_gameboard_serial_obj):
 
 def _serialize_history(current_gameboard):
     history = list()
-    for i in range(len(current_gameboard['history']['function'])):
+
+    for idx in range(len(current_gameboard['history']['function'])):
         hist_dict = dict()
-        func_name = current_gameboard['history']['function'][i].__name__
+        func_name = current_gameboard['history']['function'][idx].__name__
         hist_dict['function'] = func_name
 
-        param_obj = current_gameboard['history']['param'][i]
+        param_obj = current_gameboard['history']['param'][idx]
         hist_dict['param'] = dict()
 
         for k, v in param_obj.items():
@@ -107,7 +108,7 @@ def _serialize_history(current_gameboard):
             else:
                 print('This param object not included, key: ', k, " value: ", v, " function name: ", func_name)
 
-        return_obj = current_gameboard['history']['return'][i]
+        return_obj = current_gameboard['history']['return'][idx]
 
         if return_obj is None:
             hist_dict['return'] = None
@@ -172,6 +173,7 @@ def _serialize_history(current_gameboard):
         else:
             print("This return val not included in return history: ", return_obj, type(return_obj))
 
+        hist_dict['time_step'] = current_gameboard['history']['time_step'][idx]
         history.append(hist_dict)
     return history
 
@@ -228,6 +230,7 @@ def serialize_gameboard(current_gameboard):
     current_gameboard_serial_obj['die_sequence'] = total_die_seq
     current_gameboard_serial_obj['history'] = history_serial_obj
     pruned_gameboard_serial_obj = _prune_serialize_history(current_gameboard_serial_obj)
+
     with open('result.json', 'w') as fp:
         json.dump(pruned_gameboard_serial_obj, fp)
     fp.close()
