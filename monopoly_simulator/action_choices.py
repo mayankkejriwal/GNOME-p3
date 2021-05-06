@@ -760,6 +760,9 @@ def accept_trade_offer(player, current_gameboard):
     - if ownership of properties are incorrect
     - if the properties involved in the trade are improved.
     - if the properties involved in the trade are mortgaged.
+    - if the properties involved in the trade are part of monopolized color groups, then the other properties in the color group
+        should be un-improved (since the trade will dissolve the monopoly and the improvements on the other properties in the color
+        group become invalid and illegal.)
     """
     if player.outstanding_trade_offer['from_player'].status == 'lost':
         logger.debug("I have an outstanding trade offer that was made to me by a player that has lost the game! Cannot process trade offer. Returning failure code.")
@@ -789,6 +792,16 @@ def accept_trade_offer(player, current_gameboard):
                 logger.debug(item.name+' is mortgaged. Cannot accept sell trade offer! Returning failure code.')
                 flag_properties_wanted = 0
                 break
+            elif item.color in player.full_color_sets_possessed:
+                # if color is monopolized by player, check if there are improvements on the other properties of the color group
+                for same_colored_asset in current_gameboard['color_assets'][item.color]:
+                    if same_colored_asset == item:
+                        continue
+                    elif same_colored_asset.num_houses > 0 or same_colored_asset.num_hotels > 0:
+                        logger.debug(same_colored_asset.name + ' belongs to same color group as the property involved in trade and is improved. '
+                                                               'Declining accept sell trade offer! Returning failure code.')
+                        flag_properties_wanted = 0
+                        break
         for item in player.outstanding_trade_offer['property_set_offered']:
             if item.owned_by != player.outstanding_trade_offer['from_player']:
                 flag_properties_offered = 0
@@ -802,6 +815,16 @@ def accept_trade_offer(player, current_gameboard):
                 logger.debug(item.name+' is mortgaged. Cannot accept sell trade offer! Returning failure code.')
                 flag_properties_offered = 0
                 break
+            elif item.color in player.outstanding_trade_offer['from_player'].full_color_sets_possessed:
+                # if color is monopolized by from_player, check if there are improvements on the other properties of the color group
+                for same_colored_asset in current_gameboard['color_assets'][item.color]:
+                    if same_colored_asset == item:
+                        continue
+                    elif same_colored_asset.num_houses > 0 or same_colored_asset.num_hotels > 0:
+                        logger.debug(same_colored_asset.name + ' belongs to same color group as the property involved in trade and is improved. '
+                                                               'Declining accept sell trade offer! Returning failure code.')
+                        flag_properties_offered = 0
+                        break
         if flag_cash_offered and flag_cash_wanted and flag_properties_offered and flag_properties_wanted:
             logger.debug('Initiating trade offer transfer...')
             for item in player.outstanding_trade_offer['property_set_offered']:
