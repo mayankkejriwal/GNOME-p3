@@ -81,16 +81,6 @@ def sell_property(player, asset, current_gameboard):
         logger.debug(asset.name+' has improvements. Clear them before trying to sell! Returning failure code')
         return flag_config_dict['failure_code']
 
-    elif asset.color in player.full_color_sets_possessed:
-        # if color is monopolized by player, check if there are improvements on the other properties of the color group
-        for same_colored_asset in current_gameboard['color_assets'][asset.color]:
-            if same_colored_asset == asset:
-                continue
-            elif same_colored_asset.num_houses > 0 or same_colored_asset.num_hotels > 0:
-                logger.debug(same_colored_asset.name + ' belongs to same color group as the property involved in the offer and is improved. '
-                                                       'Clear them before trying to sell!! Returning failure code.')
-                return flag_config_dict['failure_code']
-
     else:
         logger.debug('Trying to transfer property to bank')
         cash_due = asset.transfer_property_to_bank(player, current_gameboard)
