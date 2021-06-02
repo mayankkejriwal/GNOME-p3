@@ -65,6 +65,12 @@ class Player(object):
         outstanding_trade_offer['cash_wanted'] = 0
         outstanding_trade_offer['from_player'] = None
 
+        #------------------------for interaction novelties----------------
+        # dict of dicts. Each dict will be an interaction_params_dict
+        interaction_dict = dict()               # key: interaction id, value: interaction_params_dict
+        self.interaction_dict = interaction_dict
+        #--------------------------------------------
+
         self.outstanding_trade_offer = outstanding_trade_offer
         self.is_trade_offer_outstanding = False
 
@@ -698,6 +704,7 @@ class Player(object):
             # However, you have to make this check in your decision agent.
 
         allowable_actions.add("make_trade_offer")
+        allowable_actions.add("pre_roll_arbitrary_action")
         return allowable_actions
 
     def compute_allowable_out_of_turn_actions(self, current_gameboard):
@@ -739,6 +746,9 @@ class Player(object):
             # However, you have to make this check in your decision agent.
 
         allowable_actions.add("make_trade_offer")
+        allowable_actions.add("make_arbitrary_interaction")
+        if len(self.interaction_dict) > 0:
+            allowable_actions.add("accept_arbitrary_interaction")
         return allowable_actions
 
     def compute_allowable_post_roll_actions(self, current_gameboard):
@@ -773,6 +783,26 @@ class Player(object):
     def _populate_param_dict(param_dict, player, current_gameboard):
         if not param_dict:   # check if param_dict is an empty dictionary --> skip turn and conclude_actions
             return param_dict
+
+        #-----------------action---------------
+        if 'action_params_dict' in param_dict and param_dict['action_params_dict'] is not None:
+            if 'location' in param_dict['action_params_dict']:
+                param_location_name = param_dict['action_params_dict']['location']
+                for loc in current_gameboard['location_sequence']:
+                    if loc.name == param_location_name:
+                        param_dict['action_params_dict']['location'] = loc
+                        break
+        #--------------------------------------
+
+        #-----------------interaction---------------------
+        if 'interaction_params_dict' in param_dict and param_dict['interaction_params_dict'] is not None:
+            if 'location' in param_dict['interaction_params_dict']:
+                param_location_name = param_dict['interaction_params_dict']['location']
+                for loc in current_gameboard['location_sequence']:
+                    if loc.name == param_location_name:
+                        param_dict['interaction_params_dict']['location'] = loc
+                        break
+        #_-------------------------------------------------
 
         if 'player' in param_dict:
             param_dict['player'] = player
@@ -848,6 +878,21 @@ class Player(object):
             return action_choices.pay_jail_fine
         elif function_name == 'use_get_out_of_jail_card':
             return action_choices.use_get_out_of_jail_card
+        #----------------phase2--------------------------------
+        elif function_name == 'pre_roll_arbitrary_action':
+            return action_choices.pre_roll_arbitrary_action
+        elif function_name == 'out_of_turn_arbitrary_action':
+            return action_choices.out_of_turn_arbitrary_action
+        elif function_name == 'post_roll_arbitrary_action':
+            return action_choices.post_roll_arbitrary_action
+        elif function_name == 'make_arbitrary_interaction':
+            return action_choices.make_arbitrary_interaction
+        elif function_name == 'accept_arbitrary_interaction':
+            return action_choices.accept_arbitrary_interaction
+        elif function_name == 'print_schema':
+            return action_choices.print_schema
+        #-------------------------------------------------------
+
 
     def make_pre_roll_moves(self, current_gameboard):
         """

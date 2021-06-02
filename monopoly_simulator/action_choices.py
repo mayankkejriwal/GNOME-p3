@@ -1,6 +1,7 @@
 from monopoly_simulator.flag_config import flag_config_dict
 from monopoly_simulator.bank import Bank
 from monopoly_simulator.dice import Dice
+from monopoly_simulator.location import Location
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.action_choices')
 
@@ -82,16 +83,6 @@ def sell_property(player, asset, current_gameboard):
         return flag_config_dict['failure_code']
 
     else:
-        if asset.color in player.full_color_sets_possessed:
-            # if color is monopolized by player, check if there are improvements on the other properties of the color group
-            for same_colored_asset in current_gameboard['color_assets'][asset.color]:
-                if same_colored_asset == asset:
-                    continue
-                elif same_colored_asset.num_houses > 0 or same_colored_asset.num_hotels > 0:
-                    logger.debug(same_colored_asset.name + ' belongs to same color group as the property involved in the offer and is improved. '
-                                                           'Clear them before trying to sell!! Returning failure code.')
-                    return flag_config_dict['failure_code']
-
         logger.debug('Trying to transfer property to bank')
         cash_due = asset.transfer_property_to_bank(player, current_gameboard)
         if cash_due == flag_config_dict['failure_code']:
@@ -588,7 +579,7 @@ def pay_jail_fine(player, current_gameboard):
         return flag_config_dict['failure_code']
 
 
-def roll_die(die_objects, choice):
+def roll_die(die_objects, choice, current_gameboard):
     """
     The function takes a vector of Dice objects and for each object, samples a value. It returns a list of sampled die values.
     :param die_objects: A vector of Dice objects.
@@ -697,7 +688,7 @@ def buy_property(player, asset, current_gameboard):
         return flag_config_dict['successful_action']
 
 
-def make_trade_offer(from_player, offer, to_player):
+def make_trade_offer(from_player, offer, to_player, current_gameboard):
     """
     Action for one player to make a trade offer to another player to trade cash or properties or both. Note that
     the trade is processed only if to_player invokes accept_trade_offer when it is their turn next.
@@ -785,9 +776,6 @@ def accept_trade_offer(player, current_gameboard):
     - if ownership of properties are incorrect
     - if the properties involved in the trade are improved.
     - if the properties involved in the trade are mortgaged.
-    - if the properties involved in the trade are part of monopolized color groups, then the other properties in the color group
-        should be un-improved (since the trade will dissolve the monopoly and the improvements on the other properties in the color
-        group become invalid and illegal.)
     """
     if player.outstanding_trade_offer['from_player'].status == 'lost':
         logger.debug("I have an outstanding trade offer that was made to me by a player that has lost the game! Cannot process trade offer. Returning failure code.")
@@ -817,16 +805,6 @@ def accept_trade_offer(player, current_gameboard):
                 logger.debug(item.name+' is mortgaged. Cannot accept sell trade offer! Returning failure code.')
                 flag_properties_wanted = 0
                 break
-            elif item.color in player.full_color_sets_possessed:
-                # if color is monopolized by player, check if there are improvements on the other properties of the color group
-                for same_colored_asset in current_gameboard['color_assets'][item.color]:
-                    if same_colored_asset == item:
-                        continue
-                    elif same_colored_asset.num_houses > 0 or same_colored_asset.num_hotels > 0:
-                        logger.debug(same_colored_asset.name + ' belongs to same color group as the property involved in trade and is improved. '
-                                                               'Declining accept sell trade offer! Returning failure code.')
-                        flag_properties_wanted = 0
-                        break
         for item in player.outstanding_trade_offer['property_set_offered']:
             if item.owned_by != player.outstanding_trade_offer['from_player']:
                 flag_properties_offered = 0
@@ -840,16 +818,6 @@ def accept_trade_offer(player, current_gameboard):
                 logger.debug(item.name+' is mortgaged. Cannot accept sell trade offer! Returning failure code.')
                 flag_properties_offered = 0
                 break
-            elif item.color in player.outstanding_trade_offer['from_player'].full_color_sets_possessed:
-                # if color is monopolized by from_player, check if there are improvements on the other properties of the color group
-                for same_colored_asset in current_gameboard['color_assets'][item.color]:
-                    if same_colored_asset == item:
-                        continue
-                    elif same_colored_asset.num_houses > 0 or same_colored_asset.num_hotels > 0:
-                        logger.debug(same_colored_asset.name + ' belongs to same color group as the property involved in trade and is improved. '
-                                                               'Declining accept sell trade offer! Returning failure code.')
-                        flag_properties_offered = 0
-                        break
         if flag_cash_offered and flag_cash_wanted and flag_properties_offered and flag_properties_wanted:
             logger.debug('Initiating trade offer transfer...')
             for item in player.outstanding_trade_offer['property_set_offered']:
@@ -950,3 +918,68 @@ def accept_trade_offer(player, current_gameboard):
             player.outstanding_trade_offer['cash_wanted'] = 0
             player.outstanding_trade_offer['cash_offered'] = 0
             return flag_config_dict['failure_code']
+
+
+def pre_roll_arbitrary_action(from_player=None, to_player=None, action_params_dict=None, current_gameboard=None):
+    """
+    1. init (default --> placed in intialize_game_elements.py -->init_arbitrary_action())
+    2. action choice func def
+    3. add action into compute allowable actions
+    4. agent calls the action with schema printing
+    ### move to_player to action_params_dict dictionary
+    """
+    if action_params_dict is not None:
+        if isinstance(action_params_dict['location'], Location):
+            print("Hi, I am on location: " + action_params_dict['location'].name)
+
+
+def out_of_turn_arbitrary_action(from_player=None, to_player=None, action_params_dict=None, current_gameboard=None):
+    pass
+
+
+def post_roll_arbitrary_action(from_player=None, to_player=None, action_params_dict=None, current_gameboard=None):
+    pass
+
+
+def make_arbitrary_interaction(from_player, to_player, interaction_params_dict, current_gameboard):
+    pass
+
+
+def accept_arbitrary_interaction(from_player, to_player, interaction_id, decision, current_gameboard):
+    """
+
+    :param player:
+    :param interaction_id: Each interaction will associated with a unique id
+    :param decision: boolean, true/false --> accept/reject interaction offer
+    :param current_gameboard:
+    :return:
+    """
+    if interaction_id not in to_player.interaction_dict:
+        logger.debug("Incorrect interaction id")
+        return flag_config_dict['failure_code']
+    if decision:
+        pass  # in the lifted function, set trigger/global flags to account for this decision here (currently a place holder)
+    del to_player.interaction_dict[interaction_id]
+    return flag_config_dict['successful_action']
+
+
+def print_schema(current_gameboard, schema_type=None):
+    """
+    When an aribitrary action/interaction is available in the simulator, schema that describes the parameters for the action/intercation
+    function call will be present in the schema. The agent just has to call the "print_schema" function with the type.
+    :param current_gameboard:
+    :param schema_type: pre_roll_arbitrary_action, post_roll_arbitrary_action, out_of_turn_arbitrary_action
+    :return:
+    """
+    if schema_type is None:
+        logger.debug("Schema type not provided. Returning failure code.")
+        return flag_config_dict['failure_code']
+
+    schema = schema_type + "_schema"
+    if schema not in current_gameboard:
+        logger.debug("Schema of requested type not available...")
+        return flag_config_dict['failure_code']
+    current_gameboard["schema"] = current_gameboard[schema]
+    print(current_gameboard["schema"])
+    logger.debug("Requested schema info has been made available.")
+    return flag_config_dict['successful_action']

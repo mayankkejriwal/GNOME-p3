@@ -61,9 +61,15 @@ def _serialize_history(current_gameboard):
             elif k == 'current_gameboard':
                 hist_dict['param'][k] = 'current_gameboard'
             elif k == 'from_player':
-                hist_dict['param'][k] = v.player_name
+                if v is not None:
+                    hist_dict['param'][k] = v.player_name
+                else:
+                    hist_dict['param'][k] = None
             elif k == 'to_player':
-                hist_dict['param'][k] = v.player_name
+                if v is not None:
+                    hist_dict['param'][k] = v.player_name
+                else:
+                    hist_dict['param'][k] = None
             elif k == 'offer':
                 hist_dict['param'][k] = dict()
                 for k1, v1 in v.items():
@@ -105,6 +111,16 @@ def _serialize_history(current_gameboard):
                 hist_dict['param'][k] = v
             elif k == 'sell_hotel':
                 hist_dict['param'][k] = v
+            #------------------------phase2------------------------
+            elif k == 'schema_type':
+                hist_dict['param'][k] = v
+            elif k == 'action_params_dict':
+                if v is not None:
+                    hist_dict['param'][k] = dict()
+                    for k1, v1 in v.items():
+                        if k1 == 'location':
+                            hist_dict['param'][k][k1] = v1.name
+            #------------------------------------------------------
             else:
                 print('This param object not included, key: ', k, " value: ", v, " function name: ", func_name)
 
@@ -228,6 +244,9 @@ def serialize_gameboard(current_gameboard):
     current_gameboard_serial_obj['locations'] = location_serial_obj
     current_gameboard_serial_obj['location_sequence'] = location_sequence_list
     current_gameboard_serial_obj['die_sequence'] = total_die_seq
+    #-------------------------phase2----------------------------------------
+    current_gameboard_serial_obj['schema'] = current_gameboard['schema']
+    #-----------------------------------------------------------------------
     current_gameboard_serial_obj['history'] = history_serial_obj
     pruned_gameboard_serial_obj = _prune_serialize_history(current_gameboard_serial_obj)
 

@@ -842,3 +842,11 @@ def check_for_winner(current_gameboard):
                     winner = pl
 
     return winner
+
+
+def set_currently_in_jail_to_false(player, current_gameboard):
+    player.currently_in_jail = False
+
+
+def print_schema(schema_type, current_gameboard):
+    return current_gameboard[schema_type]

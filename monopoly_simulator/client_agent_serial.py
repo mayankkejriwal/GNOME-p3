@@ -27,6 +27,15 @@ def make_pre_roll_move(serial_dict_to_client):
     allowable_move_names = serial_dict_to_client['allowable_moves']
     code = serial_dict_to_client['code']
 
+    # #-------------------testing print schema-----------------------------------------------
+    # return_to_server_dict = dict()
+    # return_to_server_dict['function'] = "print_schema"
+    # return_to_server_dict['param_dict'] = dict()
+    # return_to_server_dict['param_dict']['current_gameboard'] = current_gameboard
+    # return_to_server_dict['param_dict']['schema_type'] = "pre_roll_arbitrary_action"
+    # return return_to_server_dict
+    # #--------------------------------------------------------------------------------------
+
     return_to_server_dict = dict()
     if "skip_turn" in allowable_move_names:
         return_to_server_dict['function'] = "skip_turn"

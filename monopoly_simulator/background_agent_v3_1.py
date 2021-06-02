@@ -71,6 +71,7 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
         logger.debug(player.player_name + ' has executed an unsuccessful preroll action, incrementing unsuccessful_tries ' +
                                           'counter to ' + str(player.agent._agent_memory['count_unsuccessful_tries']))
 
+
     if player.agent._agent_memory['count_unsuccessful_tries'] >= UNSUCCESSFUL_LIMIT:
         logger.debug(player.player_name + ' has reached preroll unsuccessful action limits.')
         if "skip_turn" in allowable_moves:
@@ -84,6 +85,31 @@ def make_pre_roll_move(player, current_gameboard, allowable_moves, code):
         else:
             logger.error("Exception")
             raise Exception
+
+
+    '''
+    #----------------------dummy action example---------------------------------------
+    if 'pre_roll_arbitrary_action_schema' in current_gameboard:
+        print(" ")
+        print("-----------------Arbitrary action schema:----------------------")
+        print(" ")
+        param = dict()
+        param['schema_type'] = 'pre_roll_arbitrary_action'
+        param['current_gameboard'] = 'current_gameboard'
+        return ("print_schema", param)
+
+
+    if player.current_cash < 1000:
+        print(player.player_name + " cash bal < 1000, printing Hello world through arbitrary action.")
+        param = dict()
+        param['action_params_dict'] = dict()
+        param['action_params_dict']['location'] = current_gameboard['location_sequence'][player.current_position].name
+            # send back name of property, resolved into location pointer in the player._populate_param_dict() function like the other action choice params.
+        return ("pre_roll_arbitrary_action", param)
+    else:
+        print("Condition not satisfied")
+    #----------------------------------------------------------------------
+    '''
 
     if player.current_cash >= current_gameboard['go_increment']: # if we don't have enough money, best to stay put.
         param = dict()
@@ -415,6 +441,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
                     for item in param['offer']['property_set_wanted']:
                         prop_set_wanted.add(item.name)
                     param['offer']['property_set_wanted'] = prop_set_wanted
+                    param['current_gameboard'] = 'current_gameboard'
 
                     player.agent._agent_memory['previous_action'] = "make_trade_offer"
                     return_action_list.append("make_trade_offer")
@@ -447,6 +474,7 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
                     for item in param['offer']['property_set_wanted']:
                         prop_set_wanted.add(item.name)
                     param['offer']['property_set_wanted'] = prop_set_wanted
+                    param['current_gameboard'] = 'current_gameboard'
 
                     player.agent._agent_memory['previous_action'] = "make_trade_offer"
                     return_action_list.append("make_trade_offer")

@@ -1,12 +1,13 @@
 from monopoly_simulator import initialize_game_elements
-from monopoly_simulator.action_choices import roll_die
+# from monopoly_simulator.action_choices import roll_die
+from monopoly_simulator import action_choices
 import numpy as np
 from monopoly_simulator import card_utility_actions
 from monopoly_simulator import background_agent_v3_1
 from monopoly_simulator import read_write_current_state
 import json
-from monopoly_simulator import diagnostics
 from monopoly_simulator import novelty_generator
+from monopoly_simulator import diagnostics
 from monopoly_simulator.agent import Agent
 import xlsxwriter
 from monopoly_simulator.flag_config import flag_config_dict
@@ -55,7 +56,7 @@ def disable_history(game_elements):
     game_elements['history']['time_step'] = list()
 
 
-def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
+def simulate_game_instance(game_elements, history_log_file=None, np_seed=7):
     """
     Simulate a game instance.
     :param game_elements: The dict output by set_up_board
@@ -142,15 +143,16 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
         logger.debug("Printing cash balance and net worth of each player: ")
         diagnostics.print_player_net_worths_and_cash_bal(game_elements)
 
-        r = roll_die(game_elements['dies'], np.random.choice)
+        r = action_choices.roll_die(game_elements['dies'], np.random.choice, game_elements)
         for i in range(len(r)):
             game_elements['die_sequence'][i].append(r[i])
 
         # add to game history
-        game_elements['history']['function'].append(roll_die)
+        game_elements['history']['function'].append(action_choices.roll_die)
         params = dict()
         params['die_objects'] = game_elements['dies']
         params['choice'] = np.random.choice
+        params['current_gameboard'] = game_elements
         game_elements['history']['param'].append(params)
         game_elements['history']['return'].append(r)
         game_elements['history']['time_step'].append(game_elements['time_step_indicator'])
@@ -194,7 +196,8 @@ def simulate_game_instance(game_elements, history_log_file=None, np_seed=55):
             game_elements['history']['time_step'].append(game_elements['time_step_indicator'])
 
         else:
-            current_player.currently_in_jail = False  # the player is only allowed to skip one turn (i.e. this one)
+            # current_player.currently_in_jail = False  # the player is only allowed to skip one turn (i.e. this one)
+            card_utility_actions.set_currently_in_jail_to_false(current_player, game_elements)      # change
 
         if current_player.current_cash < 0:
             code = current_player.handle_negative_cash_balance(game_elements)

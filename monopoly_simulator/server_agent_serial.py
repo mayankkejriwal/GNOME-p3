@@ -195,6 +195,7 @@ class ServerAgent(Agent):
         super().__init__(**_build_decision_agent_methods_dict())
         print("Waiting for connection...")
         self.listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.listener.bind((address[0], address[1]))
         self.listener.listen()
         conn, addr = self.listener.accept()
