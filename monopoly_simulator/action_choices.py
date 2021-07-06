@@ -2,6 +2,9 @@ from monopoly_simulator.flag_config import flag_config_dict
 from monopoly_simulator.bank import Bank
 from monopoly_simulator.dice import Dice
 from monopoly_simulator.location import Location
+# from monopoly_simulator.novelty_functions_v3 import *
+import sys
+
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.action_choices')
 
@@ -25,7 +28,7 @@ def free_mortgage(player, asset, current_gameboard):
         logger.debug(player.player_name+ ' does not have cash to free mortgage on asset '+str(asset.name)+'. Returning failure code')
         return flag_config_dict['failure_code']
     else:
-        player.charge_player(asset.calculate_mortgage_owed(asset, current_gameboard), current_gameboard, bank_flag=True)
+        player.charge_player(asset.calculate_mortgage_owed(asset, current_gameboard), current_gameboard, bank_flag=True)  # 交钱赎回典押资产
         logger.debug(player.player_name+"Player has paid down mortgage with interest. Setting status of asset to unmortgaged, and removing asset from player's mortgaged set")
         asset.is_mortgaged = False
         player.mortgaged_assets.remove(asset)
@@ -61,6 +64,7 @@ def make_sell_property_offer(from_player, asset, to_player, price):
         to_player.outstanding_property_offer['price'] = price
         to_player.is_property_offer_outstanding = True
         logger.debug('Offer has been made.')
+
         return flag_config_dict['successful_action'] # offer has been made
 
 
@@ -688,7 +692,7 @@ def buy_property(player, asset, current_gameboard):
         return flag_config_dict['successful_action']
 
 
-def make_trade_offer(from_player, offer, to_player, current_gameboard):
+def make_trade_offer(from_player, offer, to_player, current_gameboard=None):
     """
     Action for one player to make a trade offer to another player to trade cash or properties or both. Note that
     the trade is processed only if to_player invokes accept_trade_offer when it is their turn next.
@@ -928,9 +932,10 @@ def pre_roll_arbitrary_action(from_player=None, to_player=None, action_params_di
     4. agent calls the action with schema printing
     ### move to_player to action_params_dict dictionary
     """
-    if action_params_dict is not None:
+    if action_params_dict is not None and 'location' in action_params_dict:
         if isinstance(action_params_dict['location'], Location):
             print("Hi, I am on location: " + action_params_dict['location'].name)
+
 
 
 def out_of_turn_arbitrary_action(from_player=None, to_player=None, action_params_dict=None, current_gameboard=None):
@@ -938,10 +943,153 @@ def out_of_turn_arbitrary_action(from_player=None, to_player=None, action_params
 
 
 def post_roll_arbitrary_action(from_player=None, to_player=None, action_params_dict=None, current_gameboard=None):
-    pass
+    """
+        1. init (default --> placed in intialize_game_elements.py -->init_arbitrary_action())
+        2. action choice func def
+        3. add action into compute allowable actions
+        4. agent calls the action with schema printing
+        ### move to_player to action_params_dict dictionary
+        """
+
+    if 'mortgage_buy_property' in current_gameboard:
+        if 'mortgage_buy_property_installments' not in from_player.agent._agent_memory:
+            from_player.agent._agent_memory['mortgage_buy_property_installments'] = dict()
+
+        if action_params_dict['location'].loc_class == 'real_estate' or action_params_dict[
+            'location'].loc_class == 'railroad':
+            asset = action_params_dict['location']
+            # check player on property
+            if current_gameboard['location_sequence'][from_player.current_position] != asset:
+                logger.debug(from_player.player_name + ' is not physically on ' + asset.name + ' position, Resetting option_to_buy for player and returning code failure code')
+                from_player.reset_option_to_buy()
+                # add to game history
+                current_gameboard['history']['function'].append(from_player.reset_option_to_buy)
+                params = dict()
+                params['self'] = from_player
+                current_gameboard['history']['param'].append(params)
+                current_gameboard['history']['return'].append(None)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
+                return flag_config_dict['failure_code']
+            # check property belongs to bank
+            if asset.owned_by != current_gameboard['bank']:
+                logger.debug(
+                    asset.name + ' is not owned by Bank! Resetting option_to_buy for player and returning code failure code')
+                from_player.reset_option_to_buy()
+                # add to game history
+                current_gameboard['history']['function'].append(from_player.reset_option_to_buy)
+                params = dict()
+                params['self'] = from_player
+                current_gameboard['history']['param'].append(params)
+                current_gameboard['history']['return'].append(None)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
+
+                return flag_config_dict['failure_code']
+            logger.debug(
+                from_player.player_name + " is trying to mortgage purchase " + action_params_dict['location'].name)
+            if action_params_dict['location'].name in from_player.agent._agent_memory[
+                'mortgage_buy_property_installments']:
+                logger.debug(action_params_dict['location'].name + " mortgage to buy property has been conducted.")
+                return flag_config_dict['failure_code']
+            # update mortgage progress (modify down payment and installment interest)
+            from_player.agent._agent_memory['mortgage_buy_property_installments'][
+                action_params_dict['location'].name] = dict()
+            ori_mortgage_percentage = current_gameboard['bank'].mortgage_percentage
+            current_gameboard['bank'].mortgage_percentage = current_gameboard['mortgage_buy_property'][
+                'installment_interest']
+            ori_mortgage_price = action_params_dict[
+                'location'].mortgage  # modify purchase-mortgage percentage and down-payment
+            action_params_dict['location'].mortgage = action_params_dict['location'].price - \
+                                                      current_gameboard['mortgage_buy_property']['down_payment']
+            ###
+            # charge player and add log to game history
+            from_player.charge_player(current_gameboard['mortgage_buy_property']['down_payment'], current_gameboard,
+                                      bank_flag=True)
+            logger.debug(from_player.player_name + ' paid fee for mortgage to purchase property down payment: ' + str(
+                current_gameboard['mortgage_buy_property']['down_payment']) + ', the full price of the asset is: ' + str(
+                action_params_dict['location'].price))
+            current_gameboard['history']['function'].append(from_player.charge_player)
+            params = dict()
+            params['self'] = from_player
+            params['amount'] = current_gameboard['mortgage_buy_property']['down_payment']
+            params['description'] = 'mortgage to purchase property down-payment'
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
+            # update asset owner and add log to game history
+            asset.update_asset_owner(from_player, current_gameboard)
+            current_gameboard['history']['function'].append(asset.update_asset_owner)
+            params = dict()
+            params['self'] = asset
+            params['player'] = from_player
+            params['current_gameboard'] = current_gameboard
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
+            logger.debug(
+                asset.name + ' ownership has been updated! Resetting option_to_buy for player and returning code successful action code')
+            from_player.reset_option_to_buy()
+            current_gameboard['history']['function'].append(from_player.reset_option_to_buy)
+            params = dict()
+            params['self'] = from_player
+            current_gameboard['history']['param'].append(params)
+            current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
+            # set asset to mortgage status
+            if asset.owned_by != from_player:
+                logger.debug(
+                    from_player.player_name + ' is trying to mortgage property that is not theirs. Returning failure code')
+                return flag_config_dict['failure_code']
+            elif asset.is_mortgaged is True or asset in from_player.mortgaged_assets:  # the or is unnecessary but serves as a check
+                logger.debug(asset.name + ' is already mortgaged to begin with...Returning failure code')
+                return flag_config_dict['failure_code']
+            elif asset.loc_class == 'real_estate' and (asset.num_houses > 0 or asset.num_hotels > 0):
+                logger.debug(
+                    asset.name + ' has improvements. Remove improvements before attempting mortgage. Returning failure code')
+                return flag_config_dict['failure_code']
+            else:
+                logger.debug("Setting asset to mortgage status and adding to player's mortgaged assets")
+                asset.is_mortgaged = True
+                from_player.mortgaged_assets.add(asset)
+                logger.debug(
+                    "Property has been mortgaged and player has received cash. Returning successful action code")
+            from_player.agent._agent_memory['mortgage_buy_property_installments'][action_params_dict['location'].name][
+                'amount_left'] = action_params_dict['location'].calculate_mortgage_owed(action_params_dict['location'],
+                                                                                        current_gameboard)
+            from_player.agent._agent_memory['mortgage_buy_property_installments'][action_params_dict['location'].name][
+                'num_rounds_left'] = current_gameboard['mortgage_buy_property']['num_rounds']
+            from_player.agent._agent_memory['mortgage_buy_property_installments'][action_params_dict['location'].name][
+                'amount_needed_per_round'] = \
+            from_player.agent._agent_memory['mortgage_buy_property_installments'][action_params_dict['location'].name][
+                'amount_left'] / \
+            from_player.agent._agent_memory['mortgage_buy_property_installments'][action_params_dict['location'].name][
+                'num_rounds_left']
+            from_player.agent._agent_memory['mortgage_buy_property_installments'][action_params_dict['location'].name][
+                'asset'] = asset
+
+            logger.debug(from_player.player_name + " will be paying mortgage on " + action_params_dict[
+                'location'].name + " in to buy property.")
+            # restore mortgage perc for common mortgage and asset's mortgage
+            current_gameboard['bank'].mortgage_percentage = ori_mortgage_percentage
+            action_params_dict['location'].mortgage = ori_mortgage_price
+
+        else:
+
+            logger.debug("Cannot mortgage to buy this property since its not real_estate/railroad.")
+            return flag_config_dict['failure_code']
+            ###
+
+        # if 'auxiliary_check_for_go' not in current_gameboard:
+        #     current_gameboard['auxiliary_check_for_go'] = getattr(sys.modules[__name__],
+        #                                                           'charge_mortgage_fee_util')
+        # action_choices.free_mortgage = getattr(sys.modules[__name__], 'reassign_free_mortgage')
+        return flag_config_dict['successful_action']
+    else:
+        logger.debug("something wrong with novelty injection...")
+        raise Exception
 
 
 def make_arbitrary_interaction(from_player, to_player, interaction_params_dict, current_gameboard):
+    # populate the to_player interaction dict with interaction id and parameters
     pass
 
 
@@ -977,9 +1125,30 @@ def print_schema(current_gameboard, schema_type=None):
 
     schema = schema_type + "_schema"
     if schema not in current_gameboard:
+        # print('schema in not in gameboard')
         logger.debug("Schema of requested type not available...")
         return flag_config_dict['failure_code']
     current_gameboard["schema"] = current_gameboard[schema]
-    print(current_gameboard["schema"])
+    # print('schema:', current_gameboard["schema"])
     logger.debug("Requested schema info has been made available.")
     return flag_config_dict['successful_action']
+
+
+def print_pre_roll_arbitrary_action_schema():
+    # check location is a real location:
+    # if not return -1
+    return {'location': 'Location'}
+    # dict
+
+
+def print_post_roll_arbitrary_action_schema():
+    return {'location': 'Location', 'rounds': 'Rounds', 'perc_of_amount': 'Percentage of Amount'}
+
+
+def print_out_of_turn_arbitrary_action_schema():
+    pass
+
+
+def print_interaction_arbitrary_action_schema():
+    return {'from_player': 'Player1', 'to_player': 'Player2', 'rounds': 'Rounds', 'perc_of_amount': 'Percentage of Amount'}
+
