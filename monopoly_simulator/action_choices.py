@@ -943,13 +943,6 @@ def out_of_turn_arbitrary_action(from_player=None, to_player=None, action_params
 
 
 def post_roll_arbitrary_action(from_player=None, to_player=None, action_params_dict=None, current_gameboard=None):
-    """
-        1. init (default --> placed in intialize_game_elements.py -->init_arbitrary_action())
-        2. action choice func def
-        3. add action into compute allowable actions
-        4. agent calls the action with schema printing
-        ### move to_player to action_params_dict dictionary
-        """
 
     if 'mortgage_buy_property' in current_gameboard:
         if 'mortgage_buy_property_installments' not in from_player.agent._agent_memory:
