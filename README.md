@@ -34,3 +34,5 @@ Following changes have to be made to file **_GNOME-p3/monopoly_simulator/gamepla
 * The seed defined in the **_simulate_game_instance()_** function argument ensures game replication (default seed is already set, pass in new seed in line 423 for a different game instance to be played out). 
 * The simulator package comes with a few pre-implemented agents that directly interact with the simulator and do not require a client-server communication protocol (agent implementation in files with names **_background_agent_v[x].py_** and **_baseline_agent.py_**). You are free to plug in any of the implemented agents into each player in lines 396-399 in **_GNOME-p3/monopoly-simulator/gameplay_socket.py_** (default agents are set). The latest updated background agent is **_GNOME-p3/monopoly-simulator/background_agent_V3_1.py_** and the baseline agent is **_GNOME-p3/monopoly-simulator/baseline_agent.py_**.
 
+Please cite the following paper, if our tools are useful. Thanks!
+Kejriwal M, Thomas S. A multi-agent simulator for generating novelty in monopoly[J]. Simulation Modelling Practice and Theory, 2021: 102364.
