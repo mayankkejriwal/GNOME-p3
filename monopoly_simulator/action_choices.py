@@ -978,6 +978,7 @@ def post_roll_arbitrary_action(from_player=None, to_player=None, action_params_d
                     return flag_config_dict['failure_code']
                 logger.debug(
                     from_player.player_name + " is trying to mortgage purchase " + asset.name)
+                # make sure down payment is lower than asset price
                 if current_gameboard['mortgage_buy_property']['down_payment'] >= asset.price:
                     logger.debug("Parameter down payment is higher than asset price. Returning failure code")
                     return flag_config_dict['failure_code']
