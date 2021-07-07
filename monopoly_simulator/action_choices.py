@@ -943,6 +943,40 @@ def out_of_turn_arbitrary_action(from_player=None, to_player=None, action_params
 
 
 def post_roll_arbitrary_action(from_player=None, to_player=None, action_params_dict=None, current_gameboard=None):
+    """
+    Example:
+        from_player='Player_4'
+        param['action_params_dict'] = {location: 'Connecticut Avenue', 'installment_interest': 0.15,
+                                        'down_payment': 10, 'num_rounds': 3}
+        the _populate_param_dict func in player.py will automatically find the corresponding location instance of str 'Connecticut Avenue',
+        and replace the location name to the instance
+        action_params_dict = {'location': <monopoly_simulator.location.RealEstateLocation object at 0x7fa2dcf076d8>,
+                            'installment_interest': 0.15, 'down_payment': 10, 'num_rounds': 3}
+        We'll first check location name has been transferred to location instance, make sure the location is a real estate
+        or railroad, also Player_4 is physically in the location position, and the location is owned bank. We then need to
+        make sure the down_payment is lower than location's price, else the installments will be negative.
+
+        Before paying the down payment, the last thing is to make sure this mortgage purchase hasn't been conducted by Player_4.
+
+        The player will then be charged the down_payment, we will obtain a log shows 'Player_4 paid fee for mortgage to
+                                                                                    purchase property down payment: 10,
+                                                                                    the full price of the asset is: 120.0'
+        120 is the full price of 'Connecticut Avenue'.
+
+        The ownership of Connecticut Avenue will be updated, Player_4 becomes the owner of Connecticut Avenue but the property
+        is in the 'is_mortgaged' status until Player_4 finished the 3-round installments.
+
+        The 'is_mortgaged' status cannot be freed by common free_mortgage func, if the player is trying to free it by free_mortgage,
+        we will have the log like 'This action choice cannot be invoked. Returning failure code.'
+
+        After paying down payment, when Player_4 passes go, 42.166666 will be charged (120(full price) - 10(down_payment))
+                                                                                        / 3 (num_rounds) * (1 + 0.15 (installment_interest))
+        This charge action will be invoked 3 (num_rounds) rounds unless the game ended early, Player_4 did not have chance to pass go.
+
+        If Player_4 successfully paying off the loan after 3 rounds (passes go three times), Connecticut Avenue will be
+         removed from Player_4's mortgaged_assets.
+
+    """
     if 'mortgage_buy_property' in current_gameboard:
         if 'mortgage_buy_property_installments' not in from_player.agent._agent_memory:
             from_player.agent._agent_memory['mortgage_buy_property_installments'] = dict()
@@ -976,12 +1010,14 @@ def post_roll_arbitrary_action(from_player=None, to_player=None, action_params_d
                     current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                     return flag_config_dict['failure_code']
-                logger.debug(
-                    from_player.player_name + " is trying to mortgage purchase " + asset.name)
+
                 # make sure down payment is lower than asset price
                 if current_gameboard['mortgage_buy_property']['down_payment'] >= asset.price:
                     logger.debug("Parameter down payment is higher than asset price. Returning failure code")
                     return flag_config_dict['failure_code']
+                logger.debug(
+                    from_player.player_name + " is trying to mortgage purchase " + asset.name)
+                # check whether the action has been conducted
                 if asset.name in from_player.agent._agent_memory[
                     'mortgage_buy_property_installments']:
                     logger.debug(asset.name + " mortgage to buy property has been conducted.")
