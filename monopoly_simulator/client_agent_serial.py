@@ -2,6 +2,7 @@ from monopoly_simulator.agent import Agent
 import socket
 import json
 import logging
+import struct
 logger = logging.getLogger('monopoly_simulator.logging_info.client_agent_serial')
 
 
@@ -260,6 +261,15 @@ def _build_decision_agent_methods_dict():
 decision_agent_methods = _build_decision_agent_methods_dict() # this is the main data structure that is needed by gameplay
 
 
+# def recv_basic(the_socket, n):
+#     total_data = []
+#     while True:
+#         data = the_socket.recv(n)
+#         print(data)
+#         if not data: break
+#         total_data.append(data)
+#     return ''.join(total_data)
+
 class ClientAgent(Agent):
     """
     An Agent that can be sent requests from a ServerAgent and send back desired moves. Instantiate the client like you
@@ -285,11 +295,27 @@ class ClientAgent(Agent):
         self.conn.connect((address[0], address[1]))
 
         result = None
+        exception = []
         while True:
-            data_from_server = self.conn.recv(50000)
-            data_from_server = data_from_server.decode("utf-8")
 
-            data_dict_from_server = json.loads(data_from_server)
+            data_from_server = self.conn.recv(500000)
+            data_from_server = data_from_server.decode("utf-8")
+            # data_dict_from_server = json.loads(data_from_server)
+
+            # bug fixed
+            try:
+                data_dict_from_server = json.loads(data_from_server)
+            except ValueError:
+                exception.append(data_from_server)
+                try:
+                    print(data_from_server)
+                    print('combination:', ''.join(exception))
+                    data_dict_from_server = json.loads(''.join(exception))
+                    exception.clear()
+                except ValueError:
+                    continue
+                print(Exception, ': ', type(data_from_server), data_from_server)
+            #
             func_name = data_dict_from_server['function']
 
             if func_name == "start_tournament":

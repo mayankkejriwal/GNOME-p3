@@ -401,6 +401,9 @@ def play_game():
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
                                  player_decision_agents)
 
+    # game_elements = set_up_board('monopoly_game_schema_v1-2.json',
+    #                              player_decision_agents)
+
     #Comment out the above line and uncomment the piece of code to read the gameboard state from an existing json file so that
     #the game starts from a particular game state instead of initializing the gameboard with default start values.
     #Note that the novelties introduced in that particular game which was saved to file will be loaded into this game board as well.
