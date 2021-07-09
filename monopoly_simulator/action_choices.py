@@ -1173,7 +1173,7 @@ def make_arbitrary_interaction(from_player, to_player, interaction_params_dict, 
         return action_choices.flag_config_dict['failure_code']
 
     logger.debug(
-        f"{from_player.player_name} ask for free rent to {to_player.player_name} on peoperty {interaction_params_dict['to_location'].name}."
+        f"{from_player.player_name} asks for free rent to {to_player.player_name} on peoperty {interaction_params_dict['to_location'].name}."
         f" If {to_player.player_name} accepts, {to_player.player_name} will also do not need to pay rent on {from_player.player_name}'s property {interaction_params_dict['location'].name}.")
     
     if 'free_rent_interaction' in current_gameboard:  # interaction schema
@@ -1231,7 +1231,7 @@ def accept_arbitrary_interaction(from_player, to_player, interaction_id, decisio
     if decision:  # if accept the offer
 
         logger.debug(
-            f"{to_player.player_name} accept the offer from {from_player.player_name}. When {to_player.player_name}"
+            f"{to_player.player_name} accepts the offer from {from_player.player_name}. When {to_player.player_name}"
             f" passes {from_player.agent._agent_memory['free_rent'][interaction_id]['location'].name} or "
             f"{from_player.player_name} passes {from_player.agent._agent_memory['free_rent'][interaction_id]['to_location'].name},"
             f" they don't need to pay rent.")
