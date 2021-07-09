@@ -1122,7 +1122,10 @@ def make_arbitrary_interaction(from_player, to_player, interaction_params_dict, 
     """
     Example interaction_params_dict = {'location': 'Pacific Avenue', 'to_location': New York Avenue}
     from_player = Player_2, to_player = Player_3
-    the location is an asset owned by from_player, and to_location is an asset owned by to_player.
+
+    The location is an asset owned by from_player (who sends the offer), and to_location is an asset owned by to_player
+    (who receives the offer).
+
     The make_arbitrary_interaction could be called in out_of_turn move and we do not limit the position of offer sender 
     and receiver when the trade happens (i.e., the sender do not need to at 'location' or 'to_location' to send offer,
     and the receiver do not need to at 'location' or 'to_location' to receive offer.)
