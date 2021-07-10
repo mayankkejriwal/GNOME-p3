@@ -1121,9 +1121,9 @@ def post_roll_arbitrary_action(from_player=None, to_player=None, action_params_d
 def make_arbitrary_interaction(from_player, to_player, interaction_params_dict, current_gameboard):
     """
     Two players can agree not to charge rent to one another on one of their assets.
-    Say Pacific Avenue is one property of player_1, and New York Avenue is one property owned by player_2,
-    if they made the agreement on these two properties, when player_2 lands on Pacific Avenue
-    or player_1 lands on New York Avenue, no rent fee will be charged.
+    Say Pacific Avenue is one property of player_2, and New York Avenue is one property owned by player_3,
+    if they made the agreement on these two properties, when player_3 lands on Pacific Avenue
+    or player_2 lands on New York Avenue, no rent fee will be charged.
 
     Example interaction_params_dict = {'location': 'Pacific Avenue', 'to_location': New York Avenue}
     from_player = Player_2, to_player = Player_3
