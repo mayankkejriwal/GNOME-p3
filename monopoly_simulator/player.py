@@ -149,6 +149,15 @@ class Player(object):
         player_dict['mortgaged_assets'] = property_mortgage_list
 
         player_dict['option_to_buy'] = self._option_to_buy
+
+        if self.interaction_dict is not None:
+            player_dict['interaction_dict'] = dict()
+            for k, v in self.interaction_dict.items():
+                player_dict['interaction_dict'][k] = dict()
+                player_dict['interaction_dict'][k]['from_player'] = v['from_player'].player_name
+                player_dict['interaction_dict'][k]['location'] = v['location'].name
+                player_dict['interaction_dict'][k]['to_location'] = v['to_location'].name
+
         return player_dict
 
 

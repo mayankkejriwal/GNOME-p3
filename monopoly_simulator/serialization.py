@@ -120,6 +120,24 @@ def _serialize_history(current_gameboard):
                     for k1, v1 in v.items():
                         if k1 == 'location':
                             hist_dict['param'][k][k1] = v1.name
+            ### add interaction serialization
+            elif k == 'interaction_params_dict':
+                if v is not None:
+                    hist_dict['param'][k] = dict()
+                    for k1, v1 in v.items():
+                        if k1 == 'location':
+                            hist_dict['param'][k][k1] = v1.name
+                        elif k1 == 'to_location':
+                            hist_dict['param'][k][k1] = v1.name
+                        elif k1 == 'from_player':
+                            hist_dict['param'][k][k1] = v1.player_name
+            # elif k == 'interactions':
+            #     if v is not None:
+            #         hist_dict['param'][k] = dict()
+            #         for k1, v1 in v.items():
+            #             hist_dict['param'][k][k1] = v1
+            # elif k == 'interaction_id' or 'decision':
+            #     hist_dict['param'][k] = v
             #------------------------------------------------------
             else:
                 print('This param object not included, key: ', k, " value: ", v, " function name: ", func_name)
@@ -188,7 +206,6 @@ def _serialize_history(current_gameboard):
                     print("This return val not included in return history ", item)
         else:
             print("This return val not included in return history: ", return_obj, type(return_obj))
-
         hist_dict['time_step'] = current_gameboard['history']['time_step'][idx]
         history.append(hist_dict)
     return history
@@ -249,7 +266,6 @@ def serialize_gameboard(current_gameboard):
     #-----------------------------------------------------------------------
     current_gameboard_serial_obj['history'] = history_serial_obj
     pruned_gameboard_serial_obj = _prune_serialize_history(current_gameboard_serial_obj)
-
     with open('result.json', 'w') as fp:
         json.dump(pruned_gameboard_serial_obj, fp)
     fp.close()

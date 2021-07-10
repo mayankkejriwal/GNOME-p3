@@ -3,7 +3,7 @@ from monopoly_simulator.bank import Bank
 from monopoly_simulator.dice import Dice
 from monopoly_simulator.location import Location
 # from monopoly_simulator.novelty_functions_v3 import *
-import sys
+# import sys
 
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.action_choices')
@@ -1120,6 +1120,11 @@ def post_roll_arbitrary_action(from_player=None, to_player=None, action_params_d
 
 def make_arbitrary_interaction(from_player, to_player, interaction_params_dict, current_gameboard):
     """
+    Two players can agree not to charge rent to one another on one of their assets.
+    Say Pacific Avenue is one property of player_1, and New York Avenue is one property owned by player_2,
+    if they made the agreement on these two properties, when player_2 lands on Pacific Avenue
+    or player_1 lands on New York Avenue, no rent fee will be charged.
+
     Example interaction_params_dict = {'location': 'Pacific Avenue', 'to_location': New York Avenue}
     from_player = Player_2, to_player = Player_3
 
@@ -1161,8 +1166,8 @@ def make_arbitrary_interaction(from_player, to_player, interaction_params_dict, 
             
     # avoid the sender and receiver are the same player
     if from_player == to_player:
-        logger.debug(f'{from_player.player_name} Cannot make interaction offer to itself')
-        return action_choices.flag_config_dict['failure_code']
+        logger.debug(f'{from_player.player_name} cannot make interaction offer to itself')
+        return flag_config_dict['failure_code']
     
     # avoid using other player's or bank's property to make interaction
     if interaction_params_dict['to_location'].owned_by != to_player or \
@@ -1170,10 +1175,10 @@ def make_arbitrary_interaction(from_player, to_player, interaction_params_dict, 
         logger.debug(
             f"{from_player.player_name} did not own {interaction_params_dict['location'].name} to make offer, or"
             f" interaction offer send to wrong player who did not own {interaction_params_dict['to_location'].name}")
-        return action_choices.flag_config_dict['failure_code']
+        return flag_config_dict['failure_code']
 
     logger.debug(
-        f"{from_player.player_name} asks for free rent to {to_player.player_name} on peoperty {interaction_params_dict['to_location'].name}."
+        f"{from_player.player_name} asks for free rent to {to_player.player_name} on property {interaction_params_dict['to_location'].name}."
         f" If {to_player.player_name} accepts, {to_player.player_name} will also do not need to pay rent on {from_player.player_name}'s property {interaction_params_dict['location'].name}.")
     
     if 'free_rent_interaction' in current_gameboard:  # interaction schema
@@ -1202,8 +1207,8 @@ def make_arbitrary_interaction(from_player, to_player, interaction_params_dict, 
             logger.debug(f'{from_player.player_name} send request to {to_player.player_name} for freeing rent.')
 
         else:
-            logger.debug('Cannot free rent on this location since its not real_estate')
-            return action_choices.flag_config_dict['failure_code']
+            logger.debug('Cannot free rent on this location since its not real_estate.')
+            return flag_config_dict['failure_code']
 
         return flag_config_dict['successful_action']
     else:
@@ -1227,6 +1232,23 @@ def accept_arbitrary_interaction(from_player, to_player, interaction_id, decisio
     if from_player == to_player:
         logger.debug(f'{to_player} cannot accept/reject offer from itself')
         return flag_config_dict['failure_code']
+    current_gameboard['history']['function'].append(to_player.make_out_of_turn_moves)
+    params = dict()
+    detail_params = dict()
+    detail_params['interaction_id'] = interaction_id
+    detail_params['from_player'] = from_player.player_name
+    detail_params['to_player'] = to_player.player_name
+    detail_params['location'] = from_player.agent._agent_memory['free_rent'][interaction_id]['location'].name
+    detail_params['to_location'] = from_player.agent._agent_memory['free_rent'][interaction_id]['to_location'].name
+    detail_params['decision'] = decision
+    params['interactions'] = detail_params
+    if decision:
+        params['description'] = 'accept free rent interaction offer'
+    else:
+        params['description'] = 'reject free rent interaction offer'
+    current_gameboard['history']['param'].append(params)
+    current_gameboard['history']['return'].append(None)
+    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
     if decision:  # if accept the offer
 
@@ -1235,6 +1257,11 @@ def accept_arbitrary_interaction(from_player, to_player, interaction_id, decisio
             f" passes {from_player.agent._agent_memory['free_rent'][interaction_id]['location'].name} or "
             f"{from_player.player_name} passes {from_player.agent._agent_memory['free_rent'][interaction_id]['to_location'].name},"
             f" they don't need to pay rent.")
+        # print(
+        #     f"{to_player.player_name} accepts the offer from {from_player.player_name}. When {to_player.player_name}"
+        #     f" passes {from_player.agent._agent_memory['free_rent'][interaction_id]['location'].name} or "
+        #     f"{from_player.player_name} passes {from_player.agent._agent_memory['free_rent'][interaction_id]['to_location'].name},"
+        #     f" they don't need to pay rent.")
         # to_player has two location info and who is the sender
         to_player.agent._agent_memory['free_rent'][interaction_id] = dict()
         to_player.agent._agent_memory['free_rent'][interaction_id]['from_player'] = from_player
