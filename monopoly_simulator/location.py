@@ -212,7 +212,7 @@ class ActionLocation(Location):
         loc_dict['start_position'] = self.start_position
         loc_dict['end_position'] = self.end_position
         loc_dict['color'] = self.color
-        loc_dict['perform_actiom'] = self.perform_action.__name__
+        loc_dict['perform_action'] = self.perform_action.__name__
         return loc_dict
 
 
