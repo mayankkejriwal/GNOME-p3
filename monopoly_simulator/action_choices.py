@@ -1322,5 +1322,5 @@ def print_out_of_turn_arbitrary_action_schema():
 
 
 def print_interaction_arbitrary_action_schema():
-    return {'from_player': 'Player1', 'to_player': 'Player2', 'rounds': 'Rounds', 'perc_of_amount': 'Percentage of Amount'}
+    return {'location': 'Location', 'to_location': 'Location'}
 
