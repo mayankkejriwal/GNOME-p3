@@ -1318,7 +1318,7 @@ def print_post_roll_arbitrary_action_schema():
 
 
 def print_out_of_turn_arbitrary_action_schema():
-    pass
+    return {}
 
 
 def print_interaction_arbitrary_action_schema():
