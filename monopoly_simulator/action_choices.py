@@ -935,11 +935,19 @@ def pre_roll_arbitrary_action(from_player=None, to_player=None, action_params_di
     if action_params_dict is not None and 'location' in action_params_dict:
         if isinstance(action_params_dict['location'], Location):
             print("Hi, I am on location: " + action_params_dict['location'].name)
-
-
+            return flag_config_dict['successful_action']
+        else:
+            return flag_config_dict['failure_code']
+    else:
+        return flag_config_dict['failure_code']
+            
+           
 
 def out_of_turn_arbitrary_action(from_player=None, to_player=None, action_params_dict=None, current_gameboard=None):
-    pass
+    if not action_params_dict:
+        return flag_config_dict['successful_action']
+    else:
+        return flag_config_dict['failure_code']
 
 
 def post_roll_arbitrary_action(from_player=None, to_player=None, action_params_dict=None, current_gameboard=None):
