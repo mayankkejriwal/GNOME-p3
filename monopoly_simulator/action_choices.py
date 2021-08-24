@@ -1287,27 +1287,27 @@ def accept_arbitrary_interaction(from_player, to_player, interaction_id, decisio
     return flag_config_dict['successful_action']
 
 
-def print_schema(current_gameboard, schema_type=None):
-    """
-    When an aribitrary action/interaction is available in the simulator, schema that describes the parameters for the action/intercation
-    function call will be present in the schema. The agent just has to call the "print_schema" function with the type.
-    :param current_gameboard:
-    :param schema_type: pre_roll_arbitrary_action, post_roll_arbitrary_action, out_of_turn_arbitrary_action
-    :return:
-    """
-    if schema_type is None:
-        logger.debug("Schema type not provided. Returning failure code.")
-        return flag_config_dict['failure_code']
+# def print_schema(current_gameboard, schema_type=None):
+#     """
+#     When an aribitrary action/interaction is available in the simulator, schema that describes the parameters for the action/intercation
+#     function call will be present in the schema. The agent just has to call the "print_schema" function with the type.
+#     :param current_gameboard:
+#     :param schema_type: pre_roll_arbitrary_action, post_roll_arbitrary_action, out_of_turn_arbitrary_action
+#     :return:
+#     """
+#     if schema_type is None:
+#         logger.debug("Schema type not provided. Returning failure code.")
+#         return flag_config_dict['failure_code']
 
-    schema = schema_type + "_schema"
-    if schema not in current_gameboard:
-        # print('schema in not in gameboard')
-        logger.debug("Schema of requested type not available...")
-        return flag_config_dict['failure_code']
-    current_gameboard["schema"] = current_gameboard[schema]
-    # print('schema:', current_gameboard["schema"])
-    logger.debug("Requested schema info has been made available.")
-    return flag_config_dict['successful_action']
+#     schema = schema_type + "_schema"
+#     if schema not in current_gameboard:
+#         # print('schema in not in gameboard')
+#         logger.debug("Schema of requested type not available...")
+#         return flag_config_dict['failure_code']
+#     current_gameboard["schema"] = current_gameboard[schema]
+#     # print('schema:', current_gameboard["schema"])
+#     logger.debug("Requested schema info has been made available.")
+#     return flag_config_dict['successful_action']
 
 
 def print_pre_roll_arbitrary_action_schema():
