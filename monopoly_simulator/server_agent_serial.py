@@ -87,6 +87,8 @@ def make_out_of_turn_move(player, current_gameboard, allowable_moves, code):
     result = json.loads(return_from_client.decode("utf-8"))
     func_name = result['function']
     param_dict = result['param_dict']
+    if func_name == 'make_trade_offer' and 'current_gameboard' not in param_dict:
+        param_dict['current_gameboard'] = 'current_gameboard'
 
     return (func_name, param_dict)
 
