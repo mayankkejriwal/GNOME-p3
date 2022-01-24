@@ -234,8 +234,19 @@ class ServerAgent(Agent):
         json_serial_dict_to_client = json.dumps(serial_dict_to_client)
         self.conn.sendall(bytes(json_serial_dict_to_client, encoding="utf-8"))
         return_from_client = self.conn.recv(1024)
-        result = bool(return_from_client.decode("utf-8"))
+
+        return_from_client_cha = str(return_from_client.decode("utf-8"))[0]
+        return_from_client_string = str(return_from_client.decode("utf-8"))
+        logger.debug("return_from_client_cha = " + return_from_client_cha)
+        logger.debug("return_from_client_string = " + return_from_client_string)
+        if return_from_client_cha == '1':
+            result = 'True'
+        elif return_from_client_cha == '0':
+            result = 'False'
+        else:
+            result = 'None'
         logger.debug("TA2 agent novelty detection = " + str(result))
+        
         return result
 
     def end_tournament(self):
