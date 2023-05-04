@@ -8,6 +8,7 @@ novelty_name="environments_10"
 #novelty_name="goals_5"
 novelty_info=False # True if giving the AI agent a digit-hint 
 debug=False
+port=6010
 # ---------------------------------------------------
 
 
@@ -26,9 +27,9 @@ echo $novelty_class
 
 if [ ${novelty_class} = 'goals' ]
 then
-	python3 test_harness_phase3_goals.py ${novelty_name} 1 ${metaseed} ${novelty_index} ${novelty_info} TA2-agent 6010 ${num_games} ${debug}
+	python3 test_harness_phase3_goals.py ${novelty_name} 1 ${metaseed} ${novelty_index} ${novelty_info} TA2-agent ${port} ${num_games} ${debug}
 else
-	python3 test_harness_phase3.py ${novelty_name} 1 ${metaseed} ${novelty_index} ${novelty_info} TA2-agent 6010 ${num_games} ${debug}
+	python3 test_harness_phase3.py ${novelty_name} 1 ${metaseed} ${novelty_index} ${novelty_info} TA2-agent ${port} ${num_games} ${debug}
 fi
 
 
