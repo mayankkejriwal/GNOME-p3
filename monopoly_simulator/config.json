@@ -1,0 +1,1748 @@
+{"All": {
+   "InanimateAttributeNovelty":{
+      "bank_attribute_novelty":{
+         "attribute":[
+            "mortgage_percentage",
+            "monopolized_property_rent_factor",
+            "total_houses",
+            "total_hotels",
+            "total_cash_with_bank",
+            "property_sell_percentage",
+            "house_sell_percentage",
+            "hotel_sell_percentage",
+            "jail_fine",
+            "house_limit_before_hotel",
+            "hotel_limit"
+         ],
+         "new_value":[
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+         ]
+      },
+      "go_increment_novelty":{
+         "new_go_increment":[
+            10,
+            50,
+            100,
+            300
+         ]
+      },
+      "card_amount_novelty":{
+         "community_chest_card_amounts":[
+            {
+               "bank_error":10
+            },
+            {
+               "doctor_fee":100
+            },
+            {
+               "sale_of_stock":50
+            },
+            {
+               "holiday_fund_matures":10
+            },
+            {
+               "income_tax_refund":500
+            },
+            {
+               "life_insurance_matures":1
+            },
+            {
+               "hospital_fee":400
+            },
+            {
+               "school_fee":600
+            },
+            {
+               "consultancy_fee":100
+            },
+            {
+               "win_beauty_contest":1
+            },
+            {
+               "inherit_money":5
+            }
+         ],
+         "chance_card_amounts":[
+            {
+               "bank_dividend":100
+            },
+            {
+               "pay_poor_tax":10
+            },
+            {
+               "building_loan_matures":1000
+            },
+            {
+               "win_crossword_competition":1
+            }
+         ]
+      },
+      "mortgage_novelty":{
+         "new_mortgage":[
+            10,
+            100,
+            200,
+            300
+         ],
+         "loc_class":[
+            "real_estate",
+            "railroad",
+            "utility"
+         ]
+      },
+      "price_novelty":{
+         "new_price":[
+            10,
+            50,
+            100,
+            200,
+            300,
+            400
+         ],
+         "loc_class":[
+            "real_estate"
+         ],
+         "name":[
+            "Boardwalk",
+            "Park Place",
+            "Pennsylvania Avenue",
+            "North Carolina Avenue",
+            "Pacific Avenue",
+            "Marvin Gardens",
+            "Ventnor Avenue",
+            "Atlantic Avenue",
+            "Illinois Avenue",
+            "Indiana Avenue",
+            "Kentucky Avenue",
+            "New York Avenue",
+            "Tennessee Avenue",
+            "St. James Place",
+            "Virginia Avenue",
+            "States Avenue",
+            "St. Charles Place",
+            "Connecticut Avenue",
+            "Vermont Avenue",
+            "Oriental Avenue",
+            "Baltic Avenue",
+            "Mediterranean Avenue"
+         ]
+      },
+      "player_starting_cash_novelty":{
+         "player":[
+            "player_1",
+            "player_2",
+            "player_3",
+            "player_4"
+         ],
+         "new_start_cash":[
+            100,
+            500,
+            1000,
+            2000,
+            2500
+         ]
+      },
+      "price_per_house_novelty":{
+         "loc_class":[
+            "real_estate"
+         ],
+         "name":[
+            "Boardwalk",
+            "Park Place",
+            "Pennsylvania Avenue",
+            "North Carolina Avenue",
+            "Pacific Avenue",
+            "Marvin Gardens",
+            "Ventnor Avenue",
+            "Atlantic Avenue",
+            "Illinois Avenue",
+            "Indiana Avenue",
+            "Kentucky Avenue",
+            "New York Avenue",
+            "Tennessee Avenue",
+            "St. James Place",
+            "Virginia Avenue",
+            "States Avenue",
+            "St. Charles Place",
+            "Connecticut Avenue",
+            "Vermont Avenue",
+            "Oriental Avenue",
+            "Baltic Avenue",
+            "Mediterranean Avenue"
+         ],
+         "new_price_per_house":[
+            10,
+            50,
+            100,
+            200,
+            300
+         ]
+      },
+      "map_property_to_color":{
+         "property":[
+            "Mediterranean Avenue",
+            "Baltic Avenue",
+            "Oriental Avenue",
+            "Vermont Avenue",
+            "Connecticut Avenue",
+            "States Avenue",
+            "Virginia Avenue",
+            "St. James Place",
+            "Tennessee Avenue",
+            "New York Avenue",
+            "Kentucky Avenue",
+            "Indiana Avenue",
+            "Illinois Avenue",
+            "Atlantic Avenue",
+            "Ventnor Avenue",
+            "Marvin Gardens",
+            "Pacific Avenue",
+            "North Carolina Avenue",
+            "Pennsylvania Avenue",
+            "Park Place",
+            "Boardwalk"
+         ],
+         "new_color":[
+            "Brown",
+            "SkyBlue",
+            "Orchid",
+            "Red",
+            "Orange",
+            "Yellow",
+            "Green",
+            "Blue"
+         ]
+      },
+      "exchange_colors_between_properties":{
+         "property_1":[
+            "Mediterranean Avenue",
+            "Baltic Avenue",
+            "Oriental Avenue",
+            "Vermont Avenue",
+            "Connecticut Avenue",
+            "States Avenue",
+            "Virginia Avenue",
+            "Tennessee Avenue",
+            "New York Avenue",
+            "Kentucky Avenue",
+            "Indiana Avenue",
+            "Illinois Avenue",
+            "Atlantic Avenue",
+            "Ventnor Avenue",
+            "Marvin Gardens",
+            "Pacific Avenue",
+            "North Carolina Avenue",
+            "Pennsylvania Avenue",
+            "Park Place",
+            "Boardwalk"
+         ],
+         "property_2":[
+            "Mediterranean Avenue",
+            "Baltic Avenue",
+            "Oriental Avenue",
+            "Vermont Avenue",
+            "Connecticut Avenue",
+            "St. Charles Place",
+            "States Avenue",
+            "Virginia Avenue",
+            "St. James Place",
+            "Tennessee Avenue",
+            "New York Avenue",
+            "Kentucky Avenue",
+            "Indiana Avenue",
+            "Illinois Avenue",
+            "Atlantic Avenue",
+            "Ventnor Avenue",
+            "Marvin Gardens",
+            "Pacific Avenue",
+            "North Carolina Avenue",
+            "Pennsylvania Avenue",
+            "Park Place",
+            "Boardwalk"
+         ]
+      },
+      "tax_novelty":{
+         "tax_location":[
+            "Income Tax",
+            "Luxury Tax"
+         ],
+         "new_tax":[
+            10,
+            400
+         ]
+      },
+      "rent_novelty":{
+         "new_rent_perc":[
+            0.0,
+            0.5,
+            1.5,
+            2.0
+         ]
+      }
+   },
+   "ContingentAttributeNovelty":{
+      "change_mortgage_percentage":{
+         "new_percentage":[
+            0.1,
+            0.5,
+            1.5,
+            2.0
+         ]
+      },
+      "percent_of_total_mortgage_outstanding":{
+         "new_percentage":[
+            0.1,
+            0.5,
+            1.5,
+            2.0
+         ]
+      },
+      "auxiliary_go":{
+         "combined":[
+            [
+               "inflation_increment",
+               10,
+               "inflation_increment"
+            ],
+            [
+               "inflation_increment",
+               50,
+               "inflation_increment"
+            ],
+            [
+               "inflation_increment",
+               100,
+               "inflation_increment"
+            ],
+            [
+               "rent_dynamic_perc",
+               1,
+               "calculate_rent_dynamic"
+            ],
+            [
+               "rent_dynamic_perc",
+               5,
+               "calculate_rent_dynamic"
+            ],
+            [
+               "rent_dynamic_perc",
+               10,
+               "calculate_rent_dynamic"
+            ]
+         ]
+      }
+   },
+   "NumberClassNovelty":{
+      "die_novelty":{
+         "die_count":[
+            1
+         ],
+         "die_state_vector":[
+            [
+               [
+                  5,
+                  6
+               ]
+            ],
+            [
+               [
+                  1,
+                  2
+               ]
+            ],
+            [
+               [
+                  2,
+                  5,
+                  1,
+                  6
+               ]
+            ]
+         ]
+      },
+      "card_novelty":{
+         "community_chest_cards_num":[
+            {
+               "go_to_jail":50
+            },
+            {
+               "get_out_of_jail_free":50
+            },
+            {
+               "sale_of_stock":50
+            },
+            {
+               "bank_error":50
+            },
+            {
+               "doctor_fee":50
+            },
+            {
+               "advance_to_go":50
+            },
+            {
+               "grand_opera_night":50
+            },
+            {
+               "holiday_fund_matures":50
+            },
+            {
+               "income_tax_refund":50
+            },
+            {
+               "birthday":50
+            },
+            {
+               "life_insurance_matures":50
+            },
+            {
+               "hospital_fee":50
+            },
+            {
+               "school_fee":50
+            },
+            {
+               "consultancy_fee":50
+            },
+            {
+               "street_repairs":50
+            },
+            {
+               "win_beauty_contest":50
+            },
+            {
+               "inherit_money":50
+            }
+         ],
+         "chance_cards_num":[
+            {
+               "go_to_jail":50
+            },
+            {
+               "get_out_of_jail_free":50
+            },
+            {
+               "go_to_illinois_avenue":50
+            },
+            {
+               "advance_to_go":50
+            },
+            {
+               "go_to_st_charles":50
+            },
+            {
+               "go_to_nearest_utility":50
+            },
+            {
+               "go_to_nearest_railroad_pay_double":50
+            },
+            {
+               "bank_dividend":50
+            },
+            {
+               "general_repairs":50
+            },
+            {
+               "go_back_three_spaces":50
+            },
+            {
+               "go_to_reading_railroad":50
+            },
+            {
+               "go_to_boardwalk":50
+            },
+            {
+               "pay_poor_tax":50
+            },
+            {
+               "building_loan_matures":50
+            },
+            {
+               "win_crossword_competition":50
+            },
+            {
+               "elected_board_chairman":50
+            }
+         ]
+      }
+   },
+   "TypeClassNovelty":{
+      "die_novelty_type":{
+         "die_state_distribution_vector":[
+            [
+               "uniform",
+               "biased"
+            ],
+            [
+               "uniform",
+               "uniform"
+            ],
+            [
+               "biased",
+               "biased"
+            ]
+         ],
+         "die_type_vector":[
+            [
+               "odd_only",
+               "even_only"
+            ],
+            [
+               "odd_only",
+               "odd_only"
+            ],
+            [
+               "even_only",
+               "even_only"
+            ]
+         ]
+      },
+      "auxiliary_post_roll":{
+         "min_cash_limit":[
+            100,
+            500,
+            1000,
+            2000
+         ],
+         "alternate_func":[
+            "avenue_rule_change"
+         ]
+      }
+   },
+   "SpatialRepresentationNovelty":{
+      "color_reordering":{
+         "relative_location_list":[
+            [
+               "Boardwalk",
+               "Park Place"
+            ],
+            [
+               "Vermont Avenue",
+               "Oriental Avenue"
+            ],
+            [
+               "Baltic Avenue",
+               "Mediterranean Avenue"
+            ],
+            [
+               "Virginia Avenue",
+               "St. Charles Place",
+               "States Avenue"
+            ],
+            [
+               "Illinois Avenue",
+               "Kentucky Avenue",
+               "Indiana Avenue"
+            ],
+            [
+               "New York Avenue",
+               "St. James Place",
+               "Tennessee Avenue"
+            ],
+            [
+               "Marvin Gardens",
+               "Atlantic Avenue",
+               "Ventnor Avenue"
+            ],
+            [
+               "Pennsylvania Avenue",
+               "Pacific Avenue",
+               "North Carolina Avenue"
+            ]
+         ]
+      },
+      "global_reordering":{
+         "new_location_sequence":[
+            [
+               "Boardwalk",
+               "Community Chest",
+               "Mediterranean Avenue",
+               "Baltic Avenue",
+               "Income Tax",
+               "Reading Railroad",
+               "Oriental Avenue",
+               "Chance",
+               "Vermont Avenue",
+               "Connecticut Avenue",
+               "In Jail/Just Visiting",
+               "St. Charles Place",
+               "Electric Company",
+               "States Avenue",
+               "Virginia Avenue",
+               "Pennsylvania Railroad",
+               "St. James Place",
+               "Community Chest",
+               "Tennessee Avenue",
+               "New York Avenue",
+               "Free Parking",
+               "Kentucky Avenue",
+               "Chance",
+               "Indiana Avenue",
+               "Illinois Avenue",
+               "B&O Railroad",
+               "Atlantic Avenue",
+               "Ventnor Avenue",
+               "Water Works",
+               "Marvin Gardens",
+               "Go to Jail",
+               "Pacific Avenue",
+               "North Carolina Avenue",
+               "Community Chest",
+               "Pennsylvania Avenue",
+               "Short Line",
+               "Chance",
+               "Park Place",
+               "Luxury Tax",
+               "Go"
+            ],
+            [
+               "Virginia Avenue",
+               "Go",
+               "Community Chest",
+               "Mediterranean Avenue",
+               "Oriental Avenue",
+               "Income Tax",
+               "Reading Railroad",
+               "Baltic Avenue",
+               "Vermont Avenue",
+               "Connecticut Avenue",
+               "In Jail/Just Visiting",
+               "Chance",
+               "St. Charles Place",
+               "Electric Company",
+               "States Avenue",
+               "Pennsylvania Railroad",
+               "St. James Place",
+               "Community Chest",
+               "Tennessee Avenue",
+               "New York Avenue",
+               "Free Parking",
+               "Kentucky Avenue",
+               "Chance",
+               "Indiana Avenue",
+               "Illinois Avenue",
+               "B&O Railroad",
+               "Atlantic Avenue",
+               "Ventnor Avenue",
+               "Water Works",
+               "Marvin Gardens",
+               "Go to Jail",
+               "Pacific Avenue",
+               "North Carolina Avenue",
+               "Community Chest",
+               "Pennsylvania Avenue",
+               "Short Line",
+               "Chance",
+               "Park Place",
+               "Luxury Tax",
+               "Boardwalk"
+            ],
+            [
+               "Vermont Avenue",
+               "New York Avenue",
+               "Go",
+               "Mediterranean Avenue",
+               "Baltic Avenue",
+               "Income Tax",
+               "Reading Railroad",
+               "Oriental Avenue",
+               "Chance",
+               "Connecticut Avenue",
+               "In Jail/Just Visiting",
+               "St. Charles Place",
+               "Electric Company",
+               "States Avenue",
+               "Virginia Avenue",
+               "Pennsylvania Railroad",
+               "St. James Place",
+               "Community Chest",
+               "Community Chest",
+               "Tennessee Avenue",
+               "Free Parking",
+               "Kentucky Avenue",
+               "Chance",
+               "Indiana Avenue",
+               "Illinois Avenue",
+               "B&O Railroad",
+               "Atlantic Avenue",
+               "Ventnor Avenue",
+               "Water Works",
+               "Marvin Gardens",
+               "Go to Jail",
+               "Pacific Avenue",
+               "North Carolina Avenue",
+               "Community Chest",
+               "Pennsylvania Avenue",
+               "Short Line",
+               "Chance",
+               "Park Place",
+               "Luxury Tax",
+               "Boardwalk"
+            ],
+            [
+               "Free Parking",
+               "Kentucky Avenue",
+               "Reading Railroad",
+               "Oriental Avenue",
+               "Chance",
+               "Vermont Avenue",
+               "Connecticut Avenue",
+               "In Jail/Just Visiting",
+               "St. Charles Place",
+               "Electric Company",
+               "States Avenue",
+               "Virginia Avenue",
+               "Pennsylvania Railroad",
+               "St. James Place",
+               "Community Chest",
+               "Tennessee Avenue",
+               "New York Avenue",
+               "Chance",
+               "Indiana Avenue",
+               "Illinois Avenue",
+               "B&O Railroad",
+               "Atlantic Avenue",
+               "Ventnor Avenue",
+               "Water Works",
+               "Marvin Gardens",
+               "Go to Jail",
+               "Pacific Avenue",
+               "North Carolina Avenue",
+               "Community Chest",
+               "Pennsylvania Avenue",
+               "Short Line",
+               "Chance",
+               "Park Place",
+               "Luxury Tax",
+               "Boardwalk",
+               "Go",
+               "Community Chest",
+               "Mediterranean Avenue",
+               "Baltic Avenue",
+               "Income Tax"
+            ],
+            [
+               "Virginia Avenue",
+               "Pennsylvania Railroad",
+               "St. James Place",
+               "Community Chest",
+               "Tennessee Avenue",
+               "New York Avenue",
+               "Free Parking",
+               "Kentucky Avenue",
+               "Chance",
+               "Indiana Avenue",
+               "Illinois Avenue",
+               "B&O Railroad",
+               "Go",
+               "Community Chest",
+               "Mediterranean Avenue",
+               "Baltic Avenue",
+               "Income Tax",
+               "Reading Railroad",
+               "Oriental Avenue",
+               "Chance",
+               "Vermont Avenue",
+               "Connecticut Avenue",
+               "In Jail/Just Visiting",
+               "St. Charles Place",
+               "Electric Company",
+               "States Avenue",
+               "Atlantic Avenue",
+               "Ventnor Avenue",
+               "Water Works",
+               "Marvin Gardens",
+               "Go to Jail",
+               "Pacific Avenue",
+               "North Carolina Avenue",
+               "Community Chest",
+               "Pennsylvania Avenue",
+               "Short Line",
+               "Chance",
+               "Park Place",
+               "Luxury Tax",
+               "Boardwalk"
+            ]
+         ]
+      }
+   },
+   "GranularityRepresentationNovelty":{
+      "granularity_novelty1":{
+         "location":[
+            "Mediterranean Avenue",
+            "Baltic Avenue",
+            "Oriental Avenue",
+            "Vermont Avenue",
+            "Connecticut Avenue",
+            "St. Charles Place",
+            "Electric Company",
+            "States Avenue",
+            "Virginia Avenue",
+            "St. James Place",
+            "Tennessee Avenue",
+            "New York Avenue",
+            "Kentucky Avenue",
+            "Indiana Avenue",
+            "Illinois Avenue",
+            "Atlantic Avenue",
+            "Ventnor Avenue",
+            "Water Works",
+            "Marvin Gardens",
+            "Pacific Avenue",
+            "North Carolina Avenue",
+            "Pennsylvania Avenue",
+            "Park Place",
+            "Boardwalk"
+         ],
+         "increment":[
+            5,
+            10,
+            20,
+            30
+         ]
+      }
+   },
+   "RelationsNovelty":{
+      "alternate_improve_property":{
+         "alternate_func":[
+            "reverse_improve_property"
+         ],
+         "alternate_func2":[
+            "identify_improvement_opportunity_reverse_improvement"
+         ],
+         "alternate_func3":[
+            "can_asset_be_improved_reverse_improvement"
+         ],
+         "alternate_func4":[
+            "asset_incremental_improvement_rent_reverse_improvement"
+         ]
+      },
+      "assign_pick_card_func":{
+         "alternate_func_chance":[
+            "pick_card_from_chance_temp"
+         ],
+         "alternate_func_cc":[
+            "pick_card_from_community_chest_temp"
+         ]
+      },
+      "reassign_process_move_consequences":{
+         "alternate_func":[
+            "alternate_pay_utility_rent",
+            "alternate_player_movement",
+            "alternate_railroads_functionality",
+            "last_loc_monopoly_tax"
+         ]
+      },
+      "change_tax_calc":{
+         "alternate_func":[
+            "alternate_tax_calc_based_on_property_ownership",
+            "alternate_income_tax_payment"
+         ]
+      },
+      "change_rent_calc":{
+         "alternate_func":[
+            "alternate_rent_calc_based_on_max_rent"
+         ]
+      },
+      "alternate_update_player_pos":{
+         "alternate_func":[
+            "alternate_move_player_on_landing_GO"
+         ]
+      },
+      "alternate_buy_property":{
+         "alternate_func":[
+            "alternate_buy_property_with_neighbour_tax"
+         ]
+      }
+   }
+  },
+  "Events": {
+   "ContingentAttributeNovelty":{
+      "auxiliary_go":{
+         "combined":[
+            [
+               "rent_dynamic_perc",
+               0.0,
+               "calculate_rent_dynamic"
+            ],
+            [
+               "inflation_increment",
+               10,
+               "inflation_increment"
+            ],
+            [
+               "inflation_increment",
+               50,
+               "inflation_increment"
+            ],
+            [
+               "inflation_increment",
+               100,
+               "inflation_increment"
+            ],
+            [
+               "rent_dynamic_perc",
+               1,
+               "calculate_rent_dynamic"
+            ],
+            [
+               "rent_dynamic_perc",
+               5,
+               "calculate_rent_dynamic"
+            ],
+            [
+               "rent_dynamic_perc",
+               10,
+               "calculate_rent_dynamic"
+            ]
+         ]
+      }
+   },
+   "TypeClassNovelty":{
+      "auxiliary_post_roll":{
+         "min_cash_limit":[
+            100,
+            500,
+            1000,
+            2000
+         ],
+         "alternate_func":[
+            "avenue_rule_change"
+         ]
+      }
+   },
+   "RelationsNovelty":{
+      "reassign_process_move_consequences":{
+         "alternate_func":[
+            "alternate_pay_utility_rent",
+            "alternate_player_movement",
+            "alternate_railroads_functionality",
+            "last_loc_monopoly_tax"
+         ]
+      },
+      "change_tax_calc":{
+         "alternate_func":[
+            "alternate_tax_calc_based_on_property_ownership",
+            "alternate_income_tax_payment"
+         ]
+      },
+      "alternate_update_player_pos":{
+         "alternate_func":[
+            "alternate_move_player_on_landing_GO"
+         ]
+      },
+      "alternate_buy_property":{
+         "alternate_func":[
+            "alternate_buy_property_with_neighbour_tax"
+         ]
+      },
+      "change_rent_calc":{
+         "alternate_func":[
+            "alternate_rent_calc_based_on_max_rent"
+         ]
+      }
+   }
+  },
+  "Environments": {
+   "InanimateAttributeNovelty":{
+      "bank_attribute_novelty":{
+         "attribute":[
+            "mortgage_percentage",
+            "monopolized_property_rent_factor",
+            "total_houses",
+            "total_hotels",
+            "total_cash_with_bank",
+            "property_sell_percentage",
+            "house_sell_percentage",
+            "hotel_sell_percentage",
+            "jail_fine",
+            "house_limit_before_hotel",
+            "hotel_limit"
+         ],
+         "new_value":[
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+         ]
+      },
+      "go_increment_novelty":{
+         "new_go_increment":[
+            10,
+            50,
+            100,
+            300
+         ]
+      },
+      "card_amount_novelty":{
+         "community_chest_card_amounts":[
+            {
+               "bank_error":10
+            },
+            {
+               "doctor_fee":100
+            },
+            {
+               "sale_of_stock":50
+            },
+            {
+               "holiday_fund_matures":10
+            },
+            {
+               "income_tax_refund":500
+            },
+            {
+               "life_insurance_matures":1
+            },
+            {
+               "hospital_fee":400
+            },
+            {
+               "school_fee":600
+            },
+            {
+               "consultancy_fee":100
+            },
+            {
+               "win_beauty_contest":1
+            },
+            {
+               "inherit_money":5
+            }
+         ],
+         "chance_card_amounts":[
+            {
+               "bank_dividend":100
+            },
+            {
+               "pay_poor_tax":10
+            },
+            {
+               "building_loan_matures":1000
+            },
+            {
+               "win_crossword_competition":1
+            }
+         ]
+      },
+      "mortgage_novelty":{
+         "new_mortgage":[
+            10,
+            100,
+            200,
+            300
+         ],
+         "loc_class":[
+            "real_estate",
+            "railroad",
+            "utility"
+         ]
+      },
+      "price_novelty":{
+         "new_price":[
+            10,
+            50,
+            100,
+            200,
+            300,
+            400
+         ],
+         "loc_class":[
+            "real_estate"
+         ],
+         "name":[
+            "Boardwalk",
+            "Park Place",
+            "Pennsylvania Avenue",
+            "North Carolina Avenue",
+            "Pacific Avenue",
+            "Marvin Gardens",
+            "Ventnor Avenue",
+            "Atlantic Avenue",
+            "Illinois Avenue",
+            "Indiana Avenue",
+            "Kentucky Avenue",
+            "New York Avenue",
+            "Tennessee Avenue",
+            "St. James Place",
+            "Virginia Avenue",
+            "States Avenue",
+            "St. Charles Place",
+            "Connecticut Avenue",
+            "Vermont Avenue",
+            "Oriental Avenue",
+            "Baltic Avenue",
+            "Mediterranean Avenue"
+         ]
+      },
+      "player_starting_cash_novelty":{
+         "player":[
+            "player_1",
+            "player_2",
+            "player_3",
+            "player_4"
+         ],
+         "new_start_cash":[
+            100,
+            500,
+            1000,
+            2000,
+            2500
+         ]
+      },
+      "price_per_house_novelty":{
+         "loc_class":[
+            "real_estate"
+         ],
+         "name":[
+            "Boardwalk",
+            "Park Place",
+            "Pennsylvania Avenue",
+            "North Carolina Avenue",
+            "Pacific Avenue",
+            "Marvin Gardens",
+            "Ventnor Avenue",
+            "Atlantic Avenue",
+            "Illinois Avenue",
+            "Indiana Avenue",
+            "Kentucky Avenue",
+            "New York Avenue",
+            "Tennessee Avenue",
+            "St. James Place",
+            "Virginia Avenue",
+            "States Avenue",
+            "St. Charles Place",
+            "Connecticut Avenue",
+            "Vermont Avenue",
+            "Oriental Avenue",
+            "Baltic Avenue",
+            "Mediterranean Avenue"
+         ],
+         "new_price_per_house":[
+            10,
+            50,
+            100,
+            200,
+            300
+         ]
+      },
+      "map_property_to_color":{
+         "property":[
+            "Mediterranean Avenue",
+            "Baltic Avenue",
+            "Oriental Avenue",
+            "Vermont Avenue",
+            "Connecticut Avenue",
+            "States Avenue",
+            "Virginia Avenue",
+            "St. James Place",
+            "Tennessee Avenue",
+            "New York Avenue",
+            "Kentucky Avenue",
+            "Indiana Avenue",
+            "Illinois Avenue",
+            "Atlantic Avenue",
+            "Ventnor Avenue",
+            "Marvin Gardens",
+            "Pacific Avenue",
+            "North Carolina Avenue",
+            "Pennsylvania Avenue",
+            "Park Place",
+            "Boardwalk"
+         ],
+         "new_color":[
+            "Brown",
+            "SkyBlue",
+            "Orchid",
+            "Red",
+            "Orange",
+            "Yellow",
+            "Green",
+            "Blue"
+         ]
+      },
+      "exchange_colors_between_properties":{
+         "property_1":[
+            "Mediterranean Avenue",
+            "Baltic Avenue",
+            "Oriental Avenue",
+            "Vermont Avenue",
+            "Connecticut Avenue",
+            "States Avenue",
+            "Virginia Avenue",
+            "Tennessee Avenue",
+            "New York Avenue",
+            "Kentucky Avenue",
+            "Indiana Avenue",
+            "Illinois Avenue",
+            "Atlantic Avenue",
+            "Ventnor Avenue",
+            "Marvin Gardens",
+            "Pacific Avenue",
+            "North Carolina Avenue",
+            "Pennsylvania Avenue",
+            "Park Place",
+            "Boardwalk"
+         ],
+         "property_2":[
+            "Mediterranean Avenue",
+            "Baltic Avenue",
+            "Oriental Avenue",
+            "Vermont Avenue",
+            "Connecticut Avenue",
+            "St. Charles Place",
+            "States Avenue",
+            "Virginia Avenue",
+            "St. James Place",
+            "Tennessee Avenue",
+            "New York Avenue",
+            "Kentucky Avenue",
+            "Indiana Avenue",
+            "Illinois Avenue",
+            "Atlantic Avenue",
+            "Ventnor Avenue",
+            "Marvin Gardens",
+            "Pacific Avenue",
+            "North Carolina Avenue",
+            "Pennsylvania Avenue",
+            "Park Place",
+            "Boardwalk"
+         ]
+      },
+      "tax_novelty":{
+         "tax_location":[
+            "Income Tax",
+            "Luxury Tax"
+         ],
+         "new_tax":[
+            10,
+            400
+         ]
+      },
+      "rent_novelty":{
+         "new_rent_perc":[
+            0.0,
+            0.5,
+            1.5,
+            2.0
+         ]
+      }
+   },
+   "ContingentAttributeNovelty":{
+      "change_mortgage_percentage":{
+         "new_percentage":[
+            0.1,
+            0.5,
+            1.5,
+            2.0
+         ]
+      },
+      "percent_of_total_mortgage_outstanding":{
+         "new_percentage":[
+            0.1,
+            0.5,
+            1.5,
+            2.0
+         ]
+      }
+   },
+   "NumberClassNovelty":{
+      "die_novelty":{
+         "die_count":[
+            1
+         ],
+         "die_state_vector":[
+            [
+               [
+                  5,
+                  6
+               ]
+            ],
+            [
+               [
+                  1,
+                  2
+               ]
+            ],
+            [
+               [
+                  2,
+                  5,
+                  1,
+                  6
+               ]
+            ]
+         ]
+      },
+      "card_novelty":{
+         "community_chest_cards_num":[
+            {
+               "go_to_jail":50
+            },
+            {
+               "get_out_of_jail_free":50
+            },
+            {
+               "sale_of_stock":50
+            },
+            {
+               "bank_error":50
+            },
+            {
+               "doctor_fee":50
+            },
+            {
+               "advance_to_go":50
+            },
+            {
+               "grand_opera_night":50
+            },
+            {
+               "holiday_fund_matures":50
+            },
+            {
+               "income_tax_refund":50
+            },
+            {
+               "birthday":50
+            },
+            {
+               "life_insurance_matures":50
+            },
+            {
+               "hospital_fee":50
+            },
+            {
+               "school_fee":50
+            },
+            {
+               "consultancy_fee":50
+            },
+            {
+               "street_repairs":50
+            },
+            {
+               "win_beauty_contest":50
+            },
+            {
+               "inherit_money":50
+            }
+         ],
+         "chance_cards_num":[
+            {
+               "go_to_jail":50
+            },
+            {
+               "get_out_of_jail_free":50
+            },
+            {
+               "go_to_illinois_avenue":50
+            },
+            {
+               "advance_to_go":50
+            },
+            {
+               "go_to_st_charles":50
+            },
+            {
+               "go_to_nearest_utility":50
+            },
+            {
+               "go_to_nearest_railroad_pay_double":50
+            },
+            {
+               "bank_dividend":50
+            },
+            {
+               "general_repairs":50
+            },
+            {
+               "go_back_three_spaces":50
+            },
+            {
+               "go_to_reading_railroad":50
+            },
+            {
+               "go_to_boardwalk":50
+            },
+            {
+               "pay_poor_tax":50
+            },
+            {
+               "building_loan_matures":50
+            },
+            {
+               "win_crossword_competition":50
+            },
+            {
+               "elected_board_chairman":50
+            }
+         ]
+      }
+   },
+   "TypeClassNovelty":{
+      "die_novelty_type":{
+         "die_state_distribution_vector":[
+            [
+               "uniform",
+               "biased"
+            ],
+            [
+               "uniform",
+               "uniform"
+            ],
+            [
+               "biased",
+               "biased"
+            ]
+         ],
+         "die_type_vector":[
+            [
+               "odd_only",
+               "even_only"
+            ],
+            [
+               "odd_only",
+               "odd_only"
+            ],
+            [
+               "even_only",
+               "even_only"
+            ]
+         ]
+      }
+   },
+   "SpatialRepresentationNovelty":{
+      "color_reordering":{
+         "relative_location_list":[
+            [
+               "Boardwalk",
+               "Park Place"
+            ],
+            [
+               "Vermont Avenue",
+               "Oriental Avenue"
+            ],
+            [
+               "Baltic Avenue",
+               "Mediterranean Avenue"
+            ],
+            [
+               "Virginia Avenue",
+               "St. Charles Place",
+               "States Avenue"
+            ],
+            [
+               "Illinois Avenue",
+               "Kentucky Avenue",
+               "Indiana Avenue"
+            ],
+            [
+               "New York Avenue",
+               "St. James Place",
+               "Tennessee Avenue"
+            ],
+            [
+               "Marvin Gardens",
+               "Atlantic Avenue",
+               "Ventnor Avenue"
+            ],
+            [
+               "Pennsylvania Avenue",
+               "Pacific Avenue",
+               "North Carolina Avenue"
+            ]
+         ]
+      },
+      "global_reordering":{
+         "new_location_sequence":[
+            [
+               "Boardwalk",
+               "Community Chest",
+               "Mediterranean Avenue",
+               "Baltic Avenue",
+               "Income Tax",
+               "Reading Railroad",
+               "Oriental Avenue",
+               "Chance",
+               "Vermont Avenue",
+               "Connecticut Avenue",
+               "In Jail/Just Visiting",
+               "St. Charles Place",
+               "Electric Company",
+               "States Avenue",
+               "Virginia Avenue",
+               "Pennsylvania Railroad",
+               "St. James Place",
+               "Community Chest",
+               "Tennessee Avenue",
+               "New York Avenue",
+               "Free Parking",
+               "Kentucky Avenue",
+               "Chance",
+               "Indiana Avenue",
+               "Illinois Avenue",
+               "B&O Railroad",
+               "Atlantic Avenue",
+               "Ventnor Avenue",
+               "Water Works",
+               "Marvin Gardens",
+               "Go to Jail",
+               "Pacific Avenue",
+               "North Carolina Avenue",
+               "Community Chest",
+               "Pennsylvania Avenue",
+               "Short Line",
+               "Chance",
+               "Park Place",
+               "Luxury Tax",
+               "Go"
+            ],
+            [
+               "Virginia Avenue",
+               "Go",
+               "Community Chest",
+               "Mediterranean Avenue",
+               "Oriental Avenue",
+               "Income Tax",
+               "Reading Railroad",
+               "Baltic Avenue",
+               "Vermont Avenue",
+               "Connecticut Avenue",
+               "In Jail/Just Visiting",
+               "Chance",
+               "St. Charles Place",
+               "Electric Company",
+               "States Avenue",
+               "Pennsylvania Railroad",
+               "St. James Place",
+               "Community Chest",
+               "Tennessee Avenue",
+               "New York Avenue",
+               "Free Parking",
+               "Kentucky Avenue",
+               "Chance",
+               "Indiana Avenue",
+               "Illinois Avenue",
+               "B&O Railroad",
+               "Atlantic Avenue",
+               "Ventnor Avenue",
+               "Water Works",
+               "Marvin Gardens",
+               "Go to Jail",
+               "Pacific Avenue",
+               "North Carolina Avenue",
+               "Community Chest",
+               "Pennsylvania Avenue",
+               "Short Line",
+               "Chance",
+               "Park Place",
+               "Luxury Tax",
+               "Boardwalk"
+            ],
+            [
+               "Vermont Avenue",
+               "New York Avenue",
+               "Go",
+               "Mediterranean Avenue",
+               "Baltic Avenue",
+               "Income Tax",
+               "Reading Railroad",
+               "Oriental Avenue",
+               "Chance",
+               "Connecticut Avenue",
+               "In Jail/Just Visiting",
+               "St. Charles Place",
+               "Electric Company",
+               "States Avenue",
+               "Virginia Avenue",
+               "Pennsylvania Railroad",
+               "St. James Place",
+               "Community Chest",
+               "Community Chest",
+               "Tennessee Avenue",
+               "Free Parking",
+               "Kentucky Avenue",
+               "Chance",
+               "Indiana Avenue",
+               "Illinois Avenue",
+               "B&O Railroad",
+               "Atlantic Avenue",
+               "Ventnor Avenue",
+               "Water Works",
+               "Marvin Gardens",
+               "Go to Jail",
+               "Pacific Avenue",
+               "North Carolina Avenue",
+               "Community Chest",
+               "Pennsylvania Avenue",
+               "Short Line",
+               "Chance",
+               "Park Place",
+               "Luxury Tax",
+               "Boardwalk"
+            ],
+            [
+               "Free Parking",
+               "Kentucky Avenue",
+               "Reading Railroad",
+               "Oriental Avenue",
+               "Chance",
+               "Vermont Avenue",
+               "Connecticut Avenue",
+               "In Jail/Just Visiting",
+               "St. Charles Place",
+               "Electric Company",
+               "States Avenue",
+               "Virginia Avenue",
+               "Pennsylvania Railroad",
+               "St. James Place",
+               "Community Chest",
+               "Tennessee Avenue",
+               "New York Avenue",
+               "Chance",
+               "Indiana Avenue",
+               "Illinois Avenue",
+               "B&O Railroad",
+               "Atlantic Avenue",
+               "Ventnor Avenue",
+               "Water Works",
+               "Marvin Gardens",
+               "Go to Jail",
+               "Pacific Avenue",
+               "North Carolina Avenue",
+               "Community Chest",
+               "Pennsylvania Avenue",
+               "Short Line",
+               "Chance",
+               "Park Place",
+               "Luxury Tax",
+               "Boardwalk",
+               "Go",
+               "Community Chest",
+               "Mediterranean Avenue",
+               "Baltic Avenue",
+               "Income Tax"
+            ],
+            [
+               "Virginia Avenue",
+               "Pennsylvania Railroad",
+               "St. James Place",
+               "Community Chest",
+               "Tennessee Avenue",
+               "New York Avenue",
+               "Free Parking",
+               "Kentucky Avenue",
+               "Chance",
+               "Indiana Avenue",
+               "Illinois Avenue",
+               "B&O Railroad",
+               "Go",
+               "Community Chest",
+               "Mediterranean Avenue",
+               "Baltic Avenue",
+               "Income Tax",
+               "Reading Railroad",
+               "Oriental Avenue",
+               "Chance",
+               "Vermont Avenue",
+               "Connecticut Avenue",
+               "In Jail/Just Visiting",
+               "St. Charles Place",
+               "Electric Company",
+               "States Avenue",
+               "Atlantic Avenue",
+               "Ventnor Avenue",
+               "Water Works",
+               "Marvin Gardens",
+               "Go to Jail",
+               "Pacific Avenue",
+               "North Carolina Avenue",
+               "Community Chest",
+               "Pennsylvania Avenue",
+               "Short Line",
+               "Chance",
+               "Park Place",
+               "Luxury Tax",
+               "Boardwalk"
+            ]
+         ]
+      }
+   },
+   "GranularityRepresentationNovelty":{
+      "granularity_novelty1":{
+         "location":[
+            "Mediterranean Avenue",
+            "Baltic Avenue",
+            "Oriental Avenue",
+            "Vermont Avenue",
+            "Connecticut Avenue",
+            "St. Charles Place",
+            "Electric Company",
+            "States Avenue",
+            "Virginia Avenue",
+            "St. James Place",
+            "Tennessee Avenue",
+            "New York Avenue",
+            "Kentucky Avenue",
+            "Indiana Avenue",
+            "Illinois Avenue",
+            "Atlantic Avenue",
+            "Ventnor Avenue",
+            "Water Works",
+            "Marvin Gardens",
+            "Pacific Avenue",
+            "North Carolina Avenue",
+            "Pennsylvania Avenue",
+            "Park Place",
+            "Boardwalk"
+         ],
+         "increment":[
+            5,
+            10,
+            20,
+            30
+         ]
+      }
+   },
+   "RelationsNovelty":{
+      "alternate_improve_property":{
+         "alternate_func":[
+            "reverse_improve_property"
+         ],
+         "alternate_func2":[
+            "identify_improvement_opportunity_reverse_improvement"
+         ],
+         "alternate_func3":[
+            "can_asset_be_improved_reverse_improvement"
+         ],
+         "alternate_func4":[
+            "asset_incremental_improvement_rent_reverse_improvement"
+         ]
+      },
+      "assign_pick_card_func":{
+         "alternate_func_chance":[
+            "pick_card_from_chance_temp"
+         ],
+         "alternate_func_cc":[
+            "pick_card_from_community_chest_temp"
+         ]
+      }
+   }
+  }
+}

@@ -1,0 +1,352 @@
+import json
+import numpy
+from monopoly_simulator.player import Player
+from monopoly_simulator.bank import Bank
+from monopoly_simulator.location import Location, RealEstateLocation, UtilityLocation, RailroadLocation
+
+
+def _prune_serialize_history(pruned_gameboard_serial_obj):
+    del pruned_gameboard_serial_obj['bank']
+    total_chance_card_names = list(pruned_gameboard_serial_obj['cards']['chance_cards'].keys())
+    picked_chance_card_details = dict()
+    for card in total_chance_card_names:
+        if card in pruned_gameboard_serial_obj['cards']['picked_chance_cards']:   # only retaining card details of picked cards
+            picked_chance_card_details[card] = pruned_gameboard_serial_obj['cards']['chance_cards'][card]
+    pruned_gameboard_serial_obj['cards']['picked_chance_card_details'] = picked_chance_card_details
+
+    total_community_chest_card_names = list(pruned_gameboard_serial_obj['cards']['community_chest_cards'].keys())
+    picked_cc_card_details = dict()
+    for card in total_community_chest_card_names:
+        if card in pruned_gameboard_serial_obj['cards']['picked_community_chest_cards']:   # only retaining card details of picked cards
+            picked_cc_card_details[card] = pruned_gameboard_serial_obj['cards']['community_chest_cards'][card]
+    pruned_gameboard_serial_obj['cards']['picked_community_chest_card_details'] = picked_cc_card_details
+
+    del pruned_gameboard_serial_obj['cards']['chance_cards']
+    del pruned_gameboard_serial_obj['cards']['community_chest_cards']
+
+    return pruned_gameboard_serial_obj
+
+
+def _serialize_history(current_gameboard):
+    history = list()
+
+    for idx in range(len(current_gameboard['history']['function'])):
+        hist_dict = dict()
+        func_name = current_gameboard['history']['function'][idx].__name__
+        hist_dict['function'] = func_name
+
+        param_obj = current_gameboard['history']['param'][idx]
+        hist_dict['param'] = dict()
+
+        for k, v in param_obj.items():
+            if k == 'player':
+                hist_dict['param'][k] = v.player_name
+            elif k == 'allowable_moves':
+                hist_dict['param'][k] = list(v)
+            elif k == 'code':
+                hist_dict['param'][k] = v
+            elif k == 'asset':
+                hist_dict['param'][k] = v.name
+            elif k == 'self':
+                if isinstance(v, Player):
+                    hist_dict['param'][k] = v.player_name
+                elif isinstance(v, Location):
+                    hist_dict['param'][k] = v.name
+                elif isinstance(v, Bank):
+                    hist_dict['param'][k] = 'bank'
+                else:
+                    print('This self is not included. Please add to history!', v)
+            elif k == 'amount':
+                hist_dict['param'][k] = float(v)
+            elif k == 'current_gameboard':
+                hist_dict['param'][k] = 'current_gameboard'
+            elif k == 'from_player':
+                if v is not None:
+                    hist_dict['param'][k] = v.player_name
+                else:
+                    hist_dict['param'][k] = None
+            elif k == 'to_player':
+                if v is not None:
+                    hist_dict['param'][k] = v.player_name
+                else:
+                    hist_dict['param'][k] = None
+            elif k == 'offer':
+                hist_dict['param'][k] = dict()
+                for k1, v1 in v.items():
+                    if k1 == 'property_set_offered' or k1 == 'property_set_wanted':
+                        hist_dict['param'][k][k1] = list()
+                        for prop in v1:
+                            hist_dict['param'][k][k1].append(prop.name)
+                    elif k1 == 'cash_offered' or k1 == 'cash_wanted':
+                        hist_dict['param'][k][k1] = float(v1)
+            elif k == 'add_house':
+                hist_dict['param'][k] = v
+            elif k == 'add_hotel':
+                hist_dict['param'][k] = v
+            elif k == 'rel_move':
+                hist_dict['param'][k] = int(v)
+            elif k == 'new_position':
+                hist_dict['param'][k] = int(v)
+            elif k == 'check_for_go':
+                hist_dict['param'][k] = v
+            elif k == 'die_total':
+                hist_dict['param'][k] = int(v)
+            elif k == 'card':
+                hist_dict['param'][k] = v.name
+            elif k == 'current_bid':
+                hist_dict['param'][k] = float(v)
+            elif k == 'pack':
+                hist_dict['param'][k] = v
+            elif k == "starting_player_index":
+                hist_dict['param'][k] = v
+            elif k == 'die_objects' or k == 'choice':
+                pass
+            elif k == 'description':
+                hist_dict['param'][k] = v
+            elif k == 'number of railroads':
+                hist_dict['param'][k] = v
+            elif k == 'number of utilities':
+                hist_dict['param'][k] = v
+            elif k == 'sell_house':
+                hist_dict['param'][k] = v
+            elif k == 'sell_hotel':
+                hist_dict['param'][k] = v
+            #------------------------phase2------------------------
+            elif k == 'schema_type':
+                hist_dict['param'][k] = v
+            elif isinstance(v, int):
+                hist_dict['param'][k] = v
+            elif isinstance(v, float):
+                hist_dict['param'][k] = v
+            elif v is None:
+                hist_dict['param'][k] = None
+            elif isinstance(v, list):
+                hist_dict['param'][k] = list()
+                for i in v:
+                    hist_dict['param'][k].append(i)
+            elif isinstance(v, str):
+                hist_dict['param'][k] = v
+            elif isinstance(v, bool):
+                hist_dict['param'][k] = v
+            else:
+                print('This param object not included, key: ', k, " value: ", v, " function name: ", func_name)
+
+            """
+            elif k == 'action_params_dict':
+                if v is not None:
+                    hist_dict['param'][k] = dict()
+                    for k1, v1 in v.items():
+                        if k1 == 'location':
+                            hist_dict['param'][k][k1] = v1.name
+            ### add interaction serialization
+            elif k == 'interaction_params_dict':
+                if v is not None:
+                    hist_dict['param'][k] = dict()
+                    for k1, v1 in v.items():
+                        if k1 == 'location':
+                            hist_dict['param'][k][k1] = v1.name
+                        elif k1 == 'to_location':
+                            hist_dict['param'][k][k1] = v1.name
+                        elif k1 == 'from_player':
+                            hist_dict['param'][k][k1] = v1.player_name
+            """
+            # elif k == 'interactions':
+            #     if v is not None:
+            #         hist_dict['param'][k] = dict()
+            #         for k1, v1 in v.items():
+            #             hist_dict['param'][k][k1] = v1
+            # elif k == 'interaction_id' or 'decision':
+            #     hist_dict['param'][k] = v
+            #------------------------------------------------------
+            
+
+        return_obj = current_gameboard['history']['return'][idx]
+
+        if return_obj is None:
+            hist_dict['return'] = None
+        elif isinstance(return_obj, int):
+            hist_dict['return'] = int(return_obj)
+        elif isinstance(return_obj, list):   # list of code
+            hist_dict['return'] = list()
+            for i in return_obj:
+                hist_dict['return'].append(int(i))
+        elif isinstance(return_obj, float):    # amounts
+            hist_dict['return'] = float(return_obj)
+        elif isinstance(return_obj, numpy.int64):    # random generator
+            hist_dict['return'] = int(return_obj)
+        elif isinstance(return_obj, bool):              # return from make_buy_property_offer()
+            hist_dict['return'] = return_obj
+        elif isinstance(return_obj, tuple):     # return from agent is a tuple of (action to execute, params)
+            hist_dict['return'] = dict()
+            for item in return_obj:
+                if isinstance(item, list):   # trade offer tuples contain 2 lists (for trade offers to multiple players)
+                    function_list = list()
+                    param_list = list()
+                    for f in item:                             # --> one for the function, the other for params
+                        if not isinstance(f, dict):             # names of action to execute
+                            function_list.append(f)
+                        else:
+                            prm_dict = dict()                   # trade offer params
+                            for k, v in f.items():
+                                if k == 'from_player':
+                                    prm_dict[k] = v.player_name
+                                elif k == 'to_player':
+                                    prm_dict[k] = v.player_name
+                                elif k == 'offer':
+                                    prm_dict[k] = dict()
+                                    for k1, v1 in v.items():
+                                        if k1 == 'property_set_offered' or k1 == 'property_set_wanted':
+                                            prm_dict[k][k1] = list()
+                                            for prop in v1:
+                                                prm_dict[k][k1].append(prop.name)
+                                        elif k1 == 'cash_offered' or k1 == 'cash_wanted':
+                                            prm_dict[k][k1] = float(v1)
+                            param_list.append(prm_dict)
+                    hist_dict['return']['function'] = function_list
+                    hist_dict['return']['param'] = param_list
+                elif isinstance(item, int):
+                    hist_dict['return']['param'] = item     # handle negative cash balance returns (None, int) if it is done handling negative cash balance
+                elif item is None:
+                    hist_dict['return']['function'] = None    # handle negative cash balance returns (None, int) if it is done handling negative cash balance
+                elif isinstance(item, str):
+                    hist_dict['return']['function'] = item
+                elif isinstance(item, dict):
+                    hist_dict['return']['param'] = dict()
+                    for k, v in item.items():
+
+                        if k == 'player':
+                            hist_dict['return']['param'][k] = v.player_name
+                        elif k == 'asset':
+                            hist_dict['return']['param'][k] = v.name
+                        elif k == 'code':
+                            hist_dict['return']['param'][k] = v
+
+                        ### phase 2
+                        elif k == 'from_player':
+                            hist_dict['return']['param'][k] = v.player_name
+                        elif k == 'to_player' and v is not None:
+                            hist_dict['return']['param'][k] = v.player_name
+                        elif isinstance(v, int):
+                            hist_dict['return']['param'][k] = v
+                        elif isinstance(v, float):
+                            hist_dict['return']['param'][k] = v
+                        elif v is None:
+                            hist_dict['return']['param'][k] = None
+                        elif isinstance(v, list):
+                            hist_dict['return']['param'][k] = list()
+                            for i in v:
+                                hist_dict['return']['param'][k].append(i)
+                        elif isinstance(v, str):
+                            hist_dict['return']['param'][k] = v
+                        elif isinstance(v, bool):
+                            hist_dict['return']['param'][k] = v
+                            
+                        elif k == 'action_params_dict':
+                            hist_dict['return']['param'][k] = dict()
+                            for kk, vv in v.items():
+
+                                if kk == 'location':
+                                    hist_dict['return']['param'][k][kk] = vv.name
+                                elif kk == 'card':
+                                    hist_dict['return']['param'][k][kk] = vv.name
+                                elif kk == 'from_player':
+                                    hist_dict['return']['param'][k][kk] = vv.player_name
+                                elif kk == 'to_player':
+                                    hist_dict['return']['param'][k][kk] = vv.player_name
+                                elif isinstance(vv, list):
+                                    hist_dict['return']['param'][k][kk] = list()
+                                    for i in vv:
+                                        hist_dict['return']['param'][k][kk].append(i)
+                                else:
+                                    hist_dict['return']['param'][k][kk] = vv
+                                
+                        elif k == 'interaction_params_dict':
+                            hist_dict['return']['param'][k] = dict()
+
+                            for kk, vv in v.items():
+
+                                if kk == 'location':
+                                    hist_dict['return']['param'][k][kk] = vv.name
+                                elif kk == 'to_location':
+                                    hist_dict['return']['param'][k][kk] = vv.name
+                                elif kk == 'card':
+                                    hist_dict['return']['param'][k][kk] = vv.name
+                                elif kk == 'from_player':
+                                    hist_dict['return']['param'][k][kk] = vv.player_name
+                                elif kk == 'to_player':
+                                    hist_dict['return']['param'][k][kk] = vv.player_name
+                                else:
+                                    hist_dict['return']['param'][k][kk] = vv
+
+                else:
+                    print("This return val not included in return history ", item)
+        else:
+            print("This return val not included in return history: ", return_obj, type(return_obj))
+        ######
+        # commanded by Peter
+        # date: 20211204
+        # reason: having error when running interaction novelty on AWS, need to check
+        hist_dict['time_step'] = current_gameboard['history']['time_step'][idx]
+        ######
+        history.append(hist_dict)
+    return history
+
+
+def serialize_gameboard(current_gameboard):
+    history_serial_obj = _serialize_history(current_gameboard)
+    current_gameboard_serial_obj = dict()
+    bank_serial_obj = current_gameboard['bank'].serialize()
+    players_serial_obj = dict()
+    for player in current_gameboard['players']:
+        players_serial_obj[player.player_name] = player.serialize()
+
+    card_serial_obj = dict()
+    card_serial_obj['chance_cards'] = dict()
+    card_serial_obj['community_chest_cards'] = dict()
+    for card in current_gameboard['chance_cards']:
+        card_serial_obj['chance_cards'][card.name] = card.serialize()
+    for card in current_gameboard['community_chest_cards']:
+        card_serial_obj['community_chest_cards'][card.name] = card.serialize()
+
+    location_serial_obj = dict()
+    location_sequence_list = list()
+    set_location_seq = set()
+    for loc in current_gameboard['location_sequence']:
+        set_location_seq.add(loc)
+        location_sequence_list.append(loc.name)
+    for loc in set_location_seq:
+        location_serial_obj[loc.name] = loc.serialize()
+
+    picked_chance_cards_list = list()
+    for card in current_gameboard['picked_chance_cards']:
+        picked_chance_cards_list.append(card.name)
+
+    picked_community_chest_cards_list = list()
+    for card in current_gameboard['picked_community_chest_cards']:
+        picked_community_chest_cards_list.append(card.name)
+
+    total_die_seq = list()
+    num_dies = len(current_gameboard['die_sequence'])
+    die_rolls = len(current_gameboard['die_sequence'][0])
+    for i in range(die_rolls):
+        die_seq = list()
+        for j in range(num_dies):
+            die_seq.append(int(current_gameboard['die_sequence'][j][i]))
+        total_die_seq.append(die_seq)
+
+    current_gameboard_serial_obj['bank'] = bank_serial_obj
+    current_gameboard_serial_obj['players'] = players_serial_obj
+    current_gameboard_serial_obj['cards'] = card_serial_obj
+    current_gameboard_serial_obj['cards']['picked_chance_cards'] = picked_chance_cards_list
+    current_gameboard_serial_obj['cards']['picked_community_chest_cards'] = picked_community_chest_cards_list
+    current_gameboard_serial_obj['locations'] = location_serial_obj
+    current_gameboard_serial_obj['location_sequence'] = location_sequence_list
+    current_gameboard_serial_obj['die_sequence'] = total_die_seq
+    #-------------------------phase2----------------------------------------
+    current_gameboard_serial_obj['schema'] = current_gameboard['schema']
+    #-----------------------------------------------------------------------
+    current_gameboard_serial_obj['history'] = history_serial_obj
+    pruned_gameboard_serial_obj = _prune_serialize_history(current_gameboard_serial_obj)
+
+
+    return pruned_gameboard_serial_obj
