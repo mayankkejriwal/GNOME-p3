@@ -8,7 +8,7 @@ For the detailed usage for simulator, please refer to README_serial_com_over_soc
 We suggest executing the simulator by high-level __bash script__ instead of executing from test_harness_phase3.py directly.
 
 -------------------------------------------------
-1. ```$ cd GNOME-p3```
+1. ```$ cd GNOME-p3/monopoly_simulator```
 2. Modify the user's parameter in execute_phase3.sh
  * metaseed: the random seed used in the tournament
  * num_games: the total game count played in the tournament
