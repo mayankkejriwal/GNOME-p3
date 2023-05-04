@@ -15,9 +15,9 @@ We suggest executing the simulator by high-level __bash script__ instead of exec
  * novelty_index: the game index that injects novelty(0-indexed)
  * novelty_name: The format is (novelty_class) _ (novelty_idx_in_novelty_list) <br />
 novelty_class should be limited to [environments, events, goals] <br />
-novelty_idx_in_novelty_list should be bounded by 1 to 15 (inclusive)
+novelty_idx_in_novelty_list should be bounded by 1 to 15 (inclusive) <br />
+In other words, you can use environments_1 ~ environments_15, events_1 ~ events_15, and goals_1 ~ goals_15
  * novelty_info: True if giving the AI agent a digit-hint 
- * debug: True if using debug mode
  * port: socketing port
 3. ```$ bash execute_phase3.sh```
 -------------------------------------------------
