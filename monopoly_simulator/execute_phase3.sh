@@ -3,9 +3,11 @@
 metaseed=15
 num_games=2
 novelty_index=1 # the game index that injects novelty(0-indexed)
+# --- novelty_name: you can use environments_1 ~ environments_15, events_1 ~ events_15, and goals_1 ~ goals_15
 #novelty_name="events_8"
 novelty_name="environments_10"
 #novelty_name="goals_5"
+# ---
 novelty_info=False # True if giving the AI agent a digit-hint 
 port=6010
 # ---------------------------------------------------
