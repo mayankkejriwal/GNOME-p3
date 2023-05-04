@@ -6,6 +6,7 @@ For the detailed usage for simulator, please refer to README_serial_com_over_soc
 ### Start the tournament with socketing to your AI agent:
 
 __We suggest executing the simulator by high-level bash script instead of executing from test_harness_phase3.py directly__.
+
 -------------------------------------------------
 1. ```$ cd monopoly_simulator```
 2. Modify the user's parameter in execute_phase3.sh
