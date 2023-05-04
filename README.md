@@ -22,3 +22,8 @@ In other words, you can use you can use environments_1 ~ environments_15, events
 3. ```$ bash execute_phase3.sh```
 -------------------------------------------------
 4. execute your AI agent via port
+
+
+### Phase3 novelties
+
+Please refer to phase3_novelty_description.xlsx for the details.
