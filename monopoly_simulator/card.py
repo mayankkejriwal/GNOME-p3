@@ -31,6 +31,14 @@ class MovementCard(Card):
         super().__init__(action, card_type, name)
         self.destination = destination
 
+    def serialize(self):
+        card_dict = dict()
+        card_dict['action'] = self.action.__name__
+        card_dict['card_type'] = self.card_type
+        card_dict['name'] = self.name
+        card_dict['destination'] = self.destination.name
+        return card_dict
+
 
 class MovementPaymentCard(Card):
     def __init__(self, action, card_type, name):
@@ -46,6 +54,13 @@ class MovementPaymentCard(Card):
         """
         super().__init__(action, card_type, name)
 
+    def serialize(self):
+        card_dict = dict()
+        card_dict['action'] = self.action.__name__
+        card_dict['card_type'] = self.card_type
+        card_dict['name'] = self.name
+        return card_dict
+
 
 class ContingentMovementCard(Card):
     def __init__(self, action, card_type, name):
@@ -58,6 +73,14 @@ class ContingentMovementCard(Card):
         :param name: A string. Should be taken from the game schema.
         """
         super().__init__(action, card_type, name)
+
+    def serialize(self):
+        card_dict = dict()
+        card_dict['action'] = self.action.__name__
+        card_dict['card_type'] = self.card_type
+        card_dict['name'] = self.name
+        return card_dict
+
 
 
 class MovementRelativeCard(Card):
@@ -77,6 +100,15 @@ class MovementRelativeCard(Card):
         super().__init__(action, card_type, name)
         self.new_relative_position = new_relative_position
 
+    def serialize(self):
+        card_dict = dict()
+        card_dict['action'] = self.action.__name__
+        card_dict['card_type'] = self.card_type
+        card_dict['name'] = self.name
+        card_dict['new_relative_position'] = self.new_relative_position
+        return card_dict
+
+
 
 class CashFromBankCard(Card):
     def __init__(self, action, card_type, name, amount):
@@ -93,6 +125,15 @@ class CashFromBankCard(Card):
         """
         super().__init__(action, card_type, name)
         self.amount = float(amount)
+
+    def serialize(self):
+        card_dict = dict()
+        card_dict['action'] = self.action.__name__
+        card_dict['card_type'] = self.card_type
+        card_dict['name'] = self.name
+        card_dict['amount'] = self.amount
+        return card_dict
+
 
 
 class ContingentCashFromBankCard(Card):
@@ -111,6 +152,14 @@ class ContingentCashFromBankCard(Card):
         super().__init__(action, card_type, name)
         self.contingency = contingency
 
+    def serialize(self):
+        card_dict = dict()
+        card_dict['action'] = self.action.__name__
+        card_dict['card_type'] = self.card_type
+        card_dict['name'] = self.name
+        card_dict['contingency'] = self.contingency.__name__
+        return card_dict
+
 
 class CashFromPlayersCard(Card):
     def __init__(self, action, card_type, name, amount_per_player):
@@ -127,3 +176,11 @@ class CashFromPlayersCard(Card):
         """
         super().__init__(action, card_type, name)
         self.amount_per_player = float(amount_per_player)
+
+    def serialize(self):
+        card_dict = dict()
+        card_dict['action'] = self.action.__name__
+        card_dict['card_type'] = self.card_type
+        card_dict['name'] = self.name
+        card_dict['amount_per_player'] = self.amount_per_player
+        return card_dict

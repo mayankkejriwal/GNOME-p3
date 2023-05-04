@@ -38,7 +38,7 @@ class Bank(object):
     def auction(starting_player_index, current_gameboard, asset):
         """
         This function will be called when a player lands on a purchaseable property (real estate, railroad or utility)
-        but decides not to make the purchase. 
+        but decides not to make the purchase.
         :param starting_player_index:  An integer. The index of the player in current_gameboard['players'] who will be starting the auction
         :param current_gameboard: A dict. Specifies the global game board data structure
         :param asset: A purchaseable instance of Location (i.e. RealEstateLocation, UtilityLocation or RailroadLocation)
@@ -51,6 +51,10 @@ class Bank(object):
         players_out_of_auction = set()
         winning_player = None
         bidding_player_index = None
+        # agent novelty background_agent_anti_social #
+        current_gameboard['wealthy_target_out_of_auction'] = False
+        ##
+
 
         # Since the starting player may be out of the game, we first check if we should update the starting player
         for p in current_gameboard['players']:
@@ -93,15 +97,28 @@ class Bank(object):
             params['current_bid'] = current_bid
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(proposed_bid)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             logger.debug(bidding_player.player_name+' proposed bid '+str(proposed_bid))
 
             if proposed_bid == 0:
+                # agent novelty background_agent_anti_social #
+                wealthy_key = 'wealthy_target'
+                if wealthy_key in current_gameboard and current_gameboard[wealthy_key] and \
+                        current_gameboard[wealthy_key].player_name == bidding_player.player_name:
+                    current_gameboard['wealthy_target_out_of_auction'] = True
+                ##
                 players_out_of_auction.add(bidding_player)
                 logger.debug(bidding_player.player_name+' is out of the auction.')
                 bidding_player_index = (bidding_player_index + 1) % len(current_gameboard['players'])
                 continue
             elif proposed_bid <= current_bid: # the <= serves as a forcing function to ensure the proposed bid must be non-zero
+                # agent novelty background_agent_anti_social #
+                wealthy_key = bidding_player.player_name + '_wealthy_target'
+                if wealthy_key in current_gameboard and \
+                        current_gameboard[wealthy_key].player_name == bidding_player.player_name:
+                    current_gameboard['wealthy_target_out_of_auction'] = True
+                ##
                 players_out_of_auction.add(bidding_player)
                 logger.debug(bidding_player.player_name+ ' is out of the auction.')
                 bidding_player_index = (bidding_player_index + 1) % len(current_gameboard['players'])
@@ -111,6 +128,7 @@ class Bank(object):
             logger.debug('The current highest bid is '+str(current_bid)+ ' and is held with '+bidding_player.player_name)
             winning_player = bidding_player
             bidding_player_index = (bidding_player_index + 1) % len(current_gameboard['players'])
+
 
         if winning_player:
             winning_player.charge_player(current_bid, current_gameboard, bank_flag=True) # if it got here then current_bid is non-zero.
@@ -122,6 +140,7 @@ class Bank(object):
             params['description'] = 'auction'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             asset.update_asset_owner(winning_player, current_gameboard)
             # add to game history
@@ -132,6 +151,7 @@ class Bank(object):
             params['current_gameboard'] = current_gameboard
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         else:
             logger.debug('Auction did not succeed in a sale.')
         return
@@ -172,7 +192,7 @@ class Bank(object):
         :param add_house: flag if True indicates that the type of improvement is setting up a house.
         :param add_hotel: flag if True indicates that the type of improvement is setting up a hotel.
         Note: both add_house and add_hotel params cannot be true simulatneously
-        :return: a bool, true if improvement possible else false
+        :return: bool, True if improvement possible else false
         """
         if add_hotel and add_house:
             logger.debug("Cant build both a house and a hotel on a property at once!! Raising Exception.")
@@ -188,3 +208,17 @@ class Bank(object):
         elif add_house:
             if self.total_houses > 0:
                 return True
+
+    def serialize(self):
+        bank_dict = dict()
+        bank_dict['mortgage_percentage'] = self.mortgage_percentage
+        bank_dict['total_mortgage_rule'] = self.total_mortgage_rule
+        bank_dict['total_houses'] = self.total_houses
+        bank_dict['total_hotels'] = self.total_hotels
+        bank_dict['total_cash_with_bank'] = self.total_cash_with_bank
+        bank_dict['property_sell_percentage'] = self.property_sell_percentage
+        bank_dict['house_sell_percentage'] = self.house_sell_percentage
+        bank_dict['hotel_sell_percentage'] = self.hotel_sell_percentage
+        bank_dict['jail_fine'] = self.jail_fine
+        bank_dict['monopolized_property_rent_factor'] = self.monopolized_property_rent_factor
+        return bank_dict

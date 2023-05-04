@@ -44,6 +44,10 @@ def initialize_board(game_schema, player_decision_agents):
     _initialize_game_history_structs(game_elements)
     logger.debug('Successfully instantiated game history data structures')
 
+    # Step 6: initialize schema
+    _initialize_schema(game_elements)
+    logger.debug('Successfully instantiated schema data structures')
+
     game_elements['type'] = "game_elements"
     return game_elements
 
@@ -343,3 +347,11 @@ def _initialize_game_history_structs(game_elements):
     game_elements['history']['function'] = list()
     game_elements['history']['param'] = list()
     game_elements['history']['return'] = list()
+    game_elements['history']['time_step'] = list()
+
+
+def _initialize_schema(game_elements):
+    # dummy schema has been initialized for the dummy function definition logic within
+    # pre_roll_arbitrary_action() function.
+    game_elements["schema"] = dict()
+

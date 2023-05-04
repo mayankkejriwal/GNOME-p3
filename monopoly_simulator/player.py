@@ -1,6 +1,6 @@
 from monopoly_simulator import action_choices
 from monopoly_simulator import card_utility_actions
-from monopoly_simulator.location import  RealEstateLocation, UtilityLocation, RailroadLocation, TaxLocation
+from monopoly_simulator.location import RealEstateLocation, UtilityLocation, RailroadLocation, TaxLocation
 from monopoly_simulator.bank import Bank
 import logging
 logger = logging.getLogger('monopoly_simulator.logging_info.player')
@@ -14,7 +14,6 @@ class Player(object):
                  ):
         """
         An object representing a unique player in the game.
-
         :param current_position: An integer. Specifies index in the current gameboard's 'location_sequence' list where the player
         is currently situated.
         :param status: A string. One of 'waiting_for_move', 'current_move', 'won' or 'lost'
@@ -66,6 +65,12 @@ class Player(object):
         outstanding_trade_offer['cash_wanted'] = 0
         outstanding_trade_offer['from_player'] = None
 
+        #------------------------for interaction novelties----------------
+        # dict of dicts. Each dict will be an interaction_params_dict
+        interaction_dict = dict()               # key: interaction id, value: interaction_params_dict
+        self.interaction_dict = interaction_dict
+        #--------------------------------------------
+
         self.outstanding_trade_offer = outstanding_trade_offer
         self.is_trade_offer_outstanding = False
 
@@ -73,6 +78,101 @@ class Player(object):
 
         self._option_to_buy = False # this option will turn true when  the player lands on a property that could be bought.
         # We always set it to false again at the end of the post_roll phase. It is an internal variable.
+
+
+    def serialize(self):
+        player_dict = dict()
+        if self.current_position is not None:
+            player_dict['current_position'] = int(self.current_position)
+        player_dict['status'] = self.status
+        player_dict['has_get_out_of_jail_chance_card'] = self.has_get_out_of_jail_chance_card
+        player_dict['has_get_out_of_jail_community_chest_card'] = self.has_get_out_of_jail_community_chest_card
+        player_dict['current_cash'] = self.current_cash
+        player_dict['num_railroads_possessed'] = self.num_railroads_possessed
+        player_dict['player_name'] = self.player_name
+
+
+        asset_list = list()
+        if self.assets is not None:
+            for item in self.assets:
+                asset_list.append(item.name)
+        player_dict['assets'] = asset_list
+
+        if self.full_color_sets_possessed is not None:
+            player_dict['full_color_sets_possessed'] = list(self.full_color_sets_possessed)
+        player_dict['currently_in_jail'] = self.currently_in_jail
+        player_dict['num_utilities_possessed'] = self.num_utilities_possessed
+        player_dict['num_total_houses'] = self.num_total_houses
+        player_dict['num_total_hotels'] = self.num_total_hotels
+
+        player_dict['outstanding_property_offer'] = dict()
+        if self.is_property_offer_outstanding:
+            player_dict['is_property_offer_outstanding'] = self.is_property_offer_outstanding
+            player_dict['outstanding_property_offer']['from_player'] = self.outstanding_property_offer['from_player'].player_name
+            player_dict['outstanding_property_offer']['asset'] = self.outstanding_property_offer['asset'].name
+            player_dict['outstanding_property_offer']['price'] = self.outstanding_property_offer['price']
+        else:
+            player_dict['is_property_offer_outstanding'] = self.is_property_offer_outstanding
+            player_dict['outstanding_property_offer']['from_player'] = None
+            player_dict['outstanding_property_offer']['asset'] = None
+            player_dict['outstanding_property_offer']['price'] = -1
+
+
+        player_dict['outstanding_trade_offer'] = dict()
+        if self.is_trade_offer_outstanding:
+            player_dict['is_trade_offer_outstanding'] = self.is_trade_offer_outstanding
+            player_dict['outstanding_trade_offer']['from_player'] = self.outstanding_trade_offer['from_player'].player_name
+
+            property_offered_list = list()
+            for item in self.outstanding_trade_offer['property_set_offered']:
+                property_offered_list.append(item.name)
+            player_dict['outstanding_trade_offer']['property_set_offered'] = property_offered_list
+
+            property_wanted_list = list()
+            for item in self.outstanding_trade_offer['property_set_wanted']:
+                property_wanted_list.append(item.name)
+            player_dict['outstanding_trade_offer']['property_set_wanted'] = property_wanted_list
+
+            player_dict['outstanding_trade_offer']['cash_offered'] = self.outstanding_trade_offer['cash_offered']
+            player_dict['outstanding_trade_offer']['cash_wanted'] = self.outstanding_trade_offer['cash_wanted']
+        else:
+            player_dict['is_trade_offer_outstanding'] = self.is_trade_offer_outstanding
+            player_dict['outstanding_trade_offer']['from_player'] = None
+            player_dict['outstanding_trade_offer']['property_set_offered'] = None
+            player_dict['outstanding_trade_offer']['property_set_wanted'] = None
+            player_dict['outstanding_trade_offer']['cash_offered'] = 0
+            player_dict['outstanding_trade_offer']['cash_wanted'] = 0
+
+        property_mortgage_list = list()
+        if self.mortgaged_assets is not None:
+            for item in self.mortgaged_assets:
+                property_mortgage_list.append(item.name)
+        player_dict['mortgaged_assets'] = property_mortgage_list
+
+        player_dict['option_to_buy'] = self._option_to_buy
+
+        if self.interaction_dict is not None:
+            player_dict['interaction_dict'] = dict()
+            for k, v in self.interaction_dict.items():
+                player_dict['interaction_dict'][k] = dict()
+                """
+                player_dict['interaction_dict'][k]['from_player'] = v['from_player'].player_name
+                player_dict['interaction_dict'][k]['location'] = v['location'].name
+                player_dict['interaction_dict'][k]['to_location'] = v['to_location'].name
+                """
+                #change 
+                for k1, v1 in v.items():
+                    if k1 == 'location':
+                        player_dict['interaction_dict'][k]['location'] = v1.name
+                        #player_dict['interaction_dict'][k]['location'] = v1['location'].name
+                    elif k1 == 'to_location':
+                        player_dict['interaction_dict'][k]['to_location'] = v1.name
+                        #hist_dict['param'][k][k1] = v1.name
+                    elif k1 == 'from_player':
+                        player_dict['interaction_dict'][k]['from_player'] = v1.player_name
+                        #hist_dict['param'][k][k1] = v1.player_name
+        return player_dict
+
 
     def change_decision_agent(self, agent):
         self.agent = agent
@@ -98,6 +198,7 @@ class Player(object):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         self.num_total_houses = 0
         self.num_total_hotels = 0
@@ -178,10 +279,13 @@ class Player(object):
         else:
             logger.error('You are attempting to add non-purchaseable asset to player\'s portfolio!')
             logger.error("Exception")
+            print(type(asset) == RealEstateLocation)
+            print(type(asset))
+            print(asset.name)
             raise Exception
 
         if asset.is_mortgaged:
-            logger.debug('asset ',asset.name," is mortgaged. Adding to player's mortgaged assets.")
+            logger.debug('asset ,' + asset.name + ", is mortgaged. Adding to player's mortgaged assets.")
             self.mortgaged_assets.add(asset)
             logger.debug('Total number of mortgaged assets owned by player is '+str(len(self.mortgaged_assets)))
 
@@ -191,7 +295,6 @@ class Player(object):
         All of the groundwork (exchange of cash) must be done before this function is called. For safe behavior, this should always be
         accompanied by post-processing code, especially if the asset is mortgageable and/or is being sold from one player
         to another.
-
         Improvements are not permitted when removing the asset. We will raise an exception if we detect houses or hotels
         when removing the asset. asset.owned_by is not updated either, make sure to invoke it (e.g., to reflect the new owner
         or to hand it over to the bank) AFTER this function returns
@@ -220,14 +323,14 @@ class Player(object):
 
             if asset.num_houses > 0:
                 self.num_total_houses -= asset.num_houses
-                logger.debug('Decrementing '+self.player_name+ "'s num_total_houses count by "+ str(asset.num_houses),
-                    ". Total houses now owned by player now is ", str(self.num_total_houses))
+                logger.debug('Decrementing '+self.player_name+ "'s num_total_houses count by "+ str(asset.num_houses) +
+                    ". Total houses now owned by player now is " + str(self.num_total_houses))
                 # note that technically, the property should not have been removed
                 # if there were improvements on it. But we include this code just in case, and to flag errors later.
             elif asset.num_hotels > 0:
                 self.num_total_hotels -= asset.num_hotels
-                logger.debug('Decrementing '+ self.player_name+ "'s num_total_hotels count by "+ str(asset.num_hotels),
-                    ". Total hotels now owned by player now is ", str(self.num_total_hotels))
+                logger.debug('Decrementing '+ self.player_name+ "'s num_total_hotels count by "+ str(asset.num_hotels) +
+                    ". Total hotels now owned by player now is " + str(self.num_total_hotels))
         else:
             logger.error('The property to be removed from the portfolio is not purchaseable. How did it get here?')
             logger.error("Exception")
@@ -327,8 +430,9 @@ class Player(object):
                 params['current_gameboard'] = current_gameboard
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
-
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 return
+
         elif current_location.loc_class == 'tax':
             logger.debug(self.player_name+ ' is on a tax location, namely '+ current_location.name+ '. Deducting tax...')
             tax_due = TaxLocation.calculate_tax(current_location, self, current_gameboard)
@@ -341,8 +445,9 @@ class Player(object):
             params['description'] = 'tax'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return
+
         elif current_location.loc_class == 'railroad':
             logger.debug(self.player_name+ ' is on a railroad location, namely '+ current_location.name)
             if 'bank.Bank' in str(type(current_location.owned_by)):
@@ -365,6 +470,7 @@ class Player(object):
                 params['current_gameboard'] = current_gameboard
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(dues)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                 recipient = current_location.owned_by
                 code = recipient.receive_cash(dues, current_gameboard, bank_flag=False)
@@ -378,6 +484,7 @@ class Player(object):
                     params['description'] = 'railroad dues'
                     current_gameboard['history']['param'].append(params)
                     current_gameboard['history']['return'].append(code)
+                    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 else:
                     logger.debug("Not sure what happened! Something broke!")
                     logger.error("Exception")
@@ -393,8 +500,9 @@ class Player(object):
                 params['description'] = 'railroad dues'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
-
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 return
+
         elif current_location.loc_class == 'utility':
             logger.debug(self.player_name+ ' is on a utility location, namely '+ current_location.name)
             if 'bank.Bank' in str(type(current_location.owned_by)):
@@ -418,6 +526,7 @@ class Player(object):
                 params['die_total'] = current_gameboard['current_die_total']
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(dues)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
                 recipient = current_location.owned_by
                 code = recipient.receive_cash(dues, current_gameboard, bank_flag=False)
@@ -431,6 +540,7 @@ class Player(object):
                     params['description'] = 'utility dues'
                     current_gameboard['history']['param'].append(params)
                     current_gameboard['history']['return'].append(code)
+                    current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 else:
                     logger.debug("Not sure what happened! Something broke!")
                     logger.error("Exception")
@@ -446,8 +556,9 @@ class Player(object):
                 params['description'] = 'utility dues'
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(None)
-
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 return
+
         elif current_location.loc_class == 'action':
             logger.debug(self.player_name+ ' is on an action location, namely '+ current_location.name+ '. Performing action...')
             current_location.perform_action(self, current_gameboard)
@@ -458,8 +569,9 @@ class Player(object):
             params['current_gameboard'] = current_gameboard
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return
+
         else:
             logger.error(self.player_name+' is on an unidentified location type. Raising exception.')
             logger.error("Exception")
@@ -503,6 +615,7 @@ class Player(object):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(rent)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         recipient = current_loc.owned_by
         code = recipient.receive_cash(rent, current_gameboard, bank_flag=False)
@@ -515,6 +628,7 @@ class Player(object):
             params['description'] = 'rent'
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         else:
             logger.debug("Not sure what happened! Something broke!")
             logger.error("Exception")
@@ -529,6 +643,7 @@ class Player(object):
         params['description'] = 'rent'
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
     def receive_cash(self, amount, current_gameboard, bank_flag=False):
         """
@@ -576,10 +691,8 @@ class Player(object):
         obvious non-allowable actions, and will return allowable actions (as a set of names of functions) that are possible
         in principle. Your decision agent, when picking an action from this set, will also have to decide how to
         parameterize the chosen action. For more details, see simple_decision_agent_1
-
         Note that we pass in current_gameboard, even though it is currently unused. In the near future, we may use it
         to refine allowable_actions.
-
         :param current_gameboard: A dict. The global data structure representing the current game board.
         :return: The set of allowable actions (each item in the set is a function from action_choices)
         """
@@ -616,6 +729,7 @@ class Player(object):
             # However, you have to make this check in your decision agent.
 
         allowable_actions.add("make_trade_offer")
+        allowable_actions.add("pre_roll_arbitrary_action")
         return allowable_actions
 
     def compute_allowable_out_of_turn_actions(self, current_gameboard):
@@ -624,10 +738,8 @@ class Player(object):
         obvious non-allowable actions, and will return allowable actions (as a set of names of functions) that are possible
         in principle. Your decision agent, when picking an action from this set, will also have to decide how to
         parameterize the chosen action. For more details, see simple_decision_agent_1
-
         Note that we pass in current_gameboard, even though it is currently unused. In the near future, we may use it
         to refine allowable_actions.
-
         :param current_gameboard: A dict. The global data structure representing the current game board.
         :return: The set of allowable actions (each item in the set is a function from action_choices)
         """
@@ -659,6 +771,9 @@ class Player(object):
             # However, you have to make this check in your decision agent.
 
         allowable_actions.add("make_trade_offer")
+        allowable_actions.add("make_arbitrary_interaction")
+        if len(self.interaction_dict) > 0:
+            allowable_actions.add("accept_arbitrary_interaction")
         return allowable_actions
 
     def compute_allowable_post_roll_actions(self, current_gameboard):
@@ -667,10 +782,8 @@ class Player(object):
         obvious non-allowable actions, and will return allowable actions (as a set of names of functions) that are possible
         in principle. Your decision agent, when picking an action from this set, will also have to decide how to
         parameterize the chosen action. For more details, see simple_decision_agent_1
-
         Note that we pass in current_gameboard, even though it is currently unused. In the near future, we may use it
         to refine allowable_actions.
-
         :param current_gameboard: A dict. The global data structure representing the current game board.
         :return: The set of allowable actions (each item in the set is a function from action_choices)
         """
@@ -695,6 +808,26 @@ class Player(object):
     def _populate_param_dict(param_dict, player, current_gameboard):
         if not param_dict:   # check if param_dict is an empty dictionary --> skip turn and conclude_actions
             return param_dict
+
+        #-----------------action---------------
+        if 'action_params_dict' in param_dict and param_dict['action_params_dict'] is not None:
+            if 'location' in param_dict['action_params_dict']:
+                param_location_name = param_dict['action_params_dict']['location']
+                for loc in current_gameboard['location_sequence']:
+                    if loc.name == param_location_name:
+                        param_dict['action_params_dict']['location'] = loc
+                        break
+        #--------------------------------------
+
+        #-----------------interaction---------------------
+        if 'interaction_params_dict' in param_dict and param_dict['interaction_params_dict'] is not None:
+            if 'location' in param_dict['interaction_params_dict']:
+                param_location_name = param_dict['interaction_params_dict']['location']
+                for loc in current_gameboard['location_sequence']:
+                    if loc.name == param_location_name:
+                        param_dict['interaction_params_dict']['location'] = loc
+                        break
+        #_-------------------------------------------------
 
         if 'player' in param_dict:
             param_dict['player'] = player
@@ -742,6 +875,7 @@ class Player(object):
                 param_dict['offer']['property_set_offered'] = property_set_offered_ptr
             if flag_replacement_wanted:
                 param_dict['offer']['property_set_wanted'] = property_set_wanted_ptr
+
         return param_dict
 
     @staticmethod
@@ -770,6 +904,27 @@ class Player(object):
             return action_choices.pay_jail_fine
         elif function_name == 'use_get_out_of_jail_card':
             return action_choices.use_get_out_of_jail_card
+        #----------------phase2--------------------------------
+        elif function_name == 'pre_roll_arbitrary_action':
+            return action_choices.pre_roll_arbitrary_action
+        elif function_name == 'out_of_turn_arbitrary_action':
+            return action_choices.out_of_turn_arbitrary_action
+        elif function_name == 'post_roll_arbitrary_action':
+            return action_choices.post_roll_arbitrary_action
+        elif function_name == 'make_arbitrary_interaction':
+            return action_choices.make_arbitrary_interaction
+        elif function_name == 'accept_arbitrary_interaction':
+            return action_choices.accept_arbitrary_interaction
+        elif function_name == 'print_interaction_arbitrary_action_schema':
+            return action_choices.print_interaction_arbitrary_action_schema
+        elif function_name == 'print_post_roll_arbitrary_action_schema':
+            return action_choices.print_post_roll_arbitrary_action_schema
+        elif function_name == 'print_out_of_turn_arbitrary_action_schema':
+            return action_choices.print_out_of_turn_arbitrary_action_schema
+        elif function_name == 'print_pre_roll_arbitrary_action_schema':
+            return action_choices.print_pre_roll_arbitrary_action_schema
+        #-------------------------------------------------------
+
 
     def make_pre_roll_moves(self, current_gameboard):
         """
@@ -817,6 +972,7 @@ class Player(object):
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         if action_to_execute == 'skip_turn':
             if self.is_property_offer_outstanding:
@@ -900,6 +1056,7 @@ class Player(object):
                 params['code'] = code
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(t)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         # if we got here, we resolve property offers and move on.
         if self.is_property_offer_outstanding:
@@ -953,6 +1110,7 @@ class Player(object):
             action_to_execute_temp = Player._resolve_function_names_to_pointers(action_to_execute, self, current_gameboard)
             parameters_temp = Player._populate_param_dict(parameters, self, current_gameboard)
 
+
         t = (action_to_execute, parameters_temp)
         # add to game history
         current_gameboard['history']['function'].append(self.agent.make_out_of_turn_move)
@@ -965,6 +1123,7 @@ class Player(object):
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         if action_to_execute == "skip_turn":
             if self.is_property_offer_outstanding:
@@ -1048,6 +1207,7 @@ class Player(object):
                 params['code'] = code
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(t)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         # if we got here, we resolve property offers and move on.
         if self.is_property_offer_outstanding:
@@ -1104,6 +1264,7 @@ class Player(object):
         params['code'] = code
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(t)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         if action_to_execute == "concluded_actions":
             self._force_buy_outcome(current_gameboard) # if option to buy is not set, this will make no difference.
@@ -1141,10 +1302,12 @@ class Player(object):
                 params['code'] = code
                 current_gameboard['history']['param'].append(params)
                 current_gameboard['history']['return'].append(t)
+                current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
                 # logger.debug(action_to_execute)
 
         self._force_buy_outcome(current_gameboard) # if we got here, we need to conclude actions
         return self._execute_action(action_choices.concluded_actions, dict(), current_gameboard)  # now we can conclude actions
+
 
     def handle_negative_cash_balance(self, current_gameboard):
         """
@@ -1156,7 +1319,6 @@ class Player(object):
         A limit is also set on the number of unsuccessful actions that the agent can take defined by "unsuccessful_tries".
         Beyond this limit, if the player still has a negative cash balance, the function is forced to return with a failure code.
         This also ensures that the game doesnot go on for too long trying to execute unsuccessful actions.
-
         :param current_gameboard: The global gameboard data structure
         :return: 3 return cases:
         - successful action code if the players cash balance > 0
@@ -1188,6 +1350,7 @@ class Player(object):
             params['code'] = code
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(t)
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
             if action_to_execute is None:
                 return parameters    # done handling negative cash balance, parameters will be an int (successful action code or failure code
@@ -1224,7 +1387,6 @@ class Player(object):
         If you land on a property owned by the bank, and don't buy it before concluding your turn, this function will do the needful.
         In essence, it will force your decision agent to return a decision on whether you wish to buy the property (the logic for this
         is in the internal function _own_or_auction). Once the matter has been resolved, we reset the option to buy flag.
-
         :param current_gameboard: A dict. The global data structure representing the current game board.
         :return: None
         """
@@ -1239,7 +1401,7 @@ class Player(object):
         params['self'] = self
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(None)
-
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
         return
 
     def _own_or_auction(self, current_gameboard, asset):
@@ -1261,6 +1423,7 @@ class Player(object):
         params['current_gameboard'] = current_gameboard
         current_gameboard['history']['param'].append(params)
         current_gameboard['history']['return'].append(dec)
+        current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
 
         logger.debug(self.player_name+' decides to purchase? '+str(dec))
         if dec is True:
@@ -1273,8 +1436,9 @@ class Player(object):
             params['current_gameboard'] = current_gameboard
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return
+
         else:
             logger.debug('Since '+self.player_name+' decided not to purchase, we are invoking auction proceedings for asset '+asset.name)
             index_current_player = current_gameboard['players'].index(self)  # in players, find the index of the current player
@@ -1291,7 +1455,7 @@ class Player(object):
             params['asset'] = asset
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(None)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return
 
     def _execute_action(self, action_to_execute, parameters, current_gameboard):
@@ -1314,7 +1478,7 @@ class Player(object):
             params = parameters.copy()
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(p)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return p
         else:
             p = action_to_execute()
@@ -1323,5 +1487,5 @@ class Player(object):
             params = dict()
             current_gameboard['history']['param'].append(params)
             current_gameboard['history']['return'].append(p)
-
+            current_gameboard['history']['time_step'].append(current_gameboard['time_step_indicator'])
             return p
