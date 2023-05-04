@@ -2,7 +2,7 @@
 # user's parameters
 metaseed=15
 num_games=2
-novelty_index=1 # the game index that reject novelty(0-indexed)
+novelty_index=1 # the game index that injects novelty(0-indexed)
 #novelty_name="events_8"
 novelty_name="environments_10"
 #novelty_name="goals_5"
