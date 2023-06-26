@@ -553,7 +553,7 @@ def _initialize_dies(current_gameboard, game_schema):
     die_sequence = []
     for item in game_schema['die']['die_sequence']:
         die_sequence.append(item)
-    
+
     if len(game_schema['die']['die_state']) != game_schema['die']['die_count']:
         logger.debug('dice count is unequal to number of specified dice state-vectors...')
         logger.error("Exception")
@@ -730,3 +730,4 @@ def _initialize_game_history_structs(current_gameboard):
     current_gameboard['history']['function'] = list()
     current_gameboard['history']['param'] = list()
     current_gameboard['history']['return'] = list()
+    current_gameboard['history']['time_step'] = list()

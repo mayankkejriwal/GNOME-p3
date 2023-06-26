@@ -10,7 +10,6 @@ class Agent(object):
         """
         While you could always instantiate this class directly, sub-classing may be a better option since it will allow
         you to maintain your own state/variables.
-
         All of these are decision functions that need to be implemented in your agent. See simple decision agent v1 and
         background agent v1 for example implementations of these functions.
         :param handle_negative_cash_balance:

@@ -19,7 +19,7 @@ def log_file_create(filename):
     """
     Currently logging gameplay only in log file. Uncomment below line to log gameplay on console as well. 
     """
-    #logger.addHandler(stream_handler)
+    # logger.addHandler(stream_handler)
 
     return logger
 
