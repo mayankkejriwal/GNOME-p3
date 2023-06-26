@@ -1,0 +1,9 @@
+{
+    "function": "play_tournament_without_novelty",
+    "parameters": {
+        "meta_seed": 15,
+        "num_game": 2,
+        "novelty_name": "environments_10",
+        "nov": "phase3_novelty_inject"
+    }
+}

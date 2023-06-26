@@ -1,0 +1,774 @@
+2023-05-03 18:39:09,377:monopoly_simulator.logging_info.init_game_elements:DEBUG:Beginning game set up...
+2023-05-03 18:39:09,377:monopoly_simulator.logging_info.init_game_elements:DEBUG:Successfully instantiated and initialized bank.
+2023-05-03 18:39:09,377:monopoly_simulator.logging_info.init_game_elements:DEBUG:Successfully instantiated and initialized all locations on board.
+2023-05-03 18:39:09,377:monopoly_simulator.logging_info.init_game_elements:DEBUG:Successfully instantiated and initialized dies
+2023-05-03 18:39:09,378:monopoly_simulator.logging_info.init_game_elements:DEBUG:Successfully instantiated and initialized cards
+2023-05-03 18:39:09,378:monopoly_simulator.logging_info.init_game_elements:DEBUG:Successfully instantiated and initialized players and decision agents
+2023-05-03 18:39:09,378:monopoly_simulator.logging_info.init_game_elements:DEBUG:Successfully instantiated game history data structures
+2023-05-03 18:39:09,378:monopoly_simulator.logging_info.init_game_elements:DEBUG:Successfully instantiated schema data structures
+2023-05-03 18:39:09,400:monopoly_simulator.logging_info:DEBUG:Sucessfully initialized all player agents.
+2023-05-03 18:39:09,400:monopoly_simulator.logging_info:DEBUG:size of board 40
+2023-05-03 18:39:09,400:monopoly_simulator.logging_info:DEBUG:players will play in the following order: player_1->player_2->player_4->player_3
+2023-05-03 18:39:09,400:monopoly_simulator.logging_info:DEBUG:Beginning play. Rolling first die...
+2023-05-03 18:39:09,400:monopoly_simulator.logging_info.player:DEBUG:We are in the pre-roll phase for player_1
+2023-05-03 18:39:09,400:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_1
+2023-05-03 18:39:09,401:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,401:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 does not own this property, or it is mortgaged. Returning failure code
+2023-05-03 18:39:09,401:monopoly_simulator.logging_info.player:DEBUG:Received code -1. Continuing iteration...
+2023-05-03 18:39:09,401:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_1
+2023-05-03 18:39:09,402:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,402:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,402:monopoly_simulator.logging_info.player:DEBUG:Received code 2. Continuing iteration...
+2023-05-03 18:39:09,402:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_1
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,403:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info:DEBUG:Printing cash balance and net worth of each player: 
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.diagnostics:DEBUG:player_1 has a cash balance of $1500.0 and a net worth of $1500.0
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.diagnostics:DEBUG:player_2 has a cash balance of $1500.0 and a net worth of $1500.0
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.diagnostics:DEBUG:player_4 has a cash balance of $1500.0 and a net worth of $1500.0
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.diagnostics:DEBUG:player_3 has a cash balance of $1500.0 and a net worth of $1500.0
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.action_choices:DEBUG:rolling die...
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info:DEBUG:dies have come up [3]
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.card_utility_actions:DEBUG:executing move_player_after_die_roll for player_1 by 3 relative steps forward.
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:Player is currently in position Go
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG: and is moving to position Baltic Avenue
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:player_1 is on a real estate location, namely Baltic Avenue
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:Baltic Avenue is owned by Bank. Setting _option_to_buy to true for player_1
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:We are in the post-roll phase for player_1
+2023-05-03 18:39:09,404:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_1
+2023-05-03 18:39:09,405:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,405:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,405:monopoly_simulator.logging_info.player:DEBUG:Received code 2. Continuing iteration...
+2023-05-03 18:39:09,405:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_1
+2023-05-03 18:39:09,408:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,408:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player_1 amount 60.0 for asset Baltic Avenue
+2023-05-03 18:39:09,408:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 60.0
+2023-05-03 18:39:09,408:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1500.0
+2023-05-03 18:39:09,408:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1440.0
+2023-05-03 18:39:09,409:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 60.0 due to transaction from player_1
+2023-05-03 18:39:09,409:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10060.0
+2023-05-03 18:39:09,409:monopoly_simulator.logging_info.location:DEBUG:attempting to update asset Baltic Avenue to reflect new owner: player_1
+2023-05-03 18:39:09,409:monopoly_simulator.logging_info.player:DEBUG:Looking to add asset Baltic Avenue to portfolio of player_1
+2023-05-03 18:39:09,409:monopoly_simulator.logging_info.player:DEBUG:total no. of assets now owned by player: 1
+2023-05-03 18:39:09,409:monopoly_simulator.logging_info.location:DEBUG:Asset ownership update succeeded.
+2023-05-03 18:39:09,409:monopoly_simulator.logging_info.action_choices:DEBUG:Baltic Avenue ownership has been updated! Resetting option_to_buy for player and returning code successful action code
+2023-05-03 18:39:09,409:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_1
+2023-05-03 18:39:09,409:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,409:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_1
+2023-05-03 18:39:09,412:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,412:monopoly_simulator.logging_info.action_choices:DEBUG:Baltic Avenue is not owned by Bank! Resetting option_to_buy for player and returning code failure code
+2023-05-03 18:39:09,412:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_1
+2023-05-03 18:39:09,412:monopoly_simulator.logging_info.player:DEBUG:Received code -1. Continuing iteration...
+2023-05-03 18:39:09,412:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_1
+2023-05-03 18:39:09,417:monopoly_simulator.logging_info.player:DEBUG:Executing _force_buy_outcome for player_1
+2023-05-03 18:39:09,417:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_1
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:We are in the pre-roll phase for player_2
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_2
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,418:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info:DEBUG:Printing cash balance and net worth of each player: 
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.diagnostics:DEBUG:player_1 has a cash balance of $1440.0 and a net worth of $1500.0
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.diagnostics:DEBUG:player_2 has a cash balance of $1500.0 and a net worth of $1500.0
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.diagnostics:DEBUG:player_4 has a cash balance of $1500.0 and a net worth of $1500.0
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.diagnostics:DEBUG:player_3 has a cash balance of $1500.0 and a net worth of $1500.0
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.action_choices:DEBUG:rolling die...
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info:DEBUG:dies have come up [1]
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.card_utility_actions:DEBUG:executing move_player_after_die_roll for player_2 by 1 relative steps forward.
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Player is currently in position Go
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG: and is moving to position Mediterranean Avenue
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:player_2 is on a real estate location, namely Mediterranean Avenue
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Mediterranean Avenue is owned by Bank. Setting _option_to_buy to true for player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:We are in the post-roll phase for player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I will attempt to buy Mediterranean Avenue from the bank.
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am attempting to buy property Mediterranean Avenue
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player_2 amount 60.0 for asset Mediterranean Avenue
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:player_2 is being charged amount: 60.0
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1500.0
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:player_2 now has cash: 1440.0
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 60.0 due to transaction from player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10120.0
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.location:DEBUG:attempting to update asset Mediterranean Avenue to reflect new owner: player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Looking to add asset Mediterranean Avenue to portfolio of player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:total no. of assets now owned by player: 1
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.location:DEBUG:Asset ownership update succeeded.
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.action_choices:DEBUG:Mediterranean Avenue ownership has been updated! Resetting option_to_buy for player and returning code successful action code
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Executing _force_buy_outcome for player_2
+2023-05-03 18:39:09,419:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_2
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.player:DEBUG:We are in the pre-roll phase for player_4
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_4
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,420:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info:DEBUG:Printing cash balance and net worth of each player: 
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.diagnostics:DEBUG:player_1 has a cash balance of $1440.0 and a net worth of $1500.0
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.diagnostics:DEBUG:player_2 has a cash balance of $1440.0 and a net worth of $1500.0
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.diagnostics:DEBUG:player_4 has a cash balance of $1500.0 and a net worth of $1500.0
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.diagnostics:DEBUG:player_3 has a cash balance of $1500.0 and a net worth of $1500.0
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.action_choices:DEBUG:rolling die...
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info:DEBUG:dies have come up [3]
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.card_utility_actions:DEBUG:executing move_player_after_die_roll for player_4 by 3 relative steps forward.
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.player:DEBUG:Player is currently in position Go
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.player:DEBUG: and is moving to position Baltic Avenue
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.player:DEBUG:player_4 is on a real estate location, namely Baltic Avenue
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.player:DEBUG:Baltic Avenue is owned by player_1 and is not mortgaged. Proceeding to calculate and pay rent.
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.player:DEBUG:calculating and paying rent dues for player_4 who is in property Baltic Avenue which is owned by player_1
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.location:DEBUG:calculating rent for Baltic Avenue
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.location:DEBUG:rent is calculated to be 4.0
+2023-05-03 18:39:09,425:monopoly_simulator.logging_info.player:DEBUG:player_1 is receiving amount: 4.0
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:Before receipt, player has cash 1440.0
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1444.0
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:player_4 is being charged amount: 4.0
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1500.0
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:player_4 now has cash: 1496.0
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:We are in the post-roll phase for player_4
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_4
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am concluding actions
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:Executing _force_buy_outcome for player_4
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_4
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:We are in the pre-roll phase for player_3
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_3
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,426:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,435:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,435:monopoly_simulator.logging_info.action_choices:DEBUG:Instantiating data structures outstanding_trade_offer and setting is_trade_offer_outstanding to True to enable trade offer to player_2
+2023-05-03 18:39:09,435:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 has no properties to offer to player_2
+2023-05-03 18:39:09,435:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 wants properties from player_2 by offering cash = 4.5e-06
+2023-05-03 18:39:09,435:monopoly_simulator.logging_info.action_choices:DEBUG:Offer has been made.
+2023-05-03 18:39:09,435:monopoly_simulator.logging_info.action_choices:DEBUG:trade_within_incoming_group injected.
+2023-05-03 18:39:09,435:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,435:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,444:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,444:monopoly_simulator.logging_info.action_choices:DEBUG:player_2 already has a trade offer. You must wait. Returning failure code
+2023-05-03 18:39:09,444:monopoly_simulator.logging_info.player:DEBUG:Received code -1. Continuing iteration...
+2023-05-03 18:39:09,444:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: Should I accept the trade offer by player_1?
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.background_agent:DEBUG:(player_2 currently has cash balance of 1440.0)
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.background_agent:DEBUG:player_2 accepted trade offer from player_1
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.background_agent:DEBUG:player_2 recieved amount = 4.5e-06 and offered amount = 0 during trade
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.action_choices:DEBUG:Initiating trade offer transfer...
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.location:DEBUG:attempting to update asset Mediterranean Avenue to reflect new owner: player_1
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.location:DEBUG:Asset is owned by player_2. Attempting to remove...
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:Attempting to remove asset Mediterranean Avenue from ownership of player_2
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:total no. of assets now owned by player: 0
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:Looking to add asset Mediterranean Avenue to portfolio of player_1
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:total no. of assets now owned by player: 2
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.location:DEBUG:Asset ownership update succeeded.
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:player_2 is being charged amount: 0
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1440.0
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:player_2 now has cash: 1440.0
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:player_1 is receiving amount: 0
+2023-05-03 18:39:09,452:monopoly_simulator.logging_info.player:DEBUG:Before receipt, player has cash 1444.0
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1444.0
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:player_2 is receiving amount: 4.5e-06
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:Before receipt, player has cash 1440.0
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:player_2 now has cash: 1440.0000045
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 4.5e-06
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1444.0
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1443.9999955
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.action_choices:DEBUG:Transaction successful. Nulling outstanding trade offers data structures and returning successful action code
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am concluding actions
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,453:monopoly_simulator.logging_info:DEBUG:Printing cash balance and net worth of each player: 
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.diagnostics:DEBUG:player_1 has a cash balance of $1443.9999955 and a net worth of $1563.9999955
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.diagnostics:DEBUG:player_2 has a cash balance of $1440.0000045 and a net worth of $1440.0000045
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.diagnostics:DEBUG:player_4 has a cash balance of $1496.0 and a net worth of $1496.0
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.diagnostics:DEBUG:player_3 has a cash balance of $1500.0 and a net worth of $1500.0
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.action_choices:DEBUG:rolling die...
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info:DEBUG:dies have come up [6]
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.card_utility_actions:DEBUG:executing move_player_after_die_roll for player_3 by 6 relative steps forward.
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Player is currently in position Go
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG: and is moving to position Oriental Avenue
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:player_3 is on a real estate location, namely Oriental Avenue
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Oriental Avenue is owned by Bank. Setting _option_to_buy to true for player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:We are in the post-roll phase for player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I will attempt to buy Oriental Avenue from the bank.
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am attempting to buy property Oriental Avenue
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player_3 amount 100.0 for asset Oriental Avenue
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:player_3 is being charged amount: 100.0
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1500.0
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:player_3 now has cash: 1400.0
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 100.0 due to transaction from player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10220.0
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.location:DEBUG:attempting to update asset Oriental Avenue to reflect new owner: player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Looking to add asset Oriental Avenue to portfolio of player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:total no. of assets now owned by player: 1
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.location:DEBUG:Asset ownership update succeeded.
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.action_choices:DEBUG:Oriental Avenue ownership has been updated! Resetting option_to_buy for player and returning code successful action code
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am concluding actions
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Executing _force_buy_outcome for player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:We are in the pre-roll phase for player_1
+2023-05-03 18:39:09,454:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_1
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Baltic Avenue by adding a house. Currently property has 0
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.action_choices:DEBUG:Improving asset and updating num_total_houses.
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 now has num_total_hotels 0 and num_total_houses 1
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player for improvements.
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 50.0
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1443.9999955
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1393.9999955
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 50.0 due to transaction from player_1
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10270.0
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.action_choices:DEBUG:Bank now has 31 houses and 12 hotels left.
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.action_choices:DEBUG:Updating houses and hotels on the asset
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.action_choices:DEBUG:Player has successfully improved property. Returning successful action code
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,465:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_1
+2023-05-03 18:39:09,478:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,478:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Baltic Avenue by adding a house. Currently property has 1
+2023-05-03 18:39:09,478:monopoly_simulator.logging_info.action_choices:DEBUG:All same-colored properties must be uniformly improved first before you can build a house on this property. Returning failure code
+2023-05-03 18:39:09,478:monopoly_simulator.logging_info.player:DEBUG:Received code -1. Continuing iteration...
+2023-05-03 18:39:09,478:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_1
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Mediterranean Avenue by adding a house. Currently property has 0
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.action_choices:DEBUG:Improving asset and updating num_total_houses.
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 now has num_total_hotels 0 and num_total_houses 2
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player for improvements.
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 50.0
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1393.9999955
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1343.9999955
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 50.0 due to transaction from player_1
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10320.0
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.action_choices:DEBUG:Bank now has 30 houses and 12 hotels left.
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.action_choices:DEBUG:Updating houses and hotels on the asset
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.action_choices:DEBUG:Player has successfully improved property. Returning successful action code
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,492:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_1
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,493:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Baltic Avenue by adding a house. Currently property has 1
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.action_choices:DEBUG:Improving asset and updating num_total_houses.
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 now has num_total_hotels 0 and num_total_houses 3
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player for improvements.
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 50.0
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1343.9999955
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1293.9999955
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 50.0 due to transaction from player_1
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10370.0
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.action_choices:DEBUG:Bank now has 29 houses and 12 hotels left.
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.action_choices:DEBUG:Updating houses and hotels on the asset
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.action_choices:DEBUG:Player has successfully improved property. Returning successful action code
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,507:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,521:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,521:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Baltic Avenue by adding a house. Currently property has 2
+2023-05-03 18:39:09,521:monopoly_simulator.logging_info.action_choices:DEBUG:All same-colored properties must be uniformly improved first before you can build a house on this property. Returning failure code
+2023-05-03 18:39:09,521:monopoly_simulator.logging_info.player:DEBUG:Received code -1. Continuing iteration...
+2023-05-03 18:39:09,521:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Mediterranean Avenue by adding a house. Currently property has 1
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.action_choices:DEBUG:Improving asset and updating num_total_houses.
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 now has num_total_hotels 0 and num_total_houses 4
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player for improvements.
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 50.0
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1293.9999955
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1243.9999955
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 50.0 due to transaction from player_1
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10420.0
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.action_choices:DEBUG:Bank now has 28 houses and 12 hotels left.
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.action_choices:DEBUG:Updating houses and hotels on the asset
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.action_choices:DEBUG:Player has successfully improved property. Returning successful action code
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,534:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info:DEBUG:Printing cash balance and net worth of each player: 
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.diagnostics:DEBUG:player_1 has a cash balance of $1243.9999955 and a net worth of $1563.9999955
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.diagnostics:DEBUG:player_2 has a cash balance of $1440.0000045 and a net worth of $1440.0000045
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.diagnostics:DEBUG:player_4 has a cash balance of $1496.0 and a net worth of $1496.0
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.diagnostics:DEBUG:player_3 has a cash balance of $1400.0 and a net worth of $1500.0
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info.action_choices:DEBUG:rolling die...
+2023-05-03 18:39:09,535:monopoly_simulator.logging_info:DEBUG:dies have come up [3]
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.card_utility_actions:DEBUG:executing move_player_after_die_roll for player_1 by 3 relative steps forward.
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:Player is currently in position Baltic Avenue
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG: and is moving to position Oriental Avenue
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:player_1 is on a real estate location, namely Oriental Avenue
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:Oriental Avenue is owned by player_3 and is not mortgaged. Proceeding to calculate and pay rent.
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:calculating and paying rent dues for player_1 who is in property Oriental Avenue which is owned by player_3
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.location:DEBUG:calculating rent for Oriental Avenue
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.location:DEBUG:rent is calculated to be 6.0
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:player_3 is receiving amount: 6.0
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:Before receipt, player has cash 1400.0
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:player_3 now has cash: 1406.0
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 6.0
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1243.9999955
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1237.9999955
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:We are in the post-roll phase for player_1
+2023-05-03 18:39:09,536:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_1
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Baltic Avenue by adding a house. Currently property has 2
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.action_choices:DEBUG:Improving asset and updating num_total_houses.
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 now has num_total_hotels 0 and num_total_houses 5
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player for improvements.
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 50.0
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1237.9999955
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1187.9999955
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 50.0 due to transaction from player_1
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10470.0
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.action_choices:DEBUG:Bank now has 27 houses and 12 hotels left.
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.action_choices:DEBUG:Updating houses and hotels on the asset
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.action_choices:DEBUG:Player has successfully improved property. Returning successful action code
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,549:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_1
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:Executing _force_buy_outcome for player_1
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_1
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:We are in the pre-roll phase for player_2
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_2
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,558:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,566:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,566:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,566:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,566:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,566:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,566:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info:DEBUG:Printing cash balance and net worth of each player: 
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.diagnostics:DEBUG:player_1 has a cash balance of $1187.9999955 and a net worth of $1557.9999955
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.diagnostics:DEBUG:player_2 has a cash balance of $1440.0000045 and a net worth of $1440.0000045
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.diagnostics:DEBUG:player_4 has a cash balance of $1496.0 and a net worth of $1496.0
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.diagnostics:DEBUG:player_3 has a cash balance of $1406.0 and a net worth of $1506.0
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.action_choices:DEBUG:rolling die...
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info:DEBUG:dies have come up [3]
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.card_utility_actions:DEBUG:executing move_player_after_die_roll for player_2 by 3 relative steps forward.
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Player is currently in position Mediterranean Avenue
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG: and is moving to position Income Tax
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:player_2 is on a tax location, namely Income Tax. Deducting tax...
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:player_2 is being charged amount: 200.0
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1440.0000045
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:player_2 now has cash: 1240.0000045
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 200.0 due to transaction from player_2
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10670.0
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:We are in the post-roll phase for player_2
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_2
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Executing _force_buy_outcome for player_2
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_2
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:We are in the pre-roll phase for player_4
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_4
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,567:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Mediterranean Avenue by adding a house. Currently property has 2
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.action_choices:DEBUG:Improving asset and updating num_total_houses.
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 now has num_total_hotels 0 and num_total_houses 6
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player for improvements.
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 50.0
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1187.9999955
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1137.9999955
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 50.0 due to transaction from player_1
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10720.0
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.action_choices:DEBUG:Bank now has 26 houses and 12 hotels left.
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.action_choices:DEBUG:Updating houses and hotels on the asset
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.action_choices:DEBUG:Player has successfully improved property. Returning successful action code
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,580:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Mediterranean Avenue by adding a house. Currently property has 3
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.action_choices:DEBUG:Improving asset and updating num_total_houses.
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 now has num_total_hotels 0 and num_total_houses 7
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player for improvements.
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 50.0
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1137.9999955
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1087.9999955
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 50.0 due to transaction from player_1
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10770.0
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.action_choices:DEBUG:Bank now has 25 houses and 12 hotels left.
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.action_choices:DEBUG:Updating houses and hotels on the asset
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.action_choices:DEBUG:Player has successfully improved property. Returning successful action code
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,594:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Baltic Avenue by adding a house. Currently property has 3
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.action_choices:DEBUG:Improving asset and updating num_total_houses.
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 now has num_total_hotels 0 and num_total_houses 8
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player for improvements.
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 50.0
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1087.9999955
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1037.9999955
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 50.0 due to transaction from player_1
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10820.0
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.action_choices:DEBUG:Bank now has 24 houses and 12 hotels left.
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.action_choices:DEBUG:Updating houses and hotels on the asset
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.action_choices:DEBUG:Player has successfully improved property. Returning successful action code
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,607:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,621:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,621:monopoly_simulator.logging_info.action_choices:DEBUG:Looking to improve Baltic Avenue by adding a house. Currently property has 4
+2023-05-03 18:39:09,621:monopoly_simulator.logging_info.action_choices:DEBUG:There is already a hotel here or you have built the max number of houses that you can on a property. You are not permitted another house. Returning failure code
+2023-05-03 18:39:09,621:monopoly_simulator.logging_info.player:DEBUG:Received code -1. Continuing iteration...
+2023-05-03 18:39:09,621:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am skipping turn
+2023-05-03 18:39:09,634:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info:DEBUG:Printing cash balance and net worth of each player: 
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.diagnostics:DEBUG:player_1 has a cash balance of $1037.9999955 and a net worth of $1557.9999955
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.diagnostics:DEBUG:player_2 has a cash balance of $1240.0000045 and a net worth of $1240.0000045
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.diagnostics:DEBUG:player_4 has a cash balance of $1496.0 and a net worth of $1496.0
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.diagnostics:DEBUG:player_3 has a cash balance of $1406.0 and a net worth of $1506.0
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.action_choices:DEBUG:rolling die...
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info:DEBUG:dies have come up [5]
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.card_utility_actions:DEBUG:executing move_player_after_die_roll for player_4 by 5 relative steps forward.
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:Player is currently in position Baltic Avenue
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG: and is moving to position Vermont Avenue
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:player_4 is on a real estate location, namely Vermont Avenue
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:Vermont Avenue is owned by Bank. Setting _option_to_buy to true for player_4
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:We are in the post-roll phase for player_4
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_4
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I will attempt to buy Vermont Avenue from the bank.
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am attempting to buy property Vermont Avenue
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,635:monopoly_simulator.logging_info.action_choices:DEBUG:Charging player_4 amount 100.0 for asset Vermont Avenue
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:player_4 is being charged amount: 100.0
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1496.0
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:player_4 now has cash: 1396.0
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:Bank received amount 100.0 due to transaction from player_4
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:Liquid Cash remaining with Bank = 10920.0
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.location:DEBUG:attempting to update asset Vermont Avenue to reflect new owner: player_4
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:Looking to add asset Vermont Avenue to portfolio of player_4
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:total no. of assets now owned by player: 1
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.location:DEBUG:Asset ownership update succeeded.
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.action_choices:DEBUG:Vermont Avenue ownership has been updated! Resetting option_to_buy for player and returning code successful action code
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_4
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_4
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am concluding actions
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:Executing _force_buy_outcome for player_4
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:Executing reset_option_to_buy for player_4
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:We are in the pre-roll phase for player_3
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:computing allowable pre-roll actions for player_3
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am skipping turn
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,636:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,649:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,649:monopoly_simulator.logging_info.action_choices:DEBUG:Instantiating data structures outstanding_trade_offer and setting is_trade_offer_outstanding to True to enable trade offer to player_3
+2023-05-03 18:39:09,649:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 has no properties to offer to player_3
+2023-05-03 18:39:09,649:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 wants properties from player_3 by offering cash = 7.499999999999999e-06
+2023-05-03 18:39:09,649:monopoly_simulator.logging_info.action_choices:DEBUG:Offer has been made.
+2023-05-03 18:39:09,649:monopoly_simulator.logging_info.action_choices:DEBUG:trade_within_incoming_group injected.
+2023-05-03 18:39:09,649:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,649:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,662:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,663:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,663:monopoly_simulator.logging_info.player:DEBUG:Received code 2. Continuing iteration...
+2023-05-03 18:39:09,663:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,677:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,677:monopoly_simulator.logging_info.action_choices:DEBUG:Instantiating data structures outstanding_trade_offer and setting is_trade_offer_outstanding to True to enable trade offer to player_4
+2023-05-03 18:39:09,678:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 has no properties to offer to player_4
+2023-05-03 18:39:09,678:monopoly_simulator.logging_info.action_choices:DEBUG:player_1 wants properties from player_4 by offering cash = 7.499999999999999e-06
+2023-05-03 18:39:09,678:monopoly_simulator.logging_info.action_choices:DEBUG:Offer has been made.
+2023-05-03 18:39:09,678:monopoly_simulator.logging_info.action_choices:DEBUG:trade_within_incoming_group injected.
+2023-05-03 18:39:09,678:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,678:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_4
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: Should I accept the trade offer by player_1?
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.background_agent:DEBUG:(player_4 currently has cash balance of 1396.0)
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.background_agent:DEBUG:player_4 accepted trade offer from player_1
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.background_agent:DEBUG:player_4 recieved amount = 7.499999999999999e-06 and offered amount = 0 during trade
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.action_choices:DEBUG:Initiating trade offer transfer...
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.location:DEBUG:attempting to update asset Vermont Avenue to reflect new owner: player_1
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.location:DEBUG:Asset is owned by player_4. Attempting to remove...
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:Attempting to remove asset Vermont Avenue from ownership of player_4
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:total no. of assets now owned by player: 0
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:Looking to add asset Vermont Avenue to portfolio of player_1
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:total no. of assets now owned by player: 3
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.location:DEBUG:Asset ownership update succeeded.
+2023-05-03 18:39:09,691:monopoly_simulator.logging_info.player:DEBUG:player_4 is being charged amount: 0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1396.0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_4 now has cash: 1396.0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_1 is receiving amount: 0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Before receipt, player has cash 1037.9999955
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1037.9999955
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_4 is receiving amount: 7.499999999999999e-06
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Before receipt, player has cash 1396.0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_4 now has cash: 1396.0000075
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 7.499999999999999e-06
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1037.9999955
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1037.999988
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.action_choices:DEBUG:Transaction successful. Nulling outstanding trade offers data structures and returning successful action code
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_4
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.background_agent:DEBUG:player_4: I am concluding actions
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_4
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_3
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: Should I accept the trade offer by player_1?
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.background_agent:DEBUG:(player_3 currently has cash balance of 1406.0)
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.background_agent:DEBUG:player_3 accepted trade offer from player_1
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.background_agent:DEBUG:player_3 recieved amount = 7.499999999999999e-06 and offered amount = 0 during trade
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.action_choices:DEBUG:Initiating trade offer transfer...
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.location:DEBUG:attempting to update asset Oriental Avenue to reflect new owner: player_1
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.location:DEBUG:Asset is owned by player_3. Attempting to remove...
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Attempting to remove asset Oriental Avenue from ownership of player_3
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:total no. of assets now owned by player: 0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Looking to add asset Oriental Avenue to portfolio of player_1
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:total no. of assets now owned by player: 4
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.location:DEBUG:Asset ownership update succeeded.
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_3 is being charged amount: 0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1406.0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_3 now has cash: 1406.0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_1 is receiving amount: 0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Before receipt, player has cash 1037.999988
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1037.999988
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_3 is receiving amount: 7.499999999999999e-06
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Before receipt, player has cash 1406.0
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_3 now has cash: 1406.0000075
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_1 is being charged amount: 7.499999999999999e-06
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Before charge, player has cash 1037.999988
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:player_1 now has cash: 1037.9999805
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.action_choices:DEBUG:Transaction successful. Nulling outstanding trade offers data structures and returning successful action code
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Received code 1. Continuing iteration...
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_3
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am concluding actions
+2023-05-03 18:39:09,692:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_3
+2023-05-03 18:39:09,693:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,693:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_1
+2023-05-03 18:39:09,693:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_1
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_1
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.action_choices:DEBUG:player has concluded actions
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG:We are in the out-of-turn phase for player_2
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG:computing allowable out-of-turn actions for player_2
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.background_agent:DEBUG:player_2: I am skipping turn
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG:Executing _execute_action for player_2
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.action_choices:DEBUG:player is skipping turn
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info:DEBUG:Printing cash balance and net worth of each player: 
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.diagnostics:DEBUG:player_1 has a cash balance of $1037.9999805 and a net worth of $1757.9999805
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.diagnostics:DEBUG:player_2 has a cash balance of $1240.0000045 and a net worth of $1240.0000045
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.diagnostics:DEBUG:player_4 has a cash balance of $1396.0000075 and a net worth of $1396.0000075
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.diagnostics:DEBUG:player_3 has a cash balance of $1406.0000075 and a net worth of $1406.0000075
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.action_choices:DEBUG:rolling die...
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info:DEBUG:dies have come up [6]
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.card_utility_actions:DEBUG:executing move_player_after_die_roll for player_3 by 6 relative steps forward.
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG:Player is currently in position Oriental Avenue
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG: and is moving to position Electric Company
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG:player_3 is on a utility location, namely Electric Company
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG:Electric Company is owned by Bank. Setting _option_to_buy to true for player_3
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG:We are in the post-roll phase for player_3
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG:computing allowable post-roll actions for player_3
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.background_agent:DEBUG:player_3: I am concluding actions
+2023-05-03 18:39:09,705:monopoly_simulator.logging_info.player:DEBUG:Executing _force_buy_outcome for player_3
+2023-05-03 18:39:09,706:monopoly_simulator.logging_info.player:DEBUG:Executing _own_or_auction for player_3
+2023-05-03 18:39:09,706:monopoly_simulator.logging_info.player:DEBUG:player_3 decides to purchase? False
+2023-05-03 18:39:09,706:monopoly_simulator.logging_info.player:DEBUG:Since player_3 decided not to purchase, we are invoking auction proceedings for asset Electric Company
+2023-05-03 18:39:09,706:monopoly_simulator.logging_info.bank:DEBUG:Entering auctioning for asset Electric Company
+2023-05-03 18:39:09,706:monopoly_simulator.logging_info.bank:DEBUG:player_1 is an auction participant.
+2023-05-03 18:39:09,706:monopoly_simulator.logging_info.bank:DEBUG:player_2 is an auction participant.
+2023-05-03 18:39:09,706:monopoly_simulator.logging_info.bank:DEBUG:player_4 is an auction participant.
+2023-05-03 18:39:09,706:monopoly_simulator.logging_info.bank:DEBUG:player_3 is an auction participant.
+2023-05-03 18:39:09,706:monopoly_simulator.logging_info.bank:DEBUG:player_1 will place the first bid
