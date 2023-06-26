@@ -2,6 +2,7 @@
 
 .idea
 .DS_Store
+NOTE
 /monopoly_simulator/__pycache__
 /monopoly_simulator/background_agent_v1.py
 /monopoly_simulator/background_agent_v1_deprecated.py
