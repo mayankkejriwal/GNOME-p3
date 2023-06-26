@@ -41,7 +41,7 @@ def play_tournament_with_novelty_v3(agent_combination_1, agent_combination_2, to
     count = 1
 
     for i in range(len(agent_combination_1)):
-        folder_name = "../tournament_logs" + tournament_log_folder + '_comb_' + str(i) + '/'
+        folder_name = "./tournament_logs" + tournament_log_folder + '_comb_' + str(i) + '/'
         try:
             os.makedirs(folder_name)
             print('Logging gameplay')
