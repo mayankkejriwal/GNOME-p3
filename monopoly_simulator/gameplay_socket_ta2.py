@@ -8,8 +8,6 @@ from monopoly_simulator import background_agent_v1_2
 from monopoly_simulator import read_write_current_state
 import json
 from monopoly_simulator import novelty_generator
-#from monopoly_simulator import rl_agent_background
-#from monopoly_simulator.rl_agent import RLAgent
 from monopoly_simulator import diagnostics
 from monopoly_simulator.agent import Agent
 import xlsxwriter
@@ -624,7 +622,6 @@ def play_game_in_tournament_socket( game_seed, agent1, agent2, agent3, agent4, n
     player_decision_agents['player_2'] = Agent(**agent2.decision_agent_methods)
     player_decision_agents['player_3'] = Agent(**agent3.decision_agent_methods)
     player_decision_agents['player_4'] = Agent(**agent4.decision_agent_methods)
-    # player_decision_agents['player_4'] = RLAgent(**rl_agent_background.decision_agent_methods, player_name='player_4', load_path='../policy_net/rl_policy_net_v1.tar')
 
     #print(Player.process_move_consequences.__module__)
     #print(action_choices.buy_property.__module__)
@@ -740,7 +737,7 @@ def play_game_in_tournament_1(game_seed, agent0, agent1, agent2, agent3, novelty
 
     player_decision_agents['player_3'] = Agent(**agent2.decision_agent_methods)
 
-    player_decision_agents['player_4'] = RLAgent(**rl_agent_background.decision_agent_methods, player_name='player_4', load_path='../policy_net/rl_policy_net_v1.tar')
+    player_decision_agents['player_4'] = Agent(**agent3.decision_agent_methods)
 
 
     game_elements = set_up_board('../monopoly_game_schema_v1-2.json',
