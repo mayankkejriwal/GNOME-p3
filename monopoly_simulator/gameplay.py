@@ -4,13 +4,11 @@ from monopoly_simulator import action_choices
 import numpy as np
 from monopoly_simulator import card_utility_actions
 from monopoly_simulator import background_agent_v3_1
-from monopoly_simulator import rl_agent_background
 from monopoly_simulator import read_write_current_state
 import json
 from monopoly_simulator import novelty_generator
 from monopoly_simulator import diagnostics
 from monopoly_simulator.agent import Agent
-from monopoly_simulator.rl_agent import RLAgent
 import xlsxwriter
 from monopoly_simulator.flag_config import flag_config_dict
 from monopoly_simulator.logging_info import log_file_create
@@ -377,7 +375,8 @@ def play_game():
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
 
-    player_decision_agents['player_1'] = RLAgent(**rl_agent_background.decision_agent_methods, player_name='player_1', load_path='../policy_net/rl_policy_net_v1.tar')
+
+    player_decision_agents['player_1'] = Agent(**background_agent_v3_1.decision_agent_methods)
     player_decision_agents['player_2'] = Agent(**background_agent_v3_1.decision_agent_methods)
     player_decision_agents['player_3'] = Agent(**background_agent_v3_1.decision_agent_methods)
     player_decision_agents['player_4'] = Agent(**background_agent_v3_1.decision_agent_methods)
@@ -432,7 +431,7 @@ def play_game_in_tournament(game_seed, novelty_info=False, inject_novelty_functi
     player_decision_agents = dict()
     # for p in ['player_1','player_3']:
     #     player_decision_agents[p] = simple_decision_agent_1.decision_agent_methods
-    player_decision_agents['player_1'] = RLAgent(**rl_agent_background.decision_agent_methods, player_name='player_1', load_path='../policy_net/rl_policy_net_v1.tar')
+    player_decision_agents['player_1'] = Agent(**background_agent_v3_1.decision_agent_methods)
     player_decision_agents['player_2'] = Agent(**background_agent_v3_1.decision_agent_methods)
     player_decision_agents['player_3'] = Agent(**background_agent_v3_1.decision_agent_methods)
     player_decision_agents['player_4'] = Agent(**background_agent_v3_1.decision_agent_methods)
