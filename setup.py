@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 setup(name='monopoly_simulator_test',
-      version='0.0.5',
+      version='0.0.6',
       description='USC/ISI monopoly simulator',
       author='Min-Hsueh Chiu',
       author_email='minhsueh@isi.edu',
