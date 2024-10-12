@@ -34,3 +34,5 @@ Following changes have to be made to file **_GNOME-p3/monopoly_simulator/gamepla
 * (Optional) You can implement your own custom agent and replace any of the existing player agents with the new agent. In order to do so, 
 all functions in the Agent class as specified in **_GNOME-p3/monopoly_simulator/agent.py_** has to be implemented and imported into **_GNOME-p3/monopoly_simulator/gameplay.py_**. (See existing agent implementations for reference.)
 * (Optional) The gameplay can also be viewed in **_2D GUI_** by running **_GNOME-p3/monopoly_simulator/gameplay_GUI.py_** following the same instructions as above.  The packages for the GUI can be installed using **```$ pip install -r requirements_GUI.txt```**.
+
+MM
