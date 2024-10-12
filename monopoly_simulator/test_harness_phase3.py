@@ -241,5 +241,5 @@ print('-------------------')
 nov = "phase3_novelty_inject"
 play_tournament_with_novelty_v3(f'/{given_system_folder}/tournament_with_novelty_trial_{inputArgs[0]}_{inputArgs[1]}', nov=nov, meta_seed=metaseed, num_games=num_games, novelty_index=novelty_index, novelty_info=novelty_info, debug_mode = debug, novelty_name = novelty_name)
 
-
-agent1.end_tournament()
+if inputArgs[5] == "TA2-agent":
+    agent1.end_tournament()
