@@ -35,4 +35,41 @@ Following changes have to be made to file **_GNOME-p3/monopoly_simulator/gamepla
 all functions in the Agent class as specified in **_GNOME-p3/monopoly_simulator/agent.py_** has to be implemented and imported into **_GNOME-p3/monopoly_simulator/gameplay.py_**. (See existing agent implementations for reference.)
 * (Optional) The gameplay can also be viewed in **_2D GUI_** by running **_GNOME-p3/monopoly_simulator/gameplay_GUI.py_** following the same instructions as above.  The packages for the GUI can be installed using **```$ pip install -r requirements_GUI.txt```**.
 
-MM
+### Execution
+To run the project, please follow these steps:
+1. Clone the repository:
+
+```bash
+https://github.com/mayankkejriwal/GNOME-p3.git
+# git clone https://github.com/minhsueh/GNOME-p3.git
+```
+2. Check out the desired branch:
+```bash
+git checkout -b phase3_final origin/phase3_final
+```
+3. Change to the project directory:
+```bash
+cd GNOME-p3
+```
+4. Create a virtual environment:
+```bash
+python3 -m venv .env
+```
+5. Activate the virtual environment:
+```bash
+source .env/bin/activate
+```
+6. Install the required dependencies:
+```bash
+pip3 install -r requirements.txt 
+```
+7. Navigate to the simulator directory:
+```bash
+cd monopoly_simulator 
+```
+8. Execute the script to run the game:
+```bash
+bash execute_phase3.sh
+```
+
+After completing these steps, you can run the ClientAgent to connect to the game engine.
