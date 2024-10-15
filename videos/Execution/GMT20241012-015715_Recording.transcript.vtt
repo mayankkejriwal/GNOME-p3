@@ -1,0 +1,370 @@
+WEBVTT
+
+1
+00:00:02.380 --> 00:00:11.739
+Min-Hsueh Chiu: So in this video I will demonstrate how to use monopoly monopoly simulator. So as you can see, here is my repo, and here's the folder.
+
+2
+00:00:11.860 --> 00:00:17.170
+Min-Hsueh Chiu: and here is the common line. Relate to this folder, as you can see.
+
+3
+00:00:17.360 --> 00:00:25.359
+Min-Hsueh Chiu: and this common line is, I will I will use it later for execute the client. Software.
+
+4
+00:00:25.540 --> 00:00:29.009
+Min-Hsueh Chiu: So that's me started from scratch.
+
+5
+00:00:29.410 --> 00:00:32.619
+Min-Hsueh Chiu: So as you can see, it's now it is empty.
+
+6
+00:00:32.860 --> 00:00:35.363
+Min-Hsueh Chiu: So let us just
+
+7
+00:00:37.480 --> 00:00:39.390
+Min-Hsueh Chiu: copy the bit
+
+8
+00:00:40.470 --> 00:00:41.660
+Min-Hsueh Chiu: and then
+
+9
+00:00:41.790 --> 00:00:43.230
+Min-Hsueh Chiu: bonus repo.
+
+10
+00:00:44.130 --> 00:00:46.999
+Min-Hsueh Chiu: Okay, so right now, we have the repo here.
+
+11
+00:00:47.390 --> 00:00:50.209
+Min-Hsueh Chiu: and what we need to do
+
+12
+00:00:50.700 --> 00:00:53.219
+Min-Hsueh Chiu: is to multiple
+
+13
+00:00:53.300 --> 00:00:58.730
+Min-Hsueh Chiu: modify, modify to the right.
+
+14
+00:00:59.020 --> 00:01:05.439
+Min-Hsueh Chiu: Let me just directly copy it. So this will be are using this branch.
+
+15
+00:01:05.680 --> 00:01:09.260
+Min-Hsueh Chiu: which is phase 3. Final. This print?
+
+16
+00:01:11.480 --> 00:01:15.749
+Min-Hsueh Chiu: Oh, yeah. So I need to go into this folder
+
+17
+00:01:15.870 --> 00:01:21.820
+Min-Hsueh Chiu: and yeah, right now, I'm switched to the new branch.
+
+18
+00:01:26.100 --> 00:01:27.650
+Min-Hsueh Chiu: Okay, as you can see.
+
+19
+00:01:27.700 --> 00:01:31.430
+Min-Hsueh Chiu: I'm retina in a new branch. And so
+
+20
+00:01:32.900 --> 00:01:35.419
+Min-Hsueh Chiu: here, I'm going to
+
+21
+00:01:35.460 --> 00:01:36.920
+Min-Hsueh Chiu: create
+
+22
+00:01:37.570 --> 00:01:39.230
+Min-Hsueh Chiu: virtual environment
+
+23
+00:01:39.820 --> 00:01:41.199
+Min-Hsueh Chiu: that Dmv.
+
+24
+00:01:44.180 --> 00:01:45.579
+Min-Hsueh Chiu: and then
+
+25
+00:01:47.080 --> 00:01:48.260
+Min-Hsueh Chiu: I will
+
+26
+00:01:49.270 --> 00:01:54.239
+Min-Hsueh Chiu: executed so as you can see right now, I'm in my virtual environment.
+
+27
+00:01:54.770 --> 00:01:56.170
+Min-Hsueh Chiu: And then
+
+28
+00:01:56.970 --> 00:01:58.763
+Min-Hsueh Chiu: I will
+
+29
+00:02:00.870 --> 00:02:02.180
+Min-Hsueh Chiu: instill
+
+30
+00:02:02.920 --> 00:02:05.160
+Min-Hsueh Chiu: what I need for this package.
+
+31
+00:02:05.430 --> 00:02:07.990
+Min-Hsueh Chiu: Basically, it's just numpy.
+
+32
+00:02:08.630 --> 00:02:14.880
+Min-Hsueh Chiu: Okay, so here, I think, our environment is already set up.
+
+33
+00:02:15.310 --> 00:02:16.520
+Min-Hsueh Chiu: and
+
+34
+00:02:17.060 --> 00:02:23.430
+Min-Hsueh Chiu: what I need to do here is maybe I can show you the execute
+
+35
+00:02:23.780 --> 00:02:25.740
+Min-Hsueh Chiu: while first.st
+
+36
+00:02:26.872 --> 00:02:28.560
+Min-Hsueh Chiu: Here it is.
+
+37
+00:02:29.920 --> 00:02:31.570
+Min-Hsueh Chiu: Here's the execute
+
+38
+00:02:31.860 --> 00:02:34.980
+Min-Hsueh Chiu: underscore phase 3.sh!
+
+39
+00:02:36.270 --> 00:02:39.580
+Min-Hsueh Chiu: Okay, let me scroll a little bit
+
+40
+00:02:41.220 --> 00:02:45.270
+Min-Hsueh Chiu: so as you can see, here is the user parameter.
+
+41
+00:02:45.330 --> 00:02:54.210
+Min-Hsueh Chiu: and here is config, the for example, python path and then execute the function.
+
+42
+00:02:54.230 --> 00:02:57.079
+Min-Hsueh Chiu: So let me show you
+
+43
+00:02:58.620 --> 00:03:02.330
+Min-Hsueh Chiu: when the when using background player
+
+44
+00:03:02.340 --> 00:03:04.130
+Min-Hsueh Chiu: to play themselves.
+
+45
+00:03:04.400 --> 00:03:06.860
+Min-Hsueh Chiu: So basically, what I need to do
+
+46
+00:03:06.970 --> 00:03:09.920
+Min-Hsueh Chiu: is to just execute
+
+47
+00:03:10.520 --> 00:03:12.519
+Min-Hsueh Chiu: this bash file.
+
+48
+00:03:12.970 --> 00:03:14.420
+Min-Hsueh Chiu: and you can see.
+
+49
+00:03:14.650 --> 00:03:15.490
+Min-Hsueh Chiu: Let
+
+50
+00:03:16.380 --> 00:03:23.970
+Min-Hsueh Chiu: the game already playing right now, and it is done because I just play locally. So you can see here.
+
+51
+00:03:24.030 --> 00:03:30.890
+Min-Hsueh Chiu: outside the monopoly simulator folder, you can see. Here is a tournament log generated.
+
+52
+00:03:31.360 --> 00:03:35.300
+Min-Hsueh Chiu: and inside here you can see
+
+53
+00:03:35.820 --> 00:03:37.209
+Min-Hsueh Chiu: learn log
+
+54
+00:03:37.470 --> 00:03:43.099
+Min-Hsueh Chiu: for every game. So right now, I just have 2 game, as you can see here in a number game.
+
+55
+00:03:43.680 --> 00:03:48.700
+Min-Hsueh Chiu: And I'm using the novelty which is environment. Underscore 9.
+
+56
+00:03:49.140 --> 00:03:53.030
+Min-Hsueh Chiu: Okay, so this is how I would I would use
+
+57
+00:03:53.160 --> 00:03:54.920
+Min-Hsueh Chiu: for the
+
+58
+00:03:55.830 --> 00:03:58.820
+Min-Hsueh Chiu: background agent that is branded itself.
+
+59
+00:03:59.080 --> 00:04:03.769
+Min-Hsueh Chiu: So now I would demonstrate how to
+
+60
+00:04:03.980 --> 00:04:07.749
+Min-Hsueh Chiu: play with user software.
+
+61
+00:04:07.790 --> 00:04:14.840
+Min-Hsueh Chiu: So as you can see, I change my user agent to ta 2 agent. So this is the indicator
+
+62
+00:04:14.900 --> 00:04:18.890
+Min-Hsueh Chiu: are giving into the function that
+
+63
+00:04:19.200 --> 00:04:23.520
+Min-Hsueh Chiu: saying, I'm going to use a socket connection.
+
+64
+00:04:24.280 --> 00:04:25.989
+Min-Hsueh Chiu: So let me.
+
+65
+00:04:26.820 --> 00:04:29.010
+Min-Hsueh Chiu: Okay. So for
+
+66
+00:04:29.040 --> 00:04:31.699
+Min-Hsueh Chiu: clarifications I will multiply
+
+67
+00:04:32.639 --> 00:04:37.030
+Min-Hsueh Chiu: list number 10, so it will generate another folder later.
+
+68
+00:04:37.600 --> 00:04:39.360
+Min-Hsueh Chiu: and let me do it again.
+
+69
+00:04:40.190 --> 00:04:42.619
+Min-Hsueh Chiu: So as you can see that
+
+70
+00:04:42.810 --> 00:04:55.990
+Min-Hsueh Chiu: in a previous execution, I just it's it's run directly, because it's just using the background agent. But right now, since we are going to use client software.
+
+71
+00:04:56.050 --> 00:04:59.979
+Min-Hsueh Chiu: so it is waiting con waiting connection here
+
+72
+00:05:00.000 --> 00:05:06.410
+Min-Hsueh Chiu: and so right now, I'm going to execute
+
+73
+00:05:07.960 --> 00:05:12.640
+Min-Hsueh Chiu: the software that is developed by Umass
+
+74
+00:05:12.740 --> 00:05:19.369
+Min-Hsueh Chiu: and I already config all of the environments for them. So when you
+
+75
+00:05:19.410 --> 00:05:22.701
+Min-Hsueh Chiu: do when when you execute the
+
+76
+00:05:23.900 --> 00:05:31.610
+Min-Hsueh Chiu: client software, it is very important to make sure every environment parameter is okay.
+
+77
+00:05:32.040 --> 00:05:34.950
+Min-Hsueh Chiu: So let me execute their
+
+78
+00:05:35.620 --> 00:05:38.790
+Min-Hsueh Chiu: layer software here.
+
+79
+00:05:39.630 --> 00:05:42.300
+Min-Hsueh Chiu: So as you can see, game is started.
+
+80
+00:05:42.820 --> 00:05:47.299
+Min-Hsueh Chiu: And also it is showing on my game engine side.
+
+81
+00:05:48.180 --> 00:05:50.129
+Min-Hsueh Chiu: So inside here.
+
+82
+00:05:50.620 --> 00:05:53.630
+Min-Hsueh Chiu: you can see the log is updating.
+
+83
+00:05:53.750 --> 00:05:55.039
+Min-Hsueh Chiu: based on
+
+84
+00:05:55.340 --> 00:05:56.309
+Min-Hsueh Chiu: the
+
+85
+00:05:58.120 --> 00:06:00.969
+Min-Hsueh Chiu: based on the the client is playing
+
+86
+00:06:01.650 --> 00:06:02.440
+Min-Hsueh Chiu: right?
+
+87
+00:06:02.550 --> 00:06:07.029
+Min-Hsueh Chiu: And right now it's heading to the game game 2.
+
+88
+00:06:08.110 --> 00:06:09.590
+Min-Hsueh Chiu: And similarly.
+
+89
+00:06:09.730 --> 00:06:11.040
+Min-Hsueh Chiu: it is running.
+
+90
+00:06:12.580 --> 00:06:15.129
+Min-Hsueh Chiu: Okay? So that is how
+
+91
+00:06:15.963 --> 00:06:17.129
+Min-Hsueh Chiu: to connect
+
+92
+00:06:17.820 --> 00:06:19.700
+Min-Hsueh Chiu: client and game engine.
+
