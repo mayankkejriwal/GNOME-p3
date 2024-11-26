@@ -8,5 +8,5 @@ numpy==1.18.4
 Pygments==2.6.1
 requests==2.23.0
 six==1.14.0
-urllib3==1.25.9
+urllib3==1.26.5
 XlsxWriter==1.2.8
